@@ -7,3 +7,6 @@ A basic org-mode parser in go
   - https://orgmode.org/worg/dev/org-syntax.html
   - https://github.com/abo-abo/org-mode/blob/mirror/lisp/org.el
   - https://github.com/abo-abo/org-mode/blob/mirror/lisp/org-element.el
+- test cases
+  - [[https://github.com/bdewey/org-ruby/blob/master/spec/html_examples][org-ruby]]
+  - pandoc, goorgeous

@@ -1,0 +1,59 @@
+#+TITLE: Example org mode file
+#+AUTHOR: Niklas Fasching
+#+DESCRIPTION: just some random elements with little explanation
+
+* Motivation
+
+To validate the parser we'll try printing the AST back to org-mode source - if that
+works we can be kind of sure that the parsing worked.
+At least I hope so - I would like to get around writing tests for the individual parsing
+functions...
+
+** Headlines with TODO status, priority & tags
+*** TODO [#B] Headline with todo status & priority
+*** DONE Headline with TODO status
+*** [#A] Headline with tags & priority                              :foo:bar:
+this one is cheating a little as tags are ALWAYS printed right aligned to a given column number...
+** Lists
+- unordered list item 1
+- unordered list item 2 - with ~inline~ /markup/
+  1. ordered sublist item 1
+     a) ordered sublist item 1
+     b) ordered sublist item 2
+     c) ordered sublist item 3
+  2. ordered sublist item 2
+- unordered list item 3 - and a [[https://example.com][link]]
+  and some lines of text
+  1. and another subitem
+     #+BEGIN_SRC sh
+     echo with a block
+     #+END_SRC
+  2. and another one with a table
+     | a | b | c |
+     |---+---+---|
+     | 1 | 2 | 3 |
+
+     and text with an empty line in between as well!
+- unordered list item 4
+
+** Inline
+- /emphasis/ and a hard line break \\
+- /.emphasis with dot border chars./
+- /emphasis with a slash/inside/
+- /emphasis/ followed by raw text with slash /
+- ->/not an emphasis/<-
+- links with slashes do not become /emphasis/: [[https://somelinkshouldntrenderaccidentalemphasis.com]]/ /emphasis/
+- _underlined_ *bold*  =verbatim= ~code~ +strikethrough+
+- *bold string with an *asterisk inside*
+- links
+  1. regular link [[https://example.com]] link without description
+  2. regular link [[https://example.com][example.com]] link with description
+  3. regular link to a file (image) [[file:my-img.png]]
+** Footnotes
+- normal footnote reference [fn:1]
+- further references to the same footnote should not [fn:1] render duplicates in the footnote list
+- also inline footnotes are supported via =fn:2:inline definition=. But we won't test that because it would
+  cause the output to look different from the input
+
+* Footnotes
+[fn:1] Foobar
