@@ -34,7 +34,7 @@ var listTags = map[string][]string{
 func NewHTMLWriter() *HTMLWriter {
 	return &HTMLWriter{
 		HighlightCodeBlock: func(source, lang string) string {
-			return fmt.Sprintf("<pre>%s</pre>", html.EscapeString(source))
+			return fmt.Sprintf(`<div class="highlight"><pre>%s</pre></div>`, html.EscapeString(source))
 		},
 	}
 }
@@ -112,9 +112,7 @@ func (w *HTMLWriter) writeBlock(b Block) {
 		for _, n := range b.Children {
 			lines = append(lines, n.(Line).Children[0].(Text).Content)
 		}
-		w.WriteString(fmt.Sprintf(`<code class="src src-%s">`, lang) + "\n")
-		w.WriteString(w.HighlightCodeBlock(strings.Join(lines, "\n"), lang))
-		w.WriteString("\n</code>\n")
+		w.WriteString(w.HighlightCodeBlock(strings.Join(lines, "\n"), lang) + "\n")
 	case "EXAMPLE":
 		w.WriteString(`<pre class="example">\n`)
 		w.writeNodes(b.Children...)
