@@ -5,8 +5,6 @@ A basic org-mode parser in go
 * next
 - hugo frontmatter - see https://gohugo.io/content-management/front-matter/
 - captions: images, tables & blocks
-- blocks: highlighted src code, blockquote
-- basic tables
 * later
 - affiliated keywords
   see org-element.el - org-element-affiliated-keywords

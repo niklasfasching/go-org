@@ -33,7 +33,9 @@ var listTags = map[string][]string{
 
 func NewHTMLWriter() *HTMLWriter {
 	return &HTMLWriter{
-		HighlightCodeBlock: func(source, lang string) string { return html.EscapeString(source) },
+		HighlightCodeBlock: func(source, lang string) string {
+			return fmt.Sprintf("<pre>%s<pre>", html.EscapeString(source))
+		},
 	}
 }
 
@@ -110,17 +112,31 @@ func (w *HTMLWriter) writeLines(lines []Node) {
 }
 
 func (w *HTMLWriter) writeBlock(b Block) {
-	w.WriteString("<code>")
-	lang := ""
-	if len(b.Parameters) >= 1 {
-		lang = b.Parameters[0]
+	switch b.Name {
+	case "SRC":
+		lines, lang := []string{}, "text"
+		if len(b.Parameters) >= 1 {
+			lang = b.Parameters[0]
+		}
+		for _, n := range b.Children {
+			lines = append(lines, n.(Line).Children[0].(Text).Content)
+		}
+		w.WriteString(fmt.Sprintf(`<code class="src src-%s">`, lang) + "\n")
+		w.WriteString(w.HighlightCodeBlock(strings.Join(lines, "\n"), lang))
+		w.WriteString("\n</code>\n")
+	case "EXAMPLE":
+		w.WriteString(`<pre class="example">` + "\n")
+		w.writeNodes(b.Children...)
+		w.WriteString("\n</pre>\n")
+	case "QUOTE":
+		w.WriteString("<blockquote>\n")
+		w.writeNodes(b.Children...)
+		w.WriteString("\n</blockquote>\n")
+	case "CENTER":
+		w.WriteString(`<div style="text-align: center; margin-left: auto; margin-right: auto;">` + "\n")
+		w.writeNodes(b.Children...)
+		w.WriteString("\n</div>\n")
 	}
-	lines := []string{}
-	for _, n := range b.Children {
-		lines = append(lines, n.(Line).Children[0].(Text).Content)
-	}
-	w.WriteString(w.HighlightCodeBlock(strings.Join(lines, "\n"), lang))
-	w.WriteString("</code>\n")
 }
 
 func (w *HTMLWriter) writeFootnoteDefinition(f FootnoteDefinition) {
