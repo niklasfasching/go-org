@@ -34,7 +34,7 @@ var listTags = map[string][]string{
 func NewHTMLWriter() *HTMLWriter {
 	return &HTMLWriter{
 		HighlightCodeBlock: func(source, lang string) string {
-			return fmt.Sprintf("<pre>%s<pre>", html.EscapeString(source))
+			return fmt.Sprintf("<pre>%s</pre>", html.EscapeString(source))
 		},
 	}
 }
@@ -154,8 +154,8 @@ func (w *HTMLWriter) writeFootnotes(d *Document) {
 	w.WriteString(`<div id="footnotes">` + "\n")
 	w.WriteString(`<h1 class="footnotes-title">` + fs.Title + `</h1>` + "\n")
 	w.WriteString(`<div class="footnote-definitions">` + "\n")
-	for _, name := range fs.Order {
-		w.writeNodes(fs.Definitions[name])
+	for _, definition := range d.Footnotes.Ordered() {
+		w.writeNodes(definition)
 	}
 	w.WriteString("</div>\n</div>\n")
 }

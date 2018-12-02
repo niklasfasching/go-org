@@ -145,9 +145,9 @@ func (w *OrgWriter) writeFootnotes(d *Document) {
 		return
 	}
 	w.WriteString("* " + fs.Title + "\n")
-	for _, name := range fs.Order {
-		if fnDefinition := fs.Definitions[name]; !fnDefinition.Inline {
-			w.writeNodes(fnDefinition)
+	for _, definition := range fs.Ordered() {
+		if !definition.Inline {
+			w.writeNodes(definition)
 		}
 	}
 }

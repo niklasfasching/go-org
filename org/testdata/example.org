@@ -76,4 +76,22 @@ Mongodb is very webscale
 - inline footnotes are also supported via [fn:2:the inline footnote definition].
 
 * Footnotes
-[fn:1] Foobar
+[fn:1] https://www.example.com
+- footnotes can contain *markup*
+- and other elements
+  - like blocks
+    #+BEGIN_SRC
+    other non-plain
+    #+END_SRC
+  - and tables
+    | 1 | a |
+    | 2 | b |
+    | 3 | c |
+
+[fn:3] [[http://example.com/unused-footnote][example.com/unused-footnote]]
+
+[fn:4] another unused footnote
+
+[fn:5] another unused footnote
+
+[fn:6] another unused footnote

@@ -114,19 +114,11 @@ func (d *Document) parseRegularLinkOrFootnoteReference(input string, start int) 
 func (d *Document) parseFootnoteReference(input string, start int) (int, Node) {
 	if m := footnoteRegexp.FindStringSubmatch(input[start:]); m != nil {
 		name, definition := m[1], m[3]
-		seen, link := false, FootnoteLink{name, nil}
-		for _, otherName := range d.Footnotes.Order {
-			if name == otherName {
-				seen = true
-			}
-		}
-		if !seen {
-			d.Footnotes.Order = append(d.Footnotes.Order, name)
-		}
+		link := FootnoteLink{name, nil}
 		if definition != "" {
 			link.Definition = &FootnoteDefinition{name, d.parseInline(definition), true}
-			d.Footnotes.Definitions[name] = *link.Definition
 		}
+		d.Footnotes.add(name, link.Definition)
 		return len(m[0]), link
 	}
 	return 0, nil

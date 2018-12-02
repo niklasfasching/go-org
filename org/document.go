@@ -10,7 +10,7 @@ import (
 type Document struct {
 	tokens              []token
 	Nodes               []Node
-	Footnotes           Footnotes
+	Footnotes           *Footnotes
 	StatusKeywords      []string
 	MaxEmphasisNewLines int
 	BufferSettings      map[string]string
@@ -52,10 +52,10 @@ var nilToken = token{"nil", -1, "", nil}
 
 func NewDocument() *Document {
 	return &Document{
-		Footnotes: Footnotes{
+		Footnotes: &Footnotes{
 			ExcludeHeading: true,
 			Title:          "Footnotes",
-			Definitions:    map[string]FootnoteDefinition{},
+			Definitions:    map[string]*FootnoteDefinition{},
 		},
 		MaxEmphasisNewLines: 1,
 		BufferSettings:      map[string]string{},
@@ -132,7 +132,7 @@ func (d *Document) parseOne(i int, stop stopFn) (consumed int, node Node) {
 
 func (d *Document) parseMany(i int, stop stopFn) (int, []Node) {
 	start, nodes := i, []Node{}
-	for i < len(d.tokens) {
+	for i < len(d.tokens) && !stop(d, i) {
 		consumed, node := d.parseOne(i, stop)
 		i += consumed
 		nodes = append(nodes, node)
