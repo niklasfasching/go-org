@@ -126,7 +126,7 @@ func (d *Document) parseFootnoteReference(input string, start int) (int, Node) {
 }
 
 func (d *Document) parseAutoLink(input string, start int) (int, int, Node) {
-	if len(input[start:]) < 3 || input[start+1] != '/' || input[start+2] != '/' {
+	if !d.AutoLink || len(input[start:]) < 3 || input[start+1] != '/' || input[start+2] != '/' {
 		return 0, 0, nil
 	}
 	protocolStart, protocol := start-1, ""

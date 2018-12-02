@@ -13,6 +13,7 @@ type Document struct {
 	Footnotes           *Footnotes
 	StatusKeywords      []string
 	MaxEmphasisNewLines int
+	AutoLink            bool
 	BufferSettings      map[string]string
 	DefaultSettings     map[string]string
 }
@@ -57,6 +58,7 @@ func NewDocument() *Document {
 			Title:          "Footnotes",
 			Definitions:    map[string]*FootnoteDefinition{},
 		},
+		AutoLink:            true,
 		MaxEmphasisNewLines: 1,
 		BufferSettings:      map[string]string{},
 		DefaultSettings: map[string]string{
