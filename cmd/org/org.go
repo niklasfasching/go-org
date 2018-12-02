@@ -7,6 +7,10 @@ import (
 	"os"
 	"strings"
 
+	"github.com/alecthomas/chroma"
+	"github.com/alecthomas/chroma/formatters/html"
+	"github.com/alecthomas/chroma/lexers"
+	"github.com/alecthomas/chroma/styles"
 	"github.com/niklasfasching/org"
 )
 
@@ -14,7 +18,7 @@ func main() {
 	log.SetFlags(0)
 	if len(os.Args) < 3 {
 		log.Println("USAGE: org FILE OUTPUT_FORMAT")
-		log.Fatal("supported output formats: org")
+		log.Fatal("supported output formats: org, html")
 	}
 	bs, err := ioutil.ReadFile(os.Args[1])
 	if err != nil {
@@ -24,8 +28,24 @@ func main() {
 	switch strings.ToLower(os.Args[2]) {
 	case "org":
 		out = org.NewDocument().Parse(r).Write(org.NewOrgWriter()).String()
+	case "html":
+		writer := org.NewHTMLWriter()
+		writer.HighlightCodeBlock = highlightCodeBlock
+		out = org.NewDocument().Parse(r).Write(writer).String()
 	default:
 		log.Fatal("Unsupported output format")
 	}
 	log.Println(out)
+}
+
+func highlightCodeBlock(source, lang string) string {
+	var w strings.Builder
+	l := lexers.Get(lang)
+	if l == nil {
+		l = lexers.Fallback
+	}
+	l = chroma.Coalesce(l)
+	it, _ := l.Tokenise(nil, source)
+	_ = html.New().Format(&w, styles.Get("friendly"), it)
+	return w.String()
 }

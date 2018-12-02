@@ -38,6 +38,7 @@ this one is cheating a little as tags are ALWAYS printed right aligned to a give
 
 ** Inline
 - /emphasis/ and a hard line break \\
+  see?
 - /.emphasis with dot border chars./
 - /emphasis with a slash/inside/
 - /emphasis/ followed by raw text with slash /

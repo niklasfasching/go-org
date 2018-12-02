@@ -1,0 +1,78 @@
+<h1>Motivation</h1>
+<p>To validate the parser we&#39;ll try printing the AST back to org-mode source - if that works we can be kind of sure that the parsing worked. At least I hope so - I would like to get around writing tests for the individual parsing functions... </p>
+<h2>Headlines with TODO status, priority &amp; tags</h2>
+<h3>Headline with todo status &amp; priority</h3>
+<h3>Headline with TODO status</h3>
+<h3>Headline with tags &amp; priority</h3>
+<p>this one is cheating a little as tags are ALWAYS printed right aligned to a given column number...</p>
+<h2>Lists</h2>
+<ul>
+<li>unordered list item 1</li>
+<li><p>unordered list item 2 - with <code>inline</code> <em>markup</em></p>
+<ol>
+<li><p>ordered sublist item 1</p>
+<ol>
+<li>ordered sublist item 1</li>
+<li>ordered sublist item 2</li>
+<li>ordered sublist item 3</li>
+</ol>
+</li>
+<li>ordered sublist item 2</li>
+</ol>
+</li>
+<li><p>unordered list item 3 - and a <a href="https://example.com">link</a> and some lines of text</p>
+<ol>
+<li><p>and another subitem</p>
+<code>echo with a block</code>
+</li>
+<li><p>and another one with a table</p>
+<table>
+<thead>
+<th>a</th><th>b</th><th>c</th>
+</thead>
+<tbody>
+<tr>
+<td>1</td><td>2</td><td>3</td>
+</tr>
+</tbody>
+</table>
+<p>and text with an empty line in between as well!</p>
+</li>
+</ol>
+</li>
+<li>unordered list item 4 </li>
+</ul>
+<h2>Inline</h2>
+<ul>
+<li><em>emphasis</em> and a hard line break <br>
+ see?</li>
+<li><em>.emphasis with dot border chars.</em></li>
+<li><em>emphasis with a slash/inside</em></li>
+<li><em>emphasis</em> followed by raw text with slash /</li>
+<li>-&gt;/not an emphasis/&lt;-</li>
+<li>links with slashes do not become <em>emphasis</em>: <a href="https://somelinkshouldntrenderaccidentalemphasis.com">https://somelinkshouldntrenderaccidentalemphasis.com</a>/ <em>emphasis</em></li>
+<li><span style="text-decoration: underline;">underlined</span> <strong>bold</strong>  <code class="verbatim">verbatim</code> <code>code</code> <del>strikethrough</del></li>
+<li><strong>bold string with an *asterisk inside</strong></li>
+<li><p>links</p>
+<ol>
+<li>regular link <a href="https://example.com">https://example.com</a> link without description</li>
+<li>regular link <a href="https://example.com">example.com</a> link with description</li>
+<li>regular link to a file (image) <img src="my-img.png" alt="file:my-img.png" title="file:my-img.png" /></li>
+</ol>
+</li>
+</ul>
+<h2>Footnotes</h2>
+<ul>
+<li>normal footnote reference <sup class="footnote-reference"><a href="#footnote-1">1</a></sup></li>
+<li>further references to the same footnote should not <sup class="footnote-reference"><a href="#footnote-1">1</a></sup> render duplicates in the footnote list</li>
+<li>also inline footnotes are supported via <code class="verbatim">fn:2:inline definition</code>. But we won&#39;t test that because it would cause the output to look different from the input </li>
+</ul>
+<div id="footnotes">
+<h1 class="footnotes-title">Footnotes</h1>
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1">1</sup>
+<p>Foobar</p>
+</div>
+</div>
+</div>

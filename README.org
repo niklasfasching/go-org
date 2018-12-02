@@ -2,6 +2,21 @@ A basic org-mode parser in go
 * motivation
 - have a org-mode AST to play around with building an org-mode language server
 - hopefully add reasonable org-mode support to hugo - sadly [[https://github.com/chaseadamsio/goorgeous][goorgeous]] is broken & abandoned
+* next
+- hugo frontmatter - see https://gohugo.io/content-management/front-matter/
+- captions: images, tables & blocks
+- blocks: highlighted src code, blockquote
+- basic tables
+* later
+- affiliated keywords
+  see org-element.el - org-element-affiliated-keywords
+- keywords: support both multi (e.g. LINK, TODO) & normal (e.g. AUTHOR, TITLE) keywords
+- links based on #+LINK
+- includes https://orgmode.org/manual/Include-files.html
+  could be used to have a single org file (ignored via hugo ignoreFiles) and then for each post a file including the relevant headline
+- tables
+  colgroups https://orgmode.org/worg/org-tutorials/tables.html
+- org-entities replacement: see org-entities-help
 * resources
 - syntax
   - https://orgmode.org/worg/dev/org-syntax.html
