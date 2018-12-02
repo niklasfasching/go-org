@@ -50,6 +50,7 @@ this one is cheating a little as tags are ALWAYS printed right aligned to a give
   1. regular link [[https://example.com]] link without description
   2. regular link [[https://example.com][example.com]] link with description
   3. regular link to a file (image) [[file:my-img.png]]
+  4. auto link, i.e. not inside =\[[square brackets]\]= https://www.example.com
 ** Footnotes
 - normal footnote reference [fn:1]
 - further references to the same footnote should not [fn:1] render duplicates in the footnote list

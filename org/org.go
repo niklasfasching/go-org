@@ -246,7 +246,9 @@ func (w *OrgWriter) writeRegularLink(l RegularLink) {
 	descriptionWriter := w.emptyClone()
 	descriptionWriter.writeNodes(l.Description...)
 	description := descriptionWriter.String()
-	if l.URL != description {
+	if l.AutoLink {
+		w.WriteString(l.URL)
+	} else if l.URL != description {
 		w.WriteString(fmt.Sprintf("[[%s][%s]]", l.URL, description))
 	} else {
 		w.WriteString(fmt.Sprintf("[[%s]]", l.URL))

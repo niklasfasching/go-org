@@ -24,7 +24,11 @@ type RegularLink struct {
 	Protocol    string
 	Description []Node
 	URL         string
+	AutoLink    bool
 }
+
+var validURLCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;="
+var autolinkProtocols = regexp.MustCompile(`(https?|ftp|file)`)
 
 var redundantSpaces = regexp.MustCompile("[ \t]+")
 var subScriptSuperScriptRegexp = regexp.MustCompile(`([_^])\{(.*?)\}`)
@@ -33,7 +37,7 @@ var footnoteRegexp = regexp.MustCompile(`\[fn:([\w-]+?)(:(.*?))?\]`)
 func (d *Document) parseInline(input string) (nodes []Node) {
 	previous, current := 0, 0
 	for current < len(input) {
-		consumed, node := 0, (Node)(nil)
+		rewind, consumed, node := 0, 0, (Node)(nil)
 		switch input[current] {
 		case '^':
 			consumed, node = d.parseSubOrSuperScript(input, current)
@@ -45,6 +49,9 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 			consumed, node = d.parseRegularLinkOrFootnoteReference(input, current)
 		case '\\':
 			consumed, node = d.parseExplicitLineBreak(input, current)
+		case ':':
+			rewind, consumed, node = d.parseAutoLink(input, current)
+			current -= rewind
 		}
 		if consumed != 0 {
 			if current > previous {
@@ -125,6 +132,29 @@ func (d *Document) parseFootnoteReference(input string, start int) (int, Node) {
 	return 0, nil
 }
 
+func (d *Document) parseAutoLink(input string, start int) (int, int, Node) {
+	if len(input[start:]) < 3 || input[start+1] != '/' || input[start+2] != '/' {
+		return 0, 0, nil
+	}
+	protocolStart, protocol := start-1, ""
+	for ; protocolStart > 0 && unicode.IsLetter(rune(input[protocolStart])); protocolStart-- {
+	}
+	if m := autolinkProtocols.FindStringSubmatch(input[protocolStart:start]); m != nil {
+		protocol = m[1]
+	} else {
+		return 0, 0, nil
+	}
+	end := start
+	for ; end < len(input) && strings.ContainsRune(validURLCharacters, rune(input[end])); end++ {
+	}
+	path := input[start:end]
+	if path == "://" {
+		return 0, 0, nil
+	}
+	link := RegularLink{protocol, []Node{Text{protocol + path}}, protocol + path, true}
+	return len(protocol), len(path + protocol), link
+}
+
 func (d *Document) parseRegularLink(input string, start int) (int, Node) {
 	if len(input[start:]) == 0 || input[start+1] != '[' {
 		return 0, nil
@@ -147,7 +177,7 @@ func (d *Document) parseRegularLink(input string, start int) (int, Node) {
 	if len(parts) == 2 {
 		protocol = parts[0]
 	}
-	return consumed, RegularLink{protocol, description, link}
+	return consumed, RegularLink{protocol, description, link, false}
 }
 
 func (d *Document) parseEmphasis(input string, start int) (int, Node) {
