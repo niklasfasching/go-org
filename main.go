@@ -11,7 +11,7 @@ import (
 	"github.com/alecthomas/chroma/formatters/html"
 	"github.com/alecthomas/chroma/lexers"
 	"github.com/alecthomas/chroma/styles"
-	"github.com/niklasfasching/org"
+	"github.com/niklasfasching/go-org/org"
 )
 
 func main() {

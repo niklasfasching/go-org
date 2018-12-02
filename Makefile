@@ -1,13 +1,17 @@
 .PHONY: default
 default: test
 
-.PHONY: test
-test:
-	go test ./... -v
+.PHONY: install
+install:
+	go get ./...
 
 .PHONY: build
-build:
-	go build cmd/org/*
+build: install
+	go build main.go
+
+.PHONY: test
+test: install
+	go test ./... -v
 
 .PHONY: setup
 setup:
@@ -16,4 +20,4 @@ setup:
 case=example
 .PHONY: render
 render:
-	bash -c "go run cmd/org/org.go testdata/$(case).org html |& html2text"
+	bash -c "go run main.go org/testdata/$(case).org html |& html2text"
