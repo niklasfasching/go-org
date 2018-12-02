@@ -102,15 +102,6 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 	}
 }
 
-func (w *HTMLWriter) writeLines(lines []Node) {
-	for i, line := range lines {
-		w.writeNodes(line)
-		if i != len(lines)-1 && line.(Line).Children != nil {
-			w.WriteString(" ")
-		}
-	}
-}
-
 func (w *HTMLWriter) writeBlock(b Block) {
 	switch b.Name {
 	case "SRC":
@@ -125,17 +116,22 @@ func (w *HTMLWriter) writeBlock(b Block) {
 		w.WriteString(w.HighlightCodeBlock(strings.Join(lines, "\n"), lang))
 		w.WriteString("\n</code>\n")
 	case "EXAMPLE":
-		w.WriteString(`<pre class="example">` + "\n")
+		w.WriteString(`<pre class="example">\n`)
 		w.writeNodes(b.Children...)
-		w.WriteString("\n</pre>\n")
+		w.WriteString("</pre>\n")
 	case "QUOTE":
 		w.WriteString("<blockquote>\n")
 		w.writeNodes(b.Children...)
-		w.WriteString("\n</blockquote>\n")
+		w.WriteString("</blockquote>\n")
 	case "CENTER":
-		w.WriteString(`<div style="text-align: center; margin-left: auto; margin-right: auto;">` + "\n")
+		w.WriteString(`<p class="center-block" style="text-align: center; margin-left: auto; margin-right: auto;">` + "\n")
 		w.writeNodes(b.Children...)
-		w.WriteString("\n</div>\n")
+		w.WriteString("</p>\n")
+	default:
+		w.WriteString(fmt.Sprintf(`<p class="%s-block">`, strings.ToLower(b.Name)) + "\n")
+		w.writeNodes(b.Children...)
+		w.WriteString("</p>\n")
+
 	}
 }
 
@@ -159,6 +155,7 @@ func (w *HTMLWriter) writeFootnotes(d *Document) {
 	}
 	w.WriteString("</div>\n</div>\n")
 }
+
 func (w *HTMLWriter) writeHeadline(h Headline) {
 	w.WriteString(fmt.Sprintf("<h%d>", h.Lvl))
 	w.writeNodes(h.Title...)
@@ -219,27 +216,24 @@ func (w *HTMLWriter) writeList(l List) {
 }
 
 func (w *HTMLWriter) writeListItem(li ListItem) {
-	w.WriteString("<li>")
-	if len(li.Children) == 1 {
-		if p, ok := li.Children[0].(Paragraph); ok {
-			w.writeLines(p.Children)
-		}
-	} else {
-		w.writeNodes(li.Children...)
-	}
+	w.WriteString("<li>\n")
+	w.writeNodes(li.Children...)
 	w.WriteString("</li>\n")
 }
 
 func (w *HTMLWriter) writeLine(l Line) {
-	w.writeNodes(l.Children...)
+	if len(l.Children) != 0 {
+		w.writeNodes(l.Children...)
+		w.WriteString("\n")
+	}
 }
 
 func (w *HTMLWriter) writeParagraph(p Paragraph) {
 	if len(p.Children) == 1 && p.Children[0].(Line).Children == nil {
 		return
 	}
-	w.WriteString("<p>")
-	w.writeLines(p.Children)
+	w.WriteString("<p>\n")
+	w.writeNodes(p.Children...)
 	w.WriteString("</p>\n")
 }
 
@@ -248,15 +242,15 @@ func (w *HTMLWriter) writeHorizontalRule(h HorizontalRule) {
 }
 
 func (w *HTMLWriter) writeTable(t Table) {
-	w.WriteString("<table>")
+	w.WriteString("<table>\n")
 	w.writeNodes(t.Header)
-	w.WriteString("<tbody>")
+	w.WriteString("<tbody>\n")
 	w.writeNodes(t.Rows...)
 	w.WriteString("</tbody>\n</table>\n")
 }
 
 func (w *HTMLWriter) writeTableRow(t TableRow) {
-	w.WriteString("\n<tr>\n")
+	w.WriteString("<tr>\n")
 	for _, column := range t.Columns {
 		w.WriteString("<td>")
 		w.writeNodes(column...)
@@ -266,7 +260,7 @@ func (w *HTMLWriter) writeTableRow(t TableRow) {
 }
 
 func (w *HTMLWriter) writeTableHeader(t TableHeader) {
-	w.WriteString("\n<thead>\n")
+	w.WriteString("<thead>\n")
 	for _, column := range t.Columns {
 		w.WriteString("<th>")
 		w.writeNodes(column...)
@@ -276,5 +270,5 @@ func (w *HTMLWriter) writeTableHeader(t TableHeader) {
 }
 
 func (w *HTMLWriter) writeTableSeparator(t TableSeparator) {
-	w.WriteString("\n<tr></tr>\n")
+	w.WriteString("<tr></tr>\n")
 }

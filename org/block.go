@@ -32,7 +32,12 @@ func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
 		if parentStop(d, i) {
 			return 0, nil
 		}
-		nodes = append(nodes, Line{[]Node{Text{trim(d.tokens[i].matches[0])}}})
+		text := trim(d.tokens[i].matches[0])
+		if name == "SRC" || name == "EXAMPLE" {
+			nodes = append(nodes, Line{[]Node{Text{text}}})
+		} else {
+			nodes = append(nodes, Line{d.parseInline(text)})
+		}
 	}
 	return i + 1 - start, Block{name, parameters, nodes}
 }

@@ -3,18 +3,23 @@ A basic org-mode parser in go
 - have a org-mode AST to play around with building an org-mode language server
 - hopefully add reasonable org-mode support to hugo - sadly [[https://github.com/chaseadamsio/goorgeous][goorgeous]] is broken & abandoned
 * next
+- handle #+RESULTS: raw and stuff
 - hugo frontmatter - see https://gohugo.io/content-management/front-matter/
 - captions: images, tables & blocks
+*** TODO [[https://github.com/chaseadamsio/goorgeous/issues/72][#72:]] Support for #+ATTR_HTML
+*** TODO [[https://github.com/chaseadamsio/goorgeous/issues/46][#46]]: Support for symbols like ndash and mdash
+- see org-entities replacement: see org-entities-help
+*** TODO [[https://github.com/chaseadamsio/goorgeous/issues/10][#10]]: Support noexport
+*** TODO [[https://github.com/chaseadamsio/goorgeous/issues/19][#19]]: Support #+HTML
+*** TODO [[https://github.com/chaseadamsio/goorgeous/issues/31][#31]]: Support #+INCLUDE
+- see https://orgmode.org/manual/Include-files.html
+*** TODO [[https://github.com/chaseadamsio/goorgeous/issues/33][#33]]: Wrong output when mixing html with org-mode
 * later
-- affiliated keywords
-  see org-element.el - org-element-affiliated-keywords
+- affiliated keywords: see org-element.el - org-element-affiliated-keywords
 - keywords: support both multi (e.g. LINK, TODO) & normal (e.g. AUTHOR, TITLE) keywords
 - links based on #+LINK
-- includes https://orgmode.org/manual/Include-files.html
-  could be used to have a single org file (ignored via hugo ignoreFiles) and then for each post a file including the relevant headline
-- tables
-  colgroups https://orgmode.org/worg/org-tutorials/tables.html
-- org-entities replacement: see org-entities-help
+- table colgroups https://orgmode.org/worg/org-tutorials/tables.html
+- table pretty printing
 * resources
 - syntax
   - https://orgmode.org/worg/dev/org-syntax.html

@@ -2,7 +2,6 @@ package org
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 )
 
@@ -96,13 +95,6 @@ func (w *OrgWriter) writeNodes(ns ...Node) {
 	}
 }
 
-var eolWhiteSpaceRegexp = regexp.MustCompile("[\t ]*\n")
-
-func (w *OrgWriter) String() string {
-	s := w.stringBuilder.String()
-	return eolWhiteSpaceRegexp.ReplaceAllString(s, "\n")
-}
-
 func (w *OrgWriter) writeHeadline(h Headline) {
 	tmp := w.emptyClone()
 	tmp.WriteString(strings.Repeat("*", h.Lvl))
@@ -134,7 +126,11 @@ func (w *OrgWriter) writeHeadline(h Headline) {
 }
 
 func (w *OrgWriter) writeBlock(b Block) {
-	w.WriteString(fmt.Sprintf("%s#+BEGIN_%s %s\n", w.indent, b.Name, strings.Join(b.Parameters, " ")))
+	w.WriteString(w.indent + "#+BEGIN_" + b.Name)
+	if len(b.Parameters) != 0 {
+		w.WriteString(" " + strings.Join(b.Parameters, " "))
+	}
+	w.WriteString("\n")
 	w.writeNodes(b.Children...)
 	w.WriteString(w.indent + "#+END_" + b.Name + "\n")
 }
@@ -180,7 +176,6 @@ func (w *OrgWriter) writeListItem(li ListItem) {
 }
 
 func (w *OrgWriter) writeTable(t Table) {
-	// TODO: pretty print tables
 	w.writeNodes(t.Header)
 	w.writeNodes(t.Rows...)
 }
@@ -200,9 +195,12 @@ func (w *OrgWriter) writeTableSeparator(ts TableSeparator) {
 
 func (w *OrgWriter) writeTableColumns(columns [][]Node) {
 	w.WriteString(w.indent + "| ")
-	for _, columnNodes := range columns {
+	for i, columnNodes := range columns {
 		w.writeNodes(columnNodes...)
-		w.WriteString(" | ")
+		w.WriteString(" |")
+		if i < len(columns)-1 {
+			w.WriteString(" ")
+		}
 	}
 	w.WriteString("\n")
 }
@@ -212,8 +210,10 @@ func (w *OrgWriter) writeHorizontalRule(hr HorizontalRule) {
 }
 
 func (w *OrgWriter) writeLine(l Line) {
-	w.WriteString(w.indent)
-	w.writeNodes(l.Children...)
+	if len(l.Children) != 0 {
+		w.WriteString(w.indent)
+		w.writeNodes(l.Children...)
+	}
 	w.WriteString("\n")
 }
 
