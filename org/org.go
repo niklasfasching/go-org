@@ -237,7 +237,8 @@ func (w *OrgWriter) writeFootnoteLink(l FootnoteLink) {
 	w.WriteString("[fn:" + l.Name)
 	if l.Definition != nil {
 		w.WriteString(":")
-		w.writeNodes(l.Definition.Children...)
+		line := l.Definition.Children[0].(Paragraph).Children[0].(Line)
+		w.writeNodes(line.Children...)
 	}
 	w.WriteString("]")
 }

@@ -116,7 +116,8 @@ func (d *Document) parseFootnoteReference(input string, start int) (int, Node) {
 		name, definition := m[1], m[3]
 		link := FootnoteLink{name, nil}
 		if definition != "" {
-			link.Definition = &FootnoteDefinition{name, d.parseInline(definition), true}
+			paragraph := Paragraph{[]Node{Line{d.parseInline(definition)}}}
+			link.Definition = &FootnoteDefinition{name, []Node{paragraph}, true}
 		}
 		d.Footnotes.add(name, link.Definition)
 		return len(m[0]), link
