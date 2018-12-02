@@ -17,7 +17,7 @@ type FootnoteDefinition struct {
 	Inline   bool
 }
 
-var footnoteDefinitionRegexp = regexp.MustCompile(`^\[fn:([\w-]+)\]\s+(.+)`)
+var footnoteDefinitionRegexp = regexp.MustCompile(`^\[fn:([\w-]+)\](\s+(.+)|$)`)
 
 func lexFootnoteDefinition(line string) (token, bool) {
 	if m := footnoteDefinitionRegexp.FindStringSubmatch(line); m != nil {
@@ -27,10 +27,11 @@ func lexFootnoteDefinition(line string) (token, bool) {
 }
 
 func (d *Document) parseFootnoteDefinition(i int, parentStop stopFn) (int, Node) {
-	name := d.tokens[i].content
+	start, name := i, d.tokens[i].content
 	d.tokens[i] = tokenize(d.tokens[i].matches[2])
 	stop := func(d *Document, i int) bool {
-		return parentStop(d, i) || isSecondBlankLine(d, i) ||
+		return parentStop(d, i) ||
+			(isSecondBlankLine(d, i) && i > start+1) ||
 			d.tokens[i].kind == "headline" || d.tokens[i].kind == "footnoteDefinition"
 	}
 	consumed, nodes := d.parseMany(i, stop)

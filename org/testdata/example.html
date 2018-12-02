@@ -199,7 +199,7 @@ or <code>that</code> foo.
 </p>
 <h3><a href="https://github.com/chaseadamsio/goorgeous/issues/68">#68</a>: Quote block with inline markup</h3>
 <blockquote>
-<a href="www.example.com"><em>this</em> <strong>is</strong> <span style="text-decoration: underline;">markup</span>!</a>
+<a href="https://www.example.com"><em>this</em> <strong>is</strong> <span style="text-decoration: underline;">markup</span>!</a>
 </blockquote>
 <h3><a href="https://github.com/chaseadamsio/goorgeous/issues/77">#77</a>: Recognize <code class="verbatim">code</code>--- as code plus dash</h3>
 <h3><a href="https://github.com/chaseadamsio/goorgeous/issues/75">#75</a>: Not parsing nested lists correctly</h3>
@@ -243,7 +243,7 @@ Bar paragraph
 <ul>
 <li>
 <p>
-normal footnote reference <sup class="footnote-reference"><a href="#footnote-1">1</a></sup>
+normal footnote reference <sup class="footnote-reference"><a href="#footnote-1">1</a></sup> <sup class="footnote-reference"><a href="#footnote-6">6</a></sup>
 </p>
 </li>
 <li>
@@ -327,7 +327,8 @@ another unused footnote
 <div class="footnote-definition">
 <sup id="footnote-6">6</sup>
 <p>
-another unused footnote
+Footnotes break after two consecutive empty lines - just like paragraphs - see <a href="https://orgmode.org/worg/dev/org-syntax.html.">https://orgmode.org/worg/dev/org-syntax.html.</a>
+This shouldn&#39;t happen when the definition line and the line after that are empty.
 </p>
 </div>
 <div class="footnote-definition">
