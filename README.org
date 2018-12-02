@@ -1,0 +1,9 @@
+A basic org-mode parser in go
+* motivation
+- have a org-mode AST to play around with building an org-mode language server
+- hopefully add reasonable org-mode support to hugo - sadly [[https://github.com/chaseadamsio/goorgeous][goorgeous]] is broken & abandoned
+* resources
+- syntax
+  - https://orgmode.org/worg/dev/org-syntax.html
+  - https://github.com/abo-abo/org-mode/blob/mirror/lisp/org.el
+  - https://github.com/abo-abo/org-mode/blob/mirror/lisp/org-element.el
