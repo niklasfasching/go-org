@@ -53,8 +53,7 @@ this one is cheating a little as tags are ALWAYS printed right aligned to a give
 ** Footnotes
 - normal footnote reference [fn:1]
 - further references to the same footnote should not [fn:1] render duplicates in the footnote list
-- also inline footnotes are supported via =fn:2:inline definition=. But we won't test that because it would
-  cause the output to look different from the input
+- inline footnotes are also supported via [fn:2:the inline footnote definition].
 
 * Footnotes
 [fn:1] Foobar

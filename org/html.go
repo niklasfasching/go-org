@@ -44,19 +44,8 @@ func (w *HTMLWriter) emptyClone() *HTMLWriter {
 }
 
 func (w *HTMLWriter) before(d *Document) {}
-
 func (w *HTMLWriter) after(d *Document) {
-	fs := d.Footnotes
-	if len(fs.Definitions) == 0 {
-		return
-	}
-	w.WriteString(`<div id="footnotes">` + "\n")
-	w.WriteString(`<h1 class="footnotes-title">` + fs.Title + `</h1>` + "\n")
-	w.WriteString(`<div class="footnote-definitions">` + "\n")
-	for _, name := range fs.Order {
-		w.writeNodes(fs.Definitions[name])
-	}
-	w.WriteString("</div>\n</div>\n")
+	w.writeFootnotes(d)
 }
 
 func (w *HTMLWriter) writeNodes(ns ...Node) {
@@ -141,6 +130,19 @@ func (w *HTMLWriter) writeFootnoteDefinition(f FootnoteDefinition) {
 	w.WriteString("</div>\n")
 }
 
+func (w *HTMLWriter) writeFootnotes(d *Document) {
+	fs := d.Footnotes
+	if len(fs.Definitions) == 0 {
+		return
+	}
+	w.WriteString(`<div id="footnotes">` + "\n")
+	w.WriteString(`<h1 class="footnotes-title">` + fs.Title + `</h1>` + "\n")
+	w.WriteString(`<div class="footnote-definitions">` + "\n")
+	for _, name := range fs.Order {
+		w.writeNodes(fs.Definitions[name])
+	}
+	w.WriteString("</div>\n</div>\n")
+}
 func (w *HTMLWriter) writeHeadline(h Headline) {
 	w.WriteString(fmt.Sprintf("<h%d>", h.Lvl))
 	w.writeNodes(h.Title...)

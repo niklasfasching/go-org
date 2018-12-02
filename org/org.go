@@ -33,14 +33,7 @@ func NewOrgWriter() *OrgWriter {
 
 func (w *OrgWriter) before(d *Document) {}
 func (w *OrgWriter) after(d *Document) {
-	fs := d.Footnotes
-	if len(fs.Definitions) == 0 {
-		return
-	}
-	w.WriteString("* " + fs.Title + "\n")
-	for _, name := range fs.Order {
-		w.writeNodes(fs.Definitions[name])
-	}
+	w.writeFootnotes(d)
 }
 
 func (w *OrgWriter) emptyClone() *OrgWriter {
@@ -146,6 +139,19 @@ func (w *OrgWriter) writeBlock(b Block) {
 	w.WriteString(w.indent + "#+END_" + b.Name + "\n")
 }
 
+func (w *OrgWriter) writeFootnotes(d *Document) {
+	fs := d.Footnotes
+	if len(fs.Definitions) == 0 {
+		return
+	}
+	w.WriteString("* " + fs.Title + "\n")
+	for _, name := range fs.Order {
+		if fnDefinition := fs.Definitions[name]; !fnDefinition.Inline {
+			w.writeNodes(fnDefinition)
+		}
+	}
+}
+
 func (w *OrgWriter) writeFootnoteDefinition(f FootnoteDefinition) {
 	w.WriteString(fmt.Sprintf("[fn:%s] ", f.Name))
 	w.writeNodes(f.Children...)
@@ -228,7 +234,12 @@ func (w *OrgWriter) writeLinebreak(l Linebreak) {
 }
 
 func (w *OrgWriter) writeFootnoteLink(l FootnoteLink) {
-	w.WriteString("[fn:" + l.Name + "]")
+	w.WriteString("[fn:" + l.Name)
+	if l.Definition != nil {
+		w.WriteString(":")
+		w.writeNodes(l.Definition.Children...)
+	}
+	w.WriteString("]")
 }
 
 func (w *OrgWriter) writeRegularLink(l RegularLink) {

@@ -14,6 +14,7 @@ type Footnotes struct {
 type FootnoteDefinition struct {
 	Name     string
 	Children []Node
+	Inline   bool
 }
 
 var footnoteDefinitionRegexp = regexp.MustCompile(`^\[fn:([\w-]+)\]\s+(.+)`)
@@ -33,6 +34,6 @@ func (d *Document) parseFootnoteDefinition(i int, parentStop stopFn) (int, Node)
 			d.tokens[i].kind == "headline" || d.tokens[i].kind == "footnoteDefinition"
 	}
 	consumed, nodes := d.parseMany(i, stop)
-	d.Footnotes.Definitions[name] = FootnoteDefinition{name, nodes}
+	d.Footnotes.Definitions[name] = FootnoteDefinition{name, nodes, false}
 	return consumed, nil
 }
