@@ -3,7 +3,7 @@ default: test
 
 .PHONY: install
 install:
-	go get ./...
+	go get -t ./...
 
 .PHONY: build
 build: install
