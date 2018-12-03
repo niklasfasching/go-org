@@ -28,16 +28,25 @@ func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
 	t, start, nodes := d.tokens[i], i, []Node{}
 	name, parameters := t.content, strings.Fields(t.matches[3])
 	trim := trimIndentUpTo(d.tokens[i].lvl)
-	for i++; !(d.tokens[i].kind == "endBlock" && d.tokens[i].content == name); i++ {
-		if parentStop(d, i) {
-			return 0, nil
+	stop := func(d *Document, i int) bool {
+		return parentStop(d, i) || (d.tokens[i].kind == "endBlock" && d.tokens[i].content == name)
+	}
+	if name == "SRC" || name == "EXAMPLE" {
+		for i++; !stop(d, i); i++ {
+			nodes = append(nodes, Line{[]Node{Text{trim(d.tokens[i].matches[0])}}})
 		}
-		text := trim(d.tokens[i].matches[0])
-		if name == "SRC" || name == "EXAMPLE" {
-			nodes = append(nodes, Line{[]Node{Text{text}}})
-		} else {
-			nodes = append(nodes, Line{d.parseInline(text)})
+	} else {
+		for i++; !stop(d, i); {
+			consumed, node := d.parseParagraph(i, stop)
+			if consumed == 0 {
+				break
+			}
+			i += consumed
+			nodes = append(nodes, node)
 		}
+	}
+	if parentStop(d, i) {
+		return 0, nil
 	}
 	return i + 1 - start, Block{name, parameters, nodes}
 }

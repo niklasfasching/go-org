@@ -77,6 +77,8 @@ with multiple lines
 
 #+BEGIN_QUOTE
 Mongodb is very webscale
+
+and quote blocks can contain multiple paragraphs
 #+END_QUOTE
 
 ** issues from goorgeous (free test cases, yay!)

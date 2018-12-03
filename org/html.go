@@ -122,13 +122,13 @@ func (w *HTMLWriter) writeBlock(b Block) {
 		w.writeNodes(b.Children...)
 		w.WriteString("</blockquote>\n")
 	case "CENTER":
-		w.WriteString(`<p class="center-block" style="text-align: center; margin-left: auto; margin-right: auto;">` + "\n")
+		w.WriteString(`<div class="center-block" style="text-align: center; margin-left: auto; margin-right: auto;">` + "\n")
 		w.writeNodes(b.Children...)
-		w.WriteString("</p>\n")
+		w.WriteString("</div>\n")
 	default:
-		w.WriteString(fmt.Sprintf(`<p class="%s-block">`, strings.ToLower(b.Name)) + "\n")
+		w.WriteString(fmt.Sprintf(`<div class="%s-block">`, strings.ToLower(b.Name)) + "\n")
 		w.writeNodes(b.Children...)
-		w.WriteString("</p>\n")
+		w.WriteString("</div>\n")
 
 	}
 }
