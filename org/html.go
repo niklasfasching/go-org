@@ -20,7 +20,7 @@ var emphasisTags = map[string][]string{
 	"=":   []string{`<code class="verbatim">`, "</code>"},
 	"_":   []string{`<span style="text-decoration: underline;">`, "</span>"},
 	"_{}": []string{"<sub>", "</sub>"},
-	"^{}": []string{"<super>", "</super>"},
+	"^{}": []string{"<sup>", "</sup>"},
 }
 
 var listTags = map[string][]string{

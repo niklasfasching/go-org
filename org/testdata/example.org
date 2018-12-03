@@ -54,6 +54,7 @@ this one is cheating a little as tags are ALWAYS printed right aligned to a give
 - links with slashes do not become /emphasis/: [[https://somelinkshouldntrenderaccidentalemphasis.com]]/ /emphasis/
 - _underlined_ *bold*  =verbatim= ~code~ +strikethrough+
 - *bold string with an *asterisk inside*
+- subscript_{sub} and superscript^{super}
 - links
   1. regular link [[https://example.com]] link without description
   2. regular link [[https://example.com][example.com]] link with description
