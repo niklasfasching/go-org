@@ -3,9 +3,6 @@ A basic org-mode parser in go
 - have a org-mode AST to play around with building an org-mode language server
 - hopefully add reasonable org-mode support to hugo - sadly [[https://github.com/chaseadamsio/goorgeous][goorgeous]] is broken & abandoned
 * next
-- handle #+RESULTS: raw and stuff
-- hugo frontmatter - see https://gohugo.io/content-management/front-matter/
-- captions: images, tables & blocks
 *** TODO [[https://github.com/chaseadamsio/goorgeous/issues/72][#72:]] Support for #+ATTR_HTML
 *** TODO [[https://github.com/chaseadamsio/goorgeous/issues/46][#46]]: Support for symbols like ndash and mdash
 - see org-entities replacement: see org-entities-help
@@ -15,8 +12,11 @@ A basic org-mode parser in go
 - see https://orgmode.org/manual/Include-files.html
 *** TODO [[https://github.com/chaseadamsio/goorgeous/issues/33][#33]]: Wrong output when mixing html with org-mode
 * later
+- hugo frontmatter - see https://gohugo.io/content-management/front-matter/ -> actually seems to be handled by hugo itself
+- handle #+RESULTS: raw and stuff
 - affiliated keywords: see org-element.el - org-element-affiliated-keywords
 - keywords: support both multi (e.g. LINK, TODO) & normal (e.g. AUTHOR, TITLE) keywords
+  https://orgmode.org/manual/In_002dbuffer-settings.html
 - links based on #+LINK
 - table colgroups https://orgmode.org/worg/org-tutorials/tables.html
 - table pretty printing

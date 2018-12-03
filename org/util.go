@@ -17,3 +17,10 @@ func isEmptyLineParagraph(n Node) bool {
 	}
 	return false
 }
+
+func isImageOrVideoLink(n Node) bool {
+	if l, ok := n.(RegularLink); ok && l.Kind() == "video" || l.Kind() == "image" {
+		return true
+	}
+	return false
+}

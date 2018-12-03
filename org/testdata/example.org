@@ -63,7 +63,26 @@ this one is cheating a little as tags are ALWAYS printed right aligned to a give
   6. regular link to https (image) [[https://www.example.com/my-img.png]]
   7. auto link, i.e. not inside =\[[square brackets]\]= https://www.example.com
 
+** Captions
+
+Anything can be captioned. Also captions are not real, correct captions but just a paragraph below the element (bothe wrapped into a div)
+
+#+CAPTION: captioned soure block
+#+BEGIN_SRC sh
+echo "i have a caption!"
+#+END_SRC
+
+#+CAPTION: captioned link (video in this case)
+[[my-video.mp4]]
+note that only that one line is captioned, not the whole paragraph
+
+#+CAPTION: not happening!
+also, normal text lines can't be captioned
+
+
 ** blocks
+
+#+CAPTION: bleck!
 #+BEGIN_SRC bash
 echo a bash source block
 #+END_SRC

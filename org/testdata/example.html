@@ -188,8 +188,35 @@ auto link, i.e. not inside <code class="verbatim">\[[square brackets]\]</code> <
 </ol>
 </li>
 </ul>
+<h2>Captions</h2>
+<p>
+Anything can be captioned. Also captions are not real, correct captions but just a paragraph below the element (bothe wrapped into a div)
+</p>
+<div class="captioned">
+<div class="highlight"><pre>echo &#34;i have a caption!&#34;</pre></div>
+<p class="caption">
+captioned soure block
+</p>
+</div>
+<div class="captioned">
+<video src="my-video.mp4" title="my-video.mp4">my-video.mp4</video>
+<p class="caption">
+captioned link (video in this case)
+</p>
+</div>
+<p>
+note that only that one line is captioned, not the whole paragraph
+</p>
+<p>
+also, normal text lines can&#39;t be captioned
+</p>
 <h2>blocks</h2>
+<div class="captioned">
 <div class="highlight"><pre>echo a bash source block</pre></div>
+<p class="caption">
+bleck!
+</p>
+</div>
 <div class="highlight"><pre>a source block without a language
 and a second line
 and a third one</pre></div>

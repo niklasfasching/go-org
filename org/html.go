@@ -8,6 +8,7 @@ import (
 
 type HTMLWriter struct {
 	stringBuilder
+	document           *Document
 	HighlightCodeBlock func(source, lang string) string
 }
 
@@ -44,7 +45,10 @@ func (w *HTMLWriter) emptyClone() *HTMLWriter {
 	return &wcopy
 }
 
-func (w *HTMLWriter) before(d *Document) {}
+func (w *HTMLWriter) before(d *Document) {
+	w.document = d
+}
+
 func (w *HTMLWriter) after(d *Document) {
 	w.writeFootnotes(d)
 }
@@ -54,6 +58,8 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 		switch n := n.(type) {
 		case Keyword, Comment:
 			continue
+		case NodeWithMeta:
+			w.writeNodeWithMeta(n)
 		case Headline:
 			w.writeHeadline(n)
 		case Block:
@@ -240,6 +246,19 @@ func (w *HTMLWriter) writeParagraph(p Paragraph) {
 
 func (w *HTMLWriter) writeHorizontalRule(h HorizontalRule) {
 	w.WriteString("<hr>\n")
+}
+
+func (w *HTMLWriter) writeNodeWithMeta(m NodeWithMeta) {
+	nodeW := w.emptyClone()
+	nodeW.writeNodes(m.Node)
+	nodeString := nodeW.String()
+	if rawCaption, ok := m.Meta["CAPTION"]; ok {
+		nodes, captionW := w.document.parseInline(rawCaption), w.emptyClone()
+		captionW.writeNodes(nodes...)
+		caption := `<p class="caption">` + "\n" + captionW.String() + "\n</p>\n"
+		nodeString = `<div class="captioned">` + "\n" + nodeString + caption + `</div>` + "\n"
+	}
+	w.WriteString(nodeString)
 }
 
 func (w *HTMLWriter) writeTable(t Table) {

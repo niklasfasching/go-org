@@ -48,6 +48,8 @@ func (w *OrgWriter) writeNodes(ns ...Node) {
 			w.writeComment(n)
 		case Keyword:
 			w.writeKeyword(n)
+		case NodeWithMeta:
+			w.writeNodeWithMeta(n)
 		case Headline:
 			w.writeHeadline(n)
 		case Block:
@@ -162,6 +164,13 @@ func (w *OrgWriter) writeParagraph(p Paragraph) {
 
 func (w *OrgWriter) writeKeyword(k Keyword) {
 	w.WriteString(w.indent + fmt.Sprintf("#+%s: %s\n", k.Key, k.Value))
+}
+
+func (w *OrgWriter) writeNodeWithMeta(m NodeWithMeta) {
+	for k, v := range m.Meta {
+		w.writeNodes(Keyword{k, v})
+	}
+	w.writeNodes(m.Node)
 }
 
 func (w *OrgWriter) writeComment(c Comment) {
