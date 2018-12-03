@@ -25,27 +25,13 @@ func lexHorizontalRule(line string) (token, bool) {
 	return nilToken, false
 }
 
-func isSecondBlankLine(d *Document, i int) bool {
-	if i-1 <= 0 {
-		return false
-	}
-	t1, t2 := d.tokens[i-1], d.tokens[i]
-	if t1.kind == "text" && t2.kind == "text" && t1.content == "" && t2.content == "" {
-		return true
-	}
-	return false
-}
-
 func (d *Document) parseParagraph(i int, parentStop stopFn) (int, Node) {
 	lines, start := []Node{Line{d.parseInline(d.tokens[i].content)}}, i
 	i++
-	stop := func(d *Document, i int) bool { return parentStop(d, i) || d.tokens[i].kind != "text" }
-	for ; !stop(d, i) && !isSecondBlankLine(d, i); i++ {
-		if isSecondBlankLine(d, i) {
-			lines = lines[:len(lines)-1]
-			i++
-			break
-		}
+	stop := func(d *Document, i int) bool {
+		return parentStop(d, i) || d.tokens[i].kind != "text" || d.tokens[i].content == ""
+	}
+	for ; !stop(d, i); i++ {
 		lines = append(lines, Line{d.parseInline(d.tokens[i].content)})
 	}
 	consumed := i - start

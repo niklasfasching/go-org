@@ -9,6 +9,14 @@ works we can be kind of sure that the parsing worked.
 At least I hope so - I would like to get around writing tests for the individual parsing
 functions...
 
+** Paragraphs
+
+Empty lines separate paragraphs.
+
+Right?
+
+They do!
+
 ** Headlines with TODO status, priority & tags
 *** TODO [#B] Headline with todo status & priority
 *** DONE Headline with TODO status

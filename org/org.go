@@ -148,13 +148,6 @@ func (w *OrgWriter) writeFootnotes(d *Document) {
 	}
 }
 
-func isEmptyLineParagraph(n Node) bool {
-	if p, _ := n.(Paragraph); len(p.Children) == 1 {
-		return len(p.Children[0].(Line).Children) == 0
-	}
-	return false
-}
-
 func (w *OrgWriter) writeFootnoteDefinition(f FootnoteDefinition) {
 	w.WriteString(fmt.Sprintf("[fn:%s]", f.Name))
 	if !(len(f.Children) >= 1 && isEmptyLineParagraph(f.Children[0])) {
