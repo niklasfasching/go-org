@@ -120,6 +120,18 @@ crazy ain't it?
 either ~this~ or ~that~ foo.
 either ~this~
 or ~that~ foo.
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/50][#50]]: Linebreaks in lists are preserved
+- this list item
+  has
+  multiple
+  linbreaks - but it's still just one paragraph (i.e. no line breaks are rendered)
+- foobar
+1. same
+   goes
+   for
+   ordered
+   lists
+2. foo
 *** DONE [[https://github.com/chaseadamsio/goorgeous/issues/68][#68]]: Quote block with inline markup
 #+BEGIN_QUOTE
 [[https://www.example.com][/this/ *is* _markup_!]]

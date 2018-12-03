@@ -54,7 +54,7 @@ func (d *Document) parseList(i int, parentStop stopFn) (int, Node) {
 	start, lvl := i, d.tokens[i].lvl
 
 	list := List{Kind: listKind(d.tokens[i])}
-	for !parentStop(d, i) && d.tokens[i].lvl == lvl && isListToken(d.tokens[i]) {
+	for !parentStop(d, i) && d.tokens[i].lvl == lvl && isListToken(d.tokens[i]) && listKind(d.tokens[i]) == list.Kind {
 		consumed, node := d.parseListItem(i, parentStop)
 		i += consumed
 		list.Items = append(list.Items, node)
