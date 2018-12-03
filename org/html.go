@@ -114,7 +114,7 @@ func (w *HTMLWriter) writeBlock(b Block) {
 		}
 		w.WriteString(w.HighlightCodeBlock(strings.Join(lines, "\n"), lang) + "\n")
 	case "EXAMPLE":
-		w.WriteString(`<pre class="example">\n`)
+		w.WriteString(`<pre class="example">` + "\n")
 		w.writeNodes(b.Children...)
 		w.WriteString("</pre>\n")
 	case "QUOTE":
@@ -191,7 +191,7 @@ func (w *HTMLWriter) writeRegularLink(l RegularLink) {
 	descriptionWriter.writeNodes(l.Description...)
 	description := descriptionWriter.String()
 	switch l.Protocol {
-	case "file": // TODO
+	case "file":
 		url = url[len("file:"):]
 		if strings.Contains(".png.jpg.jpeg.gif", path.Ext(l.URL)) {
 			w.WriteString(fmt.Sprintf(`<img src="%s" alt="%s" title="%s" />`, url, description, description))
