@@ -1,6 +1,7 @@
 package org
 
 import (
+	"path"
 	"regexp"
 	"strings"
 	"unicode"
@@ -29,8 +30,9 @@ type RegularLink struct {
 
 var validURLCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;="
 var autolinkProtocols = regexp.MustCompile(`(https?|ftp|file)`)
+var imageExtensionRegexp = regexp.MustCompile(`^[.](png|gif|jpe?g|svg|tiff?)$`)
+var videoExtensionRegexp = regexp.MustCompile(`^[.](webm|mp4)$`)
 
-var redundantSpaces = regexp.MustCompile("[ \t]+")
 var subScriptSuperScriptRegexp = regexp.MustCompile(`([_^])\{(.*?)\}`)
 var footnoteRegexp = regexp.MustCompile(`\[fn:([\w-]+?)(:(.*?))?\]`)
 
@@ -205,3 +207,16 @@ func isValidPostChar(r rune) bool {
 }
 
 func isValidBorderChar(r rune) bool { return !unicode.IsSpace(r) }
+
+func (l RegularLink) Kind() string {
+	if p := l.Protocol; l.Description != nil || (p != "" && p != "file" && p != "http" && p != "https") {
+		return "regular"
+	}
+	if imageExtensionRegexp.MatchString(path.Ext(l.URL)) {
+		return "image"
+	}
+	if videoExtensionRegexp.MatchString(path.Ext(l.URL)) {
+		return "video"
+	}
+	return "regular"
+}

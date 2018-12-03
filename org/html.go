@@ -3,7 +3,6 @@ package org
 import (
 	"fmt"
 	"html"
-	"path"
 	"strings"
 )
 
@@ -188,20 +187,20 @@ func (w *HTMLWriter) writeFootnoteLink(l FootnoteLink) {
 
 func (w *HTMLWriter) writeRegularLink(l RegularLink) {
 	url := html.EscapeString(l.URL)
+	if l.Protocol == "file" {
+		url = url[len("file:"):]
+	}
 	description := url
 	if l.Description != nil {
 		descriptionWriter := w.emptyClone()
 		descriptionWriter.writeNodes(l.Description...)
 		description = descriptionWriter.String()
 	}
-	switch l.Protocol {
-	case "file":
-		url = url[len("file:"):]
-		if strings.Contains(".png.jpg.jpeg.gif", path.Ext(l.URL)) {
-			w.WriteString(fmt.Sprintf(`<img src="%s" alt="%s" title="%s" />`, url, description, description))
-		} else {
-			w.WriteString(fmt.Sprintf(`<a href="%s">%s</a>`, url, description))
-		}
+	switch l.Kind() {
+	case "image":
+		w.WriteString(fmt.Sprintf(`<img src="%s" alt="%s" title="%s" />`, url, description, description))
+	case "video":
+		w.WriteString(fmt.Sprintf(`<video src="%s" title="%s">%s</video>`, url, description, description))
 	default:
 		w.WriteString(fmt.Sprintf(`<a href="%s">%s</a>`, url, description))
 	}
