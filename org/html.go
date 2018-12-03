@@ -134,10 +134,12 @@ func (w *HTMLWriter) writeBlock(b Block) {
 }
 
 func (w *HTMLWriter) writeFootnoteDefinition(f FootnoteDefinition) {
+	n := f.Name
 	w.WriteString(`<div class="footnote-definition">` + "\n")
-	w.WriteString(fmt.Sprintf(`<sup id="footnote-%s">%s</sup>`, f.Name, f.Name) + "\n")
+	w.WriteString(fmt.Sprintf(`<sup id="footnote-%s"><a href="#footnote-reference-%s">%s</a></sup>`, n, n, n) + "\n")
+	w.WriteString(`<div class="footnote-body">` + "\n")
 	w.writeNodes(f.Children...)
-	w.WriteString("</div>\n")
+	w.WriteString("</div>\n</div>\n")
 }
 
 func (w *HTMLWriter) writeFootnotes(d *Document) {
@@ -145,7 +147,7 @@ func (w *HTMLWriter) writeFootnotes(d *Document) {
 	if len(fs.Definitions) == 0 {
 		return
 	}
-	w.WriteString(`<div id="footnotes">` + "\n")
+	w.WriteString(`<div class="footnotes">` + "\n")
 	w.WriteString(`<h1 class="footnotes-title">` + fs.Title + `</h1>` + "\n")
 	w.WriteString(`<div class="footnote-definitions">` + "\n")
 	for _, definition := range d.Footnotes.Ordered() {
@@ -180,9 +182,8 @@ func (w *HTMLWriter) writeLinebreak(l Linebreak) {
 }
 
 func (w *HTMLWriter) writeFootnoteLink(l FootnoteLink) {
-	name := html.EscapeString(l.Name)
-	w.WriteString(fmt.Sprintf(`<sup class="footnote-reference"><a href="#footnote-%s">%s</a></sup>`, name, name))
-
+	n := html.EscapeString(l.Name)
+	w.WriteString(fmt.Sprintf(`<sup class="footnote-reference"><a id="footnote-reference-%s" href="#footnote-%s">%s</a></sup>`, n, n, n))
 }
 
 func (w *HTMLWriter) writeRegularLink(l RegularLink) {
