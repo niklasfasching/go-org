@@ -188,9 +188,12 @@ func (w *HTMLWriter) writeFootnoteLink(l FootnoteLink) {
 
 func (w *HTMLWriter) writeRegularLink(l RegularLink) {
 	url := html.EscapeString(l.URL)
-	descriptionWriter := w.emptyClone()
-	descriptionWriter.writeNodes(l.Description...)
-	description := descriptionWriter.String()
+	description := url
+	if l.Description != nil {
+		descriptionWriter := w.emptyClone()
+		descriptionWriter.writeNodes(l.Description...)
+		description = descriptionWriter.String()
+	}
 	switch l.Protocol {
 	case "file":
 		url = url[len("file:"):]

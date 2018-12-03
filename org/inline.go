@@ -144,8 +144,7 @@ func (d *Document) parseAutoLink(input string, start int) (int, int, Node) {
 	if path == "://" {
 		return 0, 0, nil
 	}
-	link := RegularLink{protocol, []Node{Text{protocol + path}}, protocol + path, true}
-	return len(protocol), len(path + protocol), link
+	return len(protocol), len(path + protocol), RegularLink{protocol, nil, protocol + path, true}
 }
 
 func (d *Document) parseRegularLink(input string, start int) (int, Node) {
@@ -157,18 +156,15 @@ func (d *Document) parseRegularLink(input string, start int) (int, Node) {
 	if end == -1 {
 		return 0, nil
 	}
-
-	rawLink := input[2:end]
-	link, description, parts := "", []Node{}, strings.Split(rawLink, "][")
-	if len(parts) == 2 {
-		link, description = parts[0], d.parseInline(parts[1])
-	} else {
-		link, description = rawLink, []Node{Text{rawLink}}
+	rawLinkParts := strings.Split(input[2:end], "][")
+	description, link := ([]Node)(nil), rawLinkParts[0]
+	if len(rawLinkParts) == 2 {
+		link, description = rawLinkParts[0], d.parseInline(rawLinkParts[1])
 	}
 	consumed := end + 2
-	protocol, parts := "", strings.SplitN(link, ":", 2)
-	if len(parts) == 2 {
-		protocol = parts[0]
+	protocol, linkParts := "", strings.SplitN(link, ":", 2)
+	if len(linkParts) == 2 {
+		protocol = linkParts[0]
 	}
 	return consumed, RegularLink{protocol, description, link, false}
 }
