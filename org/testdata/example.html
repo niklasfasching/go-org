@@ -106,7 +106,6 @@ unordered list item 4
 <li>
 <p>
 <em>emphasis</em> and a hard line break <br>
-
 see?
 </p>
 </li>
@@ -143,6 +142,25 @@ links with slashes do not become <em>emphasis</em>: <a href="https://somelinksho
 <li>
 <p>
 <strong>bold string with an *asterisk inside</strong>
+</p>
+</li>
+<li>
+<p>
+<code class="verbatim">multiline emphasis is
+supported - and respects MaxEmphasisNewLines (default: 1)</code>
+<em>so this
+is emphasized</em>
+</p>
+<p>
+/but
+this
+is
+not emphasized/
+</p>
+</li>
+<li>
+<p>
+empty emphasis markers like ++ // __ and so on are ignored
 </p>
 </li>
 <li>
@@ -204,7 +222,9 @@ captioned soure block
 </p>
 </div>
 <div class="captioned">
+<p>
 <video src="my-video.mp4" title="my-video.mp4">my-video.mp4</video>
+</p>
 <p class="caption">
 captioned link (video in this case)
 </p>
@@ -258,7 +278,7 @@ either <code>this</code> or <code>that</code> foo.
 either <code>this</code>
 or <code>that</code> foo.
 </p>
-<h3><a href="https://github.com/chaseadamsio/goorgeous/issues/50">#50</a>: Linebreaks in lists are preserved</h3>
+<h3><a href="https://github.com/chaseadamsio/goorgeous/issues/50">#50</a>: LineBreaks in lists are preserved</h3>
 <ul>
 <li>
 <p>

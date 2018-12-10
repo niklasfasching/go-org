@@ -86,15 +86,14 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 			w.writeParagraph(n)
 		case HorizontalRule:
 			w.writeHorizontalRule(n)
-		case Line:
-			w.writeLine(n)
-
 		case Text:
 			w.writeText(n)
 		case Emphasis:
 			w.writeEmphasis(n)
-		case Linebreak:
-			w.writeLinebreak(n)
+		case ExplicitLineBreak:
+			w.writeExplicitLineBreak(n)
+		case LineBreak:
+			w.writeLineBreak(n)
 		case RegularLink:
 			w.writeRegularLink(n)
 		case FootnoteLink:
@@ -110,18 +109,15 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 func (w *HTMLWriter) writeBlock(b Block) {
 	switch b.Name {
 	case "SRC":
-		lines, lang := []string{}, "text"
+		source, lang := b.Children[0].(Text).Content, "text"
 		if len(b.Parameters) >= 1 {
 			lang = b.Parameters[0]
 		}
-		for _, n := range b.Children {
-			lines = append(lines, n.(Line).Children[0].(Text).Content)
-		}
-		w.WriteString(w.HighlightCodeBlock(strings.Join(lines, "\n"), lang) + "\n")
+		w.WriteString(w.HighlightCodeBlock(source, lang) + "\n")
 	case "EXAMPLE":
 		w.WriteString(`<pre class="example">` + "\n")
 		w.writeNodes(b.Children...)
-		w.WriteString("</pre>\n")
+		w.WriteString("\n</pre>\n")
 	case "QUOTE":
 		w.WriteString("<blockquote>\n")
 		w.writeNodes(b.Children...)
@@ -134,7 +130,6 @@ func (w *HTMLWriter) writeBlock(b Block) {
 		w.WriteString(fmt.Sprintf(`<div class="%s-block">`, strings.ToLower(b.Name)) + "\n")
 		w.writeNodes(b.Children...)
 		w.WriteString("</div>\n")
-
 	}
 }
 
@@ -182,7 +177,11 @@ func (w *HTMLWriter) writeEmphasis(e Emphasis) {
 	w.WriteString(tags[1])
 }
 
-func (w *HTMLWriter) writeLinebreak(l Linebreak) {
+func (w *HTMLWriter) writeLineBreak(l LineBreak) {
+	w.WriteString("\n")
+}
+
+func (w *HTMLWriter) writeExplicitLineBreak(l ExplicitLineBreak) {
 	w.WriteString("<br>\n")
 }
 
@@ -228,20 +227,16 @@ func (w *HTMLWriter) writeListItem(li ListItem) {
 	w.WriteString("</li>\n")
 }
 
-func (w *HTMLWriter) writeLine(l Line) {
-	if len(l.Children) != 0 {
-		w.writeNodes(l.Children...)
-		w.WriteString("\n")
-	}
-}
-
 func (w *HTMLWriter) writeParagraph(p Paragraph) {
-	if len(p.Children) == 1 && p.Children[0].(Line).Children == nil {
+	if isEmptyLineParagraph(p) {
 		return
 	}
-	w.WriteString("<p>\n")
+	w.WriteString("<p>")
+	if _, ok := p.Children[0].(LineBreak); !ok {
+		w.WriteString("\n")
+	}
 	w.writeNodes(p.Children...)
-	w.WriteString("</p>\n")
+	w.WriteString("\n</p>\n")
 }
 
 func (w *HTMLWriter) writeHorizontalRule(h HorizontalRule) {

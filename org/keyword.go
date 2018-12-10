@@ -66,7 +66,7 @@ func (d *Document) parseAffiliated(i int, stop stopFn) (int, Node) {
 	consumed, node := 0, (Node)(nil)
 	if t := d.tokens[i]; t.kind == "text" {
 		if nodes := d.parseInline(t.content); len(nodes) == 1 && isImageOrVideoLink(nodes[0]) {
-			consumed, node = 1, Line{nodes[:1]}
+			consumed, node = 1, Paragraph{nodes[:1]}
 		}
 	} else {
 		consumed, node = d.parseOne(i, stop)

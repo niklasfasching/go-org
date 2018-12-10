@@ -24,31 +24,30 @@ func lexBlock(line string) (token, bool) {
 	return nilToken, false
 }
 
+func isRawTextBlock(name string) bool { return name == "SRC" || name == "EXAMPLE" }
+
 func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
-	t, start, nodes := d.tokens[i], i, []Node{}
+	t, start, lines := d.tokens[i], i, []string{}
 	name, parameters := t.content, strings.Fields(t.matches[3])
 	trim := trimIndentUpTo(d.tokens[i].lvl)
 	stop := func(d *Document, i int) bool {
 		return parentStop(d, i) || (d.tokens[i].kind == "endBlock" && d.tokens[i].content == name)
 	}
-	if name == "SRC" || name == "EXAMPLE" {
-		for i++; !stop(d, i); i++ {
-			nodes = append(nodes, Line{[]Node{Text{trim(d.tokens[i].matches[0])}}})
+	block, consumed, i := Block{name, parameters, nil}, 0, i+1
+	if isRawTextBlock(name) {
+		for ; !stop(d, i); i++ {
+			lines = append(lines, trim(d.tokens[i].matches[0]))
 		}
+		consumed = i - start
+		block.Children = []Node{Text{strings.Join(lines, "\n")}}
 	} else {
-		for i++; !stop(d, i); {
-			consumed, node := d.parseParagraph(i, stop)
-			if consumed == 0 {
-				break
-			}
-			i += consumed
-			nodes = append(nodes, node)
-		}
+		consumed, block.Children = d.parseMany(i, stop)
+		consumed++ // line with BEGIN
 	}
 	if parentStop(d, i) {
 		return 0, nil
 	}
-	return i + 1 - start, Block{name, parameters, nodes}
+	return consumed + 1, block
 }
 
 func trimIndentUpTo(max int) func(string) string {

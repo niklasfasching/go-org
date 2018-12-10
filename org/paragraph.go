@@ -2,9 +2,9 @@ package org
 
 import (
 	"regexp"
+	"strings"
 )
 
-type Line struct{ Children []Node }
 type Paragraph struct{ Children []Node }
 type HorizontalRule struct{}
 
@@ -26,16 +26,16 @@ func lexHorizontalRule(line string) (token, bool) {
 }
 
 func (d *Document) parseParagraph(i int, parentStop stopFn) (int, Node) {
-	lines, start := []Node{Line{d.parseInline(d.tokens[i].content)}}, i
+	lines, start := []string{d.tokens[i].content}, i
 	i++
 	stop := func(d *Document, i int) bool {
 		return parentStop(d, i) || d.tokens[i].kind != "text" || d.tokens[i].content == ""
 	}
 	for ; !stop(d, i); i++ {
-		lines = append(lines, Line{d.parseInline(d.tokens[i].content)})
+		lines = append(lines, d.tokens[i].content)
 	}
 	consumed := i - start
-	return consumed, Paragraph{lines}
+	return consumed, Paragraph{d.parseInline(strings.Join(lines, "\n"))}
 }
 
 func (d *Document) parseHorizontalRule(i int, parentStop stopFn) (int, Node) {

@@ -54,6 +54,16 @@ this one is cheating a little as tags are ALWAYS printed right aligned to a give
 - links with slashes do not become /emphasis/: [[https://somelinkshouldntrenderaccidentalemphasis.com]]/ /emphasis/
 - _underlined_ *bold*  =verbatim= ~code~ +strikethrough+
 - *bold string with an *asterisk inside*
+- =multiline emphasis is
+  supported - and respects MaxEmphasisNewLines (default: 1)=
+  /so this
+  is emphasized/
+
+  /but
+  this
+  is
+  not emphasized/
+- empty emphasis markers like ++ // __ and so on are ignored
 - subscript_{sub} and superscript^{super}
 - links
   1. regular link [[https://example.com]] link without description
@@ -121,7 +131,7 @@ crazy ain't it?
 either ~this~ or ~that~ foo.
 either ~this~
 or ~that~ foo.
-*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/50][#50]]: Linebreaks in lists are preserved
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/50][#50]]: LineBreaks in lists are preserved
 - this list item
   has
   multiple

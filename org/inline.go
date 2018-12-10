@@ -9,7 +9,8 @@ import (
 
 type Text struct{ Content string }
 
-type Linebreak struct{}
+type LineBreak struct{ Count int }
+type ExplicitLineBreak struct{}
 
 type Emphasis struct {
 	Kind    string
@@ -51,6 +52,8 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 			consumed, node = d.parseRegularLinkOrFootnoteReference(input, current)
 		case '\\':
 			consumed, node = d.parseExplicitLineBreak(input, current)
+		case '\n':
+			consumed, node = d.parseLineBreak(input, current)
 		case ':':
 			rewind, consumed, node = d.parseAutoLink(input, current)
 			current -= rewind
@@ -75,13 +78,20 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 	return nodes
 }
 
+func (d *Document) parseLineBreak(input string, start int) (int, Node) {
+	i := start
+	for ; input[i] == '\n'; i++ {
+	}
+	return i - start, LineBreak{i - start}
+}
+
 func (d *Document) parseExplicitLineBreak(input string, start int) (int, Node) {
 	if start == 0 || input[start-1] == '\n' || start+1 >= len(input) || input[start+1] != '\\' {
 		return 0, nil
 	}
-	for i := start + 1; ; i++ {
+	for i := start + 2; ; i++ {
 		if i == len(input)-1 || input[i] == '\n' {
-			return i + 1 - start, Linebreak{}
+			return i + 1 - start, ExplicitLineBreak{}
 		}
 		if !unicode.IsSpace(rune(input[i])) {
 			break
@@ -118,8 +128,7 @@ func (d *Document) parseFootnoteReference(input string, start int) (int, Node) {
 		name, definition := m[1], m[3]
 		link := FootnoteLink{name, nil}
 		if definition != "" {
-			paragraph := Paragraph{[]Node{Line{d.parseInline(definition)}}}
-			link.Definition = &FootnoteDefinition{name, []Node{paragraph}, true}
+			link.Definition = &FootnoteDefinition{name, []Node{Paragraph{d.parseInline(definition)}}, true}
 			d.Footnotes.add(name, link.Definition)
 		}
 		return len(m[0]), link

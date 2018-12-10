@@ -76,15 +76,14 @@ func (w *OrgWriter) writeNodes(ns ...Node) {
 			w.writeParagraph(n)
 		case HorizontalRule:
 			w.writeHorizontalRule(n)
-		case Line:
-			w.writeLine(n)
-
 		case Text:
 			w.writeText(n)
 		case Emphasis:
 			w.writeEmphasis(n)
-		case Linebreak:
-			w.writeLinebreak(n)
+		case LineBreak:
+			w.writeLineBreak(n)
+		case ExplicitLineBreak:
+			w.writeExplicitLineBreak(n)
 		case RegularLink:
 			w.writeRegularLink(n)
 		case FootnoteLink:
@@ -133,7 +132,14 @@ func (w *OrgWriter) writeBlock(b Block) {
 		w.WriteString(" " + strings.Join(b.Parameters, " "))
 	}
 	w.WriteString("\n")
-	w.writeNodes(b.Children...)
+
+	if isRawTextBlock(b.Name) {
+		for _, line := range strings.Split(b.Children[0].(Text).Content, "\n") {
+			w.WriteString(w.indent + line + "\n")
+		}
+	} else {
+		w.writeNodes(b.Children...)
+	}
 	w.WriteString(w.indent + "#+END_" + b.Name + "\n")
 }
 
@@ -160,6 +166,7 @@ func (w *OrgWriter) writeFootnoteDefinition(f FootnoteDefinition) {
 
 func (w *OrgWriter) writeParagraph(p Paragraph) {
 	w.writeNodes(p.Children...)
+	w.WriteString("\n")
 }
 
 func (w *OrgWriter) writeKeyword(k Keyword) {
@@ -221,14 +228,6 @@ func (w *OrgWriter) writeHorizontalRule(hr HorizontalRule) {
 	w.WriteString(w.indent + "-----\n")
 }
 
-func (w *OrgWriter) writeLine(l Line) {
-	if len(l.Children) != 0 {
-		w.WriteString(w.indent)
-		w.writeNodes(l.Children...)
-	}
-	w.WriteString("\n")
-}
-
 func (w *OrgWriter) writeText(t Text) { w.WriteString(t.Content) }
 
 func (w *OrgWriter) writeEmphasis(e Emphasis) {
@@ -241,16 +240,19 @@ func (w *OrgWriter) writeEmphasis(e Emphasis) {
 	w.WriteString(borders[1])
 }
 
-func (w *OrgWriter) writeLinebreak(l Linebreak) {
-	w.WriteString(`\\`)
+func (w *OrgWriter) writeLineBreak(l LineBreak) {
+	w.WriteString(strings.Repeat("\n"+w.indent, l.Count))
+}
+
+func (w *OrgWriter) writeExplicitLineBreak(l ExplicitLineBreak) {
+	w.WriteString(`\\` + "\n" + w.indent)
 }
 
 func (w *OrgWriter) writeFootnoteLink(l FootnoteLink) {
 	w.WriteString("[fn:" + l.Name)
 	if l.Definition != nil {
 		w.WriteString(":")
-		line := l.Definition.Children[0].(Paragraph).Children[0].(Line)
-		w.writeNodes(line.Children...)
+		w.writeNodes(l.Definition.Children[0].(Paragraph).Children...)
 	}
 	w.WriteString("]")
 }

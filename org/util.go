@@ -12,10 +12,8 @@ func isSecondBlankLine(d *Document, i int) bool {
 }
 
 func isEmptyLineParagraph(n Node) bool {
-	if p, _ := n.(Paragraph); len(p.Children) == 1 {
-		return len(p.Children[0].(Line).Children) == 0
-	}
-	return false
+	p, ok := n.(Paragraph)
+	return ok && len(p.Children) == 0
 }
 
 func isImageOrVideoLink(n Node) bool {
