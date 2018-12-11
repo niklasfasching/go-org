@@ -55,7 +55,7 @@ blockquote {
   border-left: solid 1px #fa6432; }
 
 table {
-  font-family: monospace;
+  font-family: monospace, monospace; /* https://github.com/necolas/normalize.css#extended-details-and-known-issues */
   font-size: 1rem;
   text-align: left;
   caption-side: bottom;
@@ -80,6 +80,7 @@ table, .highlight > pre, pre.example {
   margin: 1em 0;
   padding: 1em;
   overflow: auto;
+  font-family: monospace, monospace; /* https://github.com/necolas/normalize.css#extended-details-and-known-issues */
   font-size: 0.85rem;
   border: 1px solid rgba(250, 100, 50, 0.5); }
 
@@ -88,11 +89,10 @@ figure {
 }
 
 figcaption {
-  font-family: monospace;
+  font-family: monospace, monospace; /* https://github.com/necolas/normalize.css#extended-details-and-known-issues */
   font-size: 0.75em;
   text-align: center;
-  color: grey;
-  margin-top: 0; }
+  color: grey; }
 
 .footnote-definition sup {
   float: left; }
