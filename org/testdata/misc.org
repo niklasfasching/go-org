@@ -1,4 +1,6 @@
 ** issues from goorgeous (free test cases, yay!)
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/19][#19]]: Support #+HTML
+#+HTML: <p style="border: 1px dotted grey">neato!</p>
 *** DONE [[https://github.com/chaseadamsio/goorgeous/issues/29][#29:]] Support verse block
 #+BEGIN_VERSE
 This
@@ -10,6 +12,11 @@ verse
 or even a *totally* /custom/ kind of block
 crazy ain't it?
 #+END_CUSTOM
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/33][#33]]: Wrong output when mixing html with org-mode
+#+HTML: <div class="outline-2" id="meta" style="color: green;">
+| *foo* | foo |
+| *bar* | bar |
+#+HTML: </div>
 *** DONE [[https://github.com/chaseadamsio/goorgeous/issues/47][#47:]] Consecutive ~code~ wrapped text gets joined
 either ~this~ or ~that~ foo.
 either ~this~

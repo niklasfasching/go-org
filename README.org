@@ -7,10 +7,8 @@ A basic org-mode parser in go
 *** TODO [[https://github.com/chaseadamsio/goorgeous/issues/46][#46]]: Support for symbols like ndash and mdash
 - see org-entities replacement: see org-entities-help
 *** TODO [[https://github.com/chaseadamsio/goorgeous/issues/10][#10]]: Support noexport
-*** TODO [[https://github.com/chaseadamsio/goorgeous/issues/19][#19]]: Support #+HTML
 *** TODO [[https://github.com/chaseadamsio/goorgeous/issues/31][#31]]: Support #+INCLUDE
 - see https://orgmode.org/manual/Include-files.html
-*** TODO [[https://github.com/chaseadamsio/goorgeous/issues/33][#33]]: Wrong output when mixing html with org-mode
 * later
 - hugo frontmatter - see https://gohugo.io/content-management/front-matter/ -> actually seems to be handled by hugo itself
 - handle #+RESULTS: raw and stuff

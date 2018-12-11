@@ -63,7 +63,9 @@ func (w *HTMLWriter) after(d *Document) {
 func (w *HTMLWriter) writeNodes(ns ...Node) {
 	for _, n := range ns {
 		switch n := n.(type) {
-		case Keyword, Comment:
+		case Keyword:
+			w.writeKeyword(n)
+		case Comment:
 			continue
 		case NodeWithMeta:
 			w.writeNodeWithMeta(n)
@@ -139,6 +141,12 @@ func (w *HTMLWriter) writeBlock(b Block) {
 		w.WriteString(fmt.Sprintf(`<div class="%s-block">`, strings.ToLower(b.Name)) + "\n")
 		w.writeNodes(b.Children...)
 		w.WriteString("</div>\n")
+	}
+}
+
+func (w *HTMLWriter) writeKeyword(k Keyword) {
+	if k.Key == "HTML" {
+		w.WriteString(k.Value + "\n")
 	}
 }
 
