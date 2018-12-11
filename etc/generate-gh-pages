@@ -1,0 +1,48 @@
+#!/bin/bash
+
+org_files=org/testdata/*.org
+content="
+<h1>Sections</h1>
+<style>
+.sections { margin-left: 2rem; }
+.sections a { display: block; padding: 0.25em 0; }
+.sections a:hover, .sections a:focus, .sections a:active { background: rgba(200, 200, 200, 0.2); }
+</style>
+<ul class='sections'>"
+for org_file in $org_files; do
+    name=$(basename $org_file)
+    content+="<li><a id='toc-${name}' href='#${name}'>${name}</a>"
+done
+content+="</ul><hr>"
+
+for org_file in $org_files; do
+    echo generating content for $org_file
+    name=$(basename $org_file)
+    content+="
+      <h2><a id='${name}' href='#toc-${name}'>${name}</a></h2>
+      <div class='source'>
+        <pre class='org'>$(cat $org_file)</pre>
+        <div class='html'>$(./go-org $org_file html-chroma)</div>
+      </div>"
+done
+
+html="<html>
+  <head>
+    <style>$(cat etc/style.css)</style>
+    <style>
+     .source {
+       display: grid;
+       grid-template-columns: 1fr 1fr;
+       grid-gap: 1rem; }
+
+     .org, .html {
+       border: 1px dashed grey;
+       padding: 1em;
+       overflow-x: auto; }
+    </style>
+  </head>
+  <body>$content</body>
+</html>"
+
+mkdir -p gh-pages
+echo "$html" > gh-pages/index.html

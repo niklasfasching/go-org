@@ -1,0 +1,102 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0; }
+
+html {
+  font: 100%/1.5 sans-serif;
+  word-wrap: break-word;
+  padding: 1.5em; }
+
+@media (min-width: 768px) {
+  html { font-size: 125%; } }
+
+h1, h2, h3, h4 {
+  margin: 2.5rem 0 1.5rem 0;
+  line-height: 1.25; }
+
+.title {
+  font-size: 2.5em; }
+
+.subtitle {
+  font-weight: normal;
+  font-size: 0.75em;
+  color: #666; }
+
+a {
+  color: #fa6432;
+  text-decoration: none; }
+a:hover, a:focus, a:active {
+  text-decoration: underline; }
+
+p {
+  margin: 1em 0; }
+p code {
+  background-color: #eee;
+  padding: 0.05em 0.2em;
+  border: 1px solid #ccc; }
+
+ol, ul {
+  margin: 1em; }
+ol li ol, ol li ul, ul li ol, ul li ul {
+  margin: 0 2em; }
+ol li p, ul li p {
+  margin: 0; }
+
+img {
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+  padding: 0.5em; }
+
+blockquote {
+  padding-left: 1em;
+  font-style: italic;
+  border-left: solid 1px #fa6432; }
+
+table {
+  font-family: monospace;
+  font-size: 1rem;
+  text-align: left;
+  caption-side: bottom;
+  margin-bottom: 2em; }
+table * {
+  border: none; }
+table thead, table tr {
+  display: table;
+  table-layout: fixed;
+  width: 100%; }
+table tr:nth-child(even) {
+  background-color: #ccc; }
+table tbody {
+  display: block;
+  max-height: 70vh;
+  overflow-y: auto; }
+table td, table th {
+  padding: 0.25em; }
+
+table, .highlight > pre, pre.example {
+  max-height: 70vh;
+  margin: 1em 0;
+  padding: 1em;
+  overflow: auto;
+  font-size: 0.85rem;
+  border: 1px solid rgba(250, 100, 50, 0.5); }
+
+.caption {
+  font-family: monospace;
+  font-size: 0.75em;
+  text-align: center;
+  color: grey;
+  margin-top: 0; }
+
+.footnote-definition sup {
+  float: left; }
+
+.footnote-definition .footnote-body {
+  margin: 1em 0;
+  padding: 0 1em;
+  border: 1px solid rgba(250, 100, 50, 0.3);
+  background-color: #ccc; }
+.footnote-definition .footnote-body p:only-child {
+  margin: 0.2em 0; }

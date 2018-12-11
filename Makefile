@@ -7,7 +7,7 @@ install:
 
 .PHONY: build
 build: install
-	go build main.go
+	go build .
 
 .PHONY: test
 test: install
@@ -21,3 +21,7 @@ case=example
 .PHONY: render
 render:
 	go run main.go org/testdata/$(case).org html | html2text
+
+.PHONY: generate-gh-pages
+generate-gh-pages: build
+	./etc/generate-gh-pages

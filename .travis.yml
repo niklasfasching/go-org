@@ -1,1 +1,13 @@
 language: go
+script:
+  - make test
+  - make generate-gh-pages
+deploy:
+  provider: pages
+  github-token: $GITHUB_TOKEN  # From travis-ci.org repository settings
+  local-dir: gh-pages
+  target-branch: gh-pages
+  skip-cleanup: true
+  verbose: true
+  on:
+    branch: master
