@@ -30,11 +30,15 @@ or ~that~ foo.
 #+BEGIN_QUOTE
 [[https://www.example.com][/this/ *is* _markup_!]]
 #+END_QUOTE
-
-*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/77][#77]]: Recognize =code=--- as code plus dash
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/72][#72]]: Support for #+ATTR_HTML
+#+ATTR_HTML: :alt "Go is fine though."
+#+ATTR_HTML: :width 300 :style "border:2px solid black;"
+[[https://golang.org/doc/gopher/pkg.png]]
 *** DONE [[https://github.com/chaseadamsio/goorgeous/issues/75][#75]]: Not parsing nested lists correctly
 - bullet 1
   - sub bullet
+
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/77][#77]]: Recognize =code=--- as code plus dash
 *** DONE [[https://github.com/chaseadamsio/goorgeous/issues/78][#78]]: Emphasis at beginning of line
 /italics/
 

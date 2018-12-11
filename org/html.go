@@ -316,12 +316,26 @@ func withHTMLAttributes(input string, kvs ...string) string {
 	}
 	out, node := strings.Builder{}, nodes[0]
 	for i := 0; i < len(kvs)-1; i += 2 {
-		k, v := strings.TrimPrefix(kvs[i], ":"), kvs[i+1]
-		node.Attr = append(node.Attr, h.Attribute{Namespace: "", Key: k, Val: v})
+		node.Attr = setHTMLAttribute(node.Attr, strings.TrimPrefix(kvs[i], ":"), kvs[i+1])
 	}
 	err = h.Render(&out, nodes[0])
 	if err != nil {
 		panic(fmt.Sprintf("could not extend html attributes of %s: %#v (%s)", input, nodes, err))
 	}
 	return out.String()
+}
+
+func setHTMLAttribute(attributes []h.Attribute, k, v string) []h.Attribute {
+	for i, a := range attributes {
+		if strings.ToLower(a.Key) == strings.ToLower(k) {
+			switch strings.ToLower(k) {
+			case "class", "style":
+				attributes[i].Val += " " + v
+			default:
+				attributes[i].Val = v
+			}
+			return attributes
+		}
+	}
+	return append(attributes, h.Attribute{Namespace: "", Key: k, Val: v})
 }

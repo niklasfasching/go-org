@@ -4,7 +4,6 @@ A basic org-mode parser in go
 - have a org-mode AST to play around with building an org-mode language server
 - hopefully add reasonable org-mode support to hugo - sadly [[https://github.com/chaseadamsio/goorgeous][goorgeous]] is broken & abandoned
 * next
-*** TODO [[https://github.com/chaseadamsio/goorgeous/issues/72][#72:]] Support for #+ATTR_HTML
 *** TODO [[https://github.com/chaseadamsio/goorgeous/issues/46][#46]]: Support for symbols like ndash and mdash
 - see org-entities replacement: see org-entities-help
 *** TODO [[https://github.com/chaseadamsio/goorgeous/issues/10][#10]]: Support noexport
