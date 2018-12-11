@@ -16,9 +16,10 @@ import (
 
 func main() {
 	log.SetFlags(0)
+	log.SetOutput(os.Stdout)
 	if len(os.Args) < 3 {
 		log.Println("USAGE: org FILE OUTPUT_FORMAT")
-		log.Fatal("supported output formats: org, html")
+		log.Fatal("supported output formats: org, html, html-chroma")
 	}
 	bs, err := ioutil.ReadFile(os.Args[1])
 	if err != nil {
@@ -29,6 +30,8 @@ func main() {
 	case "org":
 		out = org.NewDocument().Parse(r).Write(org.NewOrgWriter()).String()
 	case "html":
+		out = org.NewDocument().Parse(r).Write(org.NewHTMLWriter()).String()
+	case "html-chroma":
 		writer := org.NewHTMLWriter()
 		writer.HighlightCodeBlock = highlightCodeBlock
 		out = org.NewDocument().Parse(r).Write(writer).String()

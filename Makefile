@@ -20,4 +20,4 @@ setup:
 case=example
 .PHONY: render
 render:
-	bash -c "go run main.go org/testdata/$(case).org html |& html2text"
+	go run main.go org/testdata/$(case).org html | html2text
