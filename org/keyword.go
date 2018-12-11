@@ -17,7 +17,7 @@ type NodeWithMeta struct {
 
 type Comment struct{ Content string }
 
-var keywordRegexp = regexp.MustCompile(`^(\s*)#\+([^:]+):\s(.*)`)
+var keywordRegexp = regexp.MustCompile(`^(\s*)#\+([^:]+):(\s+(.*)|(\s*)$)`)
 var commentRegexp = regexp.MustCompile(`^(\s*)#(.*)`)
 var affiliatedKeywordRegexp = regexp.MustCompile(`^(CAPTION)$`)
 
@@ -79,7 +79,7 @@ func (d *Document) parseAffiliated(i int, stop stopFn) (int, Node) {
 }
 
 func parseKeyword(t token) Keyword {
-	k, v := t.matches[2], t.matches[3]
+	k, v := t.matches[2], t.matches[4]
 	k = strings.ToUpper(k)
 	return Keyword{k, v}
 }
