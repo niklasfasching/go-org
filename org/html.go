@@ -107,22 +107,24 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 }
 
 func (w *HTMLWriter) writeBlock(b Block) {
-	switch b.Name {
-	case "SRC":
+	switch name := b.Name; {
+	case name == "SRC":
 		source, lang := b.Children[0].(Text).Content, "text"
 		if len(b.Parameters) >= 1 {
-			lang = b.Parameters[0]
+			lang = strings.ToLower(b.Parameters[0])
 		}
 		w.WriteString(w.HighlightCodeBlock(source, lang) + "\n")
-	case "EXAMPLE":
+	case name == "EXAMPLE":
 		w.WriteString(`<pre class="example">` + "\n")
 		w.writeNodes(b.Children...)
 		w.WriteString("\n</pre>\n")
-	case "QUOTE":
+	case name == "EXPORT" && len(b.Parameters) >= 1 && strings.ToLower(b.Parameters[0]) == "html":
+		w.WriteString(b.Children[0].(Text).Content + "\n")
+	case name == "QUOTE":
 		w.WriteString("<blockquote>\n")
 		w.writeNodes(b.Children...)
 		w.WriteString("</blockquote>\n")
-	case "CENTER":
+	case name == "CENTER":
 		w.WriteString(`<div class="center-block" style="text-align: center; margin-left: auto; margin-right: auto;">` + "\n")
 		w.writeNodes(b.Children...)
 		w.WriteString("</div>\n")

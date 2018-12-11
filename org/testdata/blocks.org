@@ -19,3 +19,9 @@ Mongodb is very webscale
 
 and quote blocks can contain multiple paragraphs
 #+END_QUOTE
+
+#+BEGIN_EXPORT html
+<script>
+console.log("Hello World!")
+</script>
+#+END_EXPORT

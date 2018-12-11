@@ -24,7 +24,7 @@ func lexBlock(line string) (token, bool) {
 	return nilToken, false
 }
 
-func isRawTextBlock(name string) bool { return name == "SRC" || name == "EXAMPLE" }
+func isRawTextBlock(name string) bool { return name == "SRC" || name == "EXAMPLE" || name == "EXPORT" }
 
 func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
 	t, start, lines := d.tokens[i], i, []string{}
