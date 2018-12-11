@@ -6,11 +6,11 @@ echo "i have a caption!"
 #+END_SRC
 
 #+CAPTION: captioned link (image in this case)
-[[http://placekitten.com/200/200#.png]]
+[[https://placekitten.com/200/200#.png]]
 
 note that the whole paragraph is captioned, so a linebreak is needed for images to caption correctly
 
 #+CAPTION: captioned link (image in this case)
-[[http://placekitten.com/200/200#.png]]
+[[https://placekitten.com/200/200#.png]]
 see?
 

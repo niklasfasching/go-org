@@ -10,4 +10,4 @@ echo "a bash source block with custom html attributes"
 and an image with custom html attributes and a caption
 #+CAPTION: kittens!
 #+ATTR_HTML: :style "border: 10px solid black"
-[[http://placekitten.com/200/200#.png]]
+[[https://placekitten.com/200/200#.png]]
