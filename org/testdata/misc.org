@@ -17,6 +17,15 @@ crazy ain't it?
 | *foo* | foo |
 | *bar* | bar |
 #+HTML: </div>
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/46][#46]]: Support for symbols like ndash and mdash
+- ndash --
+- mdash ---
+- ellipsis ...
+- acute \Aacute and so on
+- note that ------ is replaced with 2 mdashes and .... becomes ellipsis+. and so on - that's how org also does it
+
+
+
 *** DONE [[https://github.com/chaseadamsio/goorgeous/issues/47][#47:]] Consecutive ~code~ wrapped text gets joined
 either ~this~ or ~that~ foo.
 either ~this~

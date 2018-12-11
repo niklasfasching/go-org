@@ -58,6 +58,13 @@ func (w *HTMLWriter) before(d *Document) {}
 
 func (w *HTMLWriter) after(d *Document) {
 	w.writeFootnotes(d)
+	w.replaceHTMLEntities(d)
+}
+
+func (w *HTMLWriter) replaceHTMLEntities(d *Document) {
+	s := w.stringBuilder.String()
+	w.stringBuilder.Reset()
+	w.stringBuilder.WriteString(htmlEntityReplacer.Replace(s))
 }
 
 func (w *HTMLWriter) writeNodes(ns ...Node) {
