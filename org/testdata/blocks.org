@@ -1,23 +1,40 @@
-#+CAPTION: block!
-#+BEGIN_SRC bash
-echo a bash source block
+#+CAPTION: block caption
+#+BEGIN_SRC bash :results raw
+echo "a bash source block"
+
+function hello {
+    echo Hello World!
+}
+
+hello
 #+END_SRC
 
 #+BEGIN_SRC
 a source block without a language
-and a second line
-and a third one
 #+END_SRC
 
 #+BEGIN_EXAMPLE foo bar baz
-an example block
-with multiple lines
+an example block with
+multiple lines including
+
+
+empty lines!
+
+it also has multiple parameters
 #+END_EXAMPLE
 
 #+BEGIN_QUOTE
-Mongodb is very webscale
+Mongodb is *webscale*. (source: [[http://www.mongodb-is-web-scale.com/][mongodb-is-web-scale]])
 
-and quote blocks can contain multiple paragraphs
+blocks can contain other elements like
+- lists
+- inline /markup/
+- tables
+  | foo |
+  | bar |
+  | baz |
+- paragraphs
+- ...
 #+END_QUOTE
 
 #+BEGIN_EXPORT html

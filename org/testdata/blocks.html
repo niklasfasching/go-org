@@ -1,27 +1,76 @@
 <div class="captioned">
 <div class="highlight">
-<pre>echo a bash source block</pre>
+<pre>echo &#34;a bash source block&#34;
+
+function hello {
+    echo Hello World!
+}
+
+hello</pre>
 </div>
 <p class="caption">
-block!
+block caption
 </p>
 </div>
 <div class="highlight">
-<pre>a source block without a language
-and a second line
-and a third one</pre>
+<pre>a source block without a language</pre>
 </div>
 <pre class="example">
-an example block
-with multiple lines
+an example block with
+multiple lines including
+
+
+empty lines!
+
+it also has multiple parameters
 </pre>
 <blockquote>
 <p>
-Mongodb is very webscale
+Mongodb is <strong>webscale</strong>. (source: <a href="http://www.mongodb-is-web-scale.com/">mongodb-is-web-scale</a>)
 </p>
 <p>
-and quote blocks can contain multiple paragraphs
+blocks can contain other elements like
 </p>
+<ul>
+<li>
+<p>
+lists
+</p>
+</li>
+<li>
+<p>
+inline <em>markup</em>
+</p>
+</li>
+<li>
+<p>
+tables
+</p>
+<table>
+<tbody>
+<tr>
+<td>foo</td>
+</tr>
+<tr>
+<td>bar</td>
+</tr>
+<tr>
+<td>baz</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>
+paragraphs
+</p>
+</li>
+<li>
+<p>
+...
+</p>
+</li>
+</ul>
 </blockquote>
 <script>
 console.log("Hello World!")
