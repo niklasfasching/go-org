@@ -1,0 +1,11 @@
+Paragraphs are the default element.
+
+Empty lines and other elements end paragraphs - but paragraphs
+can
+obviously
+span
+multiple
+lines.
+
+Paragraphs can contain inline markup like /emphasis/ *strong*  and links [[https://www.example.com][example.com]] and stuff.
+

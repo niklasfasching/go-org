@@ -1,0 +1,51 @@
+** issues from goorgeous (free test cases, yay!)
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/29][#29:]] Support verse block
+#+BEGIN_VERSE
+This
+*is*
+verse
+#+END_VERSE
+
+#+BEGIN_CUSTOM
+or even a *totally* /custom/ kind of block
+crazy ain't it?
+#+END_CUSTOM
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/47][#47:]] Consecutive ~code~ wrapped text gets joined
+either ~this~ or ~that~ foo.
+either ~this~
+or ~that~ foo.
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/50][#50]]: LineBreaks in lists are preserved
+- this list item
+  has
+  multiple
+  linbreaks - but it's still just one paragraph (i.e. no line breaks are rendered)
+- foobar
+1. same
+   goes
+   for
+   ordered
+   lists
+2. foo
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/68][#68]]: Quote block with inline markup
+#+BEGIN_QUOTE
+[[https://www.example.com][/this/ *is* _markup_!]]
+#+END_QUOTE
+
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/77][#77]]: Recognize =code=--- as code plus dash
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/75][#75]]: Not parsing nested lists correctly
+- bullet 1
+  - sub bullet
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/78][#78]]: Emphasis at beginning of line
+/italics/
+
+
+Text
+/italics/
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/82][#82]]: Crash on empty headline
+**** 
+just a space as title...
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/84][#84]]: Paragraphs that are not followed by an empty line are not parsed correctly
+**** Foo
+Foo paragraph.
+**** Bar
+Bar paragraph

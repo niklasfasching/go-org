@@ -1,0 +1,110 @@
+<h1>Using some footnotes</h1>
+<ul>
+<li>
+<p>
+normal footnote reference <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> <sup class="footnote-reference"><a id="footnote-reference-6" href="#footnote-6">6</a></sup>
+</p>
+</li>
+<li>
+<p>
+further references to the same footnote should not <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> render duplicates in the footnote list
+</p>
+</li>
+<li>
+<p>
+inline footnotes are also supported via <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup>.
+</p>
+</li>
+</ul>
+<div class="footnotes">
+<h1 class="footnotes-title">Footnotes</h1>
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>
+<a href="https://www.example.com">https://www.example.com</a>
+</p>
+<ul>
+<li>
+<p>
+footnotes can contain <strong>markup</strong>
+</p>
+</li>
+<li>
+<p>
+and other elements
+</p>
+<ul>
+<li>
+<p>
+like blocks
+</p>
+<div class="highlight"><pre>other non-plain</pre></div>
+</li>
+<li>
+<p>
+and tables
+</p>
+<table>
+<tbody>
+<tr>
+<td>1</td><td>a</td>
+</tr>
+<tr>
+<td>2</td><td>b</td>
+</tr>
+<tr>
+<td>3</td><td>c</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-3"><a href="#footnote-reference-3">3</a></sup>
+<div class="footnote-body">
+<p>
+<a href="http://example.com/unused-footnote">example.com/unused-footnote</a>
+</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-4"><a href="#footnote-reference-4">4</a></sup>
+<div class="footnote-body">
+<p>
+another unused footnote
+</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-5"><a href="#footnote-reference-5">5</a></sup>
+<div class="footnote-body">
+<p>
+another unused footnote
+</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-6"><a href="#footnote-reference-6">6</a></sup>
+<div class="footnote-body">
+<p>
+Footnotes break after two consecutive empty lines - just like paragraphs - see <a href="https://orgmode.org/worg/dev/org-syntax.html.">https://orgmode.org/worg/dev/org-syntax.html.</a>
+This shouldn&#39;t happen when the definition line and the line after that are empty.
+</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-2"><a href="#footnote-reference-2">2</a></sup>
+<div class="footnote-body">
+<p>
+the inline footnote definition
+</p>
+</div>
+</div>
+</div>
+</div>

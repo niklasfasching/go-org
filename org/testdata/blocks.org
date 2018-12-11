@@ -1,0 +1,21 @@
+#+CAPTION: block!
+#+BEGIN_SRC bash
+echo a bash source block
+#+END_SRC
+
+#+BEGIN_SRC
+a source block without a language
+and a second line
+and a third one
+#+END_SRC
+
+#+BEGIN_EXAMPLE foo bar baz
+an example block
+with multiple lines
+#+END_EXAMPLE
+
+#+BEGIN_QUOTE
+Mongodb is very webscale
+
+and quote blocks can contain multiple paragraphs
+#+END_QUOTE

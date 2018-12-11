@@ -1,0 +1,28 @@
+- /emphasis/ and a hard line break \\
+  see?
+- /.emphasis with dot border chars./
+- /emphasis with a slash/inside/
+- /emphasis/ followed by raw text with slash /
+- ->/not an emphasis/<-
+- links with slashes do not become /emphasis/: [[https://somelinkshouldntrenderaccidentalemphasis.com]]/ /emphasis/
+- _underlined_ *bold*  =verbatim= ~code~ +strikethrough+
+- *bold string with an *asterisk inside*
+- =multiline emphasis is
+  supported - and respects MaxEmphasisNewLines (default: 1)=
+  /so this
+  is emphasized/
+
+  /but
+  this
+  is
+  not emphasized/
+- empty emphasis markers like ++ // __ and so on are ignored
+- subscript_{sub} and superscript^{super}
+- links
+  1. regular link [[https://example.com]] link without description
+  2. regular link [[https://example.com][example.com]] link with description
+  3. regular link to a file (image) [[file:my-img.png]]
+  4. regular link to a file (video) [[my-video.mp4]]
+  5. regular link to http (image) [[http://www.example.com/my-img.png]]
+  6. regular link to https (image) [[https://www.example.com/my-img.png]]
+  7. auto link, i.e. not inside =\[[square brackets]\]= https://www.example.com
