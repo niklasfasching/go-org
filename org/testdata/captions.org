@@ -5,9 +5,12 @@ Anything can be captioned. Also captions are not real, correct captions but just
 echo "i have a caption!"
 #+END_SRC
 
-#+CAPTION: captioned link (video in this case)
-[[my-video.mp4]]
-note that only that one line is captioned, not the whole paragraph
+#+CAPTION: captioned link (image in this case)
+[[http://placekitten.com/200/200#.png]]
 
-#+CAPTION: not happening!
-also, normal text lines can't be captioned
+note that the whole paragraph is captioned, so a linebreak is needed for images to caption correctly
+
+#+CAPTION: captioned link (image in this case)
+[[http://placekitten.com/200/200#.png]]
+see?
+

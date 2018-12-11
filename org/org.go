@@ -173,11 +173,25 @@ func (w *OrgWriter) writeKeyword(k Keyword) {
 	w.WriteString(w.indent + fmt.Sprintf("#+%s: %s\n", k.Key, k.Value))
 }
 
-func (w *OrgWriter) writeNodeWithMeta(m NodeWithMeta) {
-	for k, v := range m.Meta {
-		w.writeNodes(Keyword{k, v})
+func (w *OrgWriter) writeNodeWithMeta(n NodeWithMeta) {
+	for _, ns := range n.Meta.Caption {
+		w.WriteString("#+CAPTION: ")
+		w.writeNodes(ns...)
+		w.WriteString("\n")
 	}
-	w.writeNodes(m.Node)
+	for _, attributes := range n.Meta.HTMLAttributes {
+		w.WriteString("#+ATTR_HTML: ")
+		for i := 0; i < len(attributes)-1; i += 2 {
+			w.WriteString(attributes[i] + " ")
+			if strings.ContainsAny(attributes[i+1], "\t ") {
+				w.WriteString(`"` + attributes[i+1] + `"`)
+			} else {
+				w.WriteString(attributes[i+1])
+			}
+		}
+		w.WriteString("\n")
+	}
+	w.writeNodes(n.Node)
 }
 
 func (w *OrgWriter) writeComment(c Comment) {

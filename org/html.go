@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"html"
 	"strings"
+
+	h "golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 )
 
 type HTMLWriter struct {
@@ -45,9 +48,13 @@ func (w *HTMLWriter) emptyClone() *HTMLWriter {
 	return &wcopy
 }
 
-func (w *HTMLWriter) before(d *Document) {
-	w.document = d
+func (w *HTMLWriter) nodesAsString(nodes ...Node) string {
+	tmp := w.emptyClone()
+	tmp.writeNodes(nodes...)
+	return tmp.String()
 }
+
+func (w *HTMLWriter) before(d *Document) {}
 
 func (w *HTMLWriter) after(d *Document) {
 	w.writeFootnotes(d)
@@ -199,9 +206,7 @@ func (w *HTMLWriter) writeRegularLink(l RegularLink) {
 	}
 	description := url
 	if l.Description != nil {
-		descriptionWriter := w.emptyClone()
-		descriptionWriter.writeNodes(l.Description...)
-		description = descriptionWriter.String()
+		description = w.nodesAsString(l.Description...)
 	}
 	switch l.Kind() {
 	case "image":
@@ -245,17 +250,27 @@ func (w *HTMLWriter) writeHorizontalRule(h HorizontalRule) {
 	w.WriteString("<hr>\n")
 }
 
-func (w *HTMLWriter) writeNodeWithMeta(m NodeWithMeta) {
-	nodeW := w.emptyClone()
-	nodeW.writeNodes(m.Node)
-	nodeString := nodeW.String()
-	if rawCaption, ok := m.Meta["CAPTION"]; ok {
-		nodes, captionW := w.document.parseInline(rawCaption), w.emptyClone()
-		captionW.writeNodes(nodes...)
-		caption := `<p class="caption">` + "\n" + captionW.String() + "\n</p>\n"
-		nodeString = `<div class="captioned">` + "\n" + nodeString + caption + `</div>` + "\n"
+func (w *HTMLWriter) writeNodeWithMeta(n NodeWithMeta) {
+	out := w.nodesAsString(n.Node)
+	if p, ok := n.Node.(Paragraph); ok {
+		if len(p.Children) == 1 && isImageOrVideoLink(p.Children[0]) {
+			out = w.nodesAsString(p.Children[0])
+		}
 	}
-	w.WriteString(nodeString)
+	for _, attributes := range n.Meta.HTMLAttributes {
+		out = withHTMLAttributes(out, attributes...) + "\n"
+	}
+	if len(n.Meta.Caption) != 0 {
+		caption := ""
+		for i, ns := range n.Meta.Caption {
+			if i != 0 {
+				caption += " "
+			}
+			caption += w.nodesAsString(ns...)
+		}
+		out = fmt.Sprintf("<figure>\n%s<figcaption>\n%s\n</figcaption>\n</figure>\n", out, caption)
+	}
+	w.WriteString(out)
 }
 
 func (w *HTMLWriter) writeTable(t Table) {
@@ -288,4 +303,25 @@ func (w *HTMLWriter) writeTableHeader(t TableHeader) {
 
 func (w *HTMLWriter) writeTableSeparator(t TableSeparator) {
 	w.WriteString("<tr></tr>\n")
+}
+
+func withHTMLAttributes(input string, kvs ...string) string {
+	if len(kvs)%2 != 0 {
+		panic(fmt.Sprintf("len of kvs must be even: %#v", kvs))
+	}
+	context := &h.Node{Type: h.ElementNode, Data: "body", DataAtom: atom.Body}
+	nodes, err := h.ParseFragment(strings.NewReader(strings.TrimSpace(input)), context)
+	if err != nil || len(nodes) != 1 {
+		panic(fmt.Sprintf("could not extend html attributes of %s: %v (%s)", input, len(nodes), err))
+	}
+	out, node := strings.Builder{}, nodes[0]
+	for i := 0; i < len(kvs)-1; i += 2 {
+		k, v := strings.TrimPrefix(kvs[i], ":"), kvs[i+1]
+		node.Attr = append(node.Attr, h.Attribute{Namespace: "", Key: k, Val: v})
+	}
+	err = h.Render(&out, nodes[0])
+	if err != nil {
+		panic(fmt.Sprintf("could not extend html attributes of %s: %#v (%s)", input, nodes, err))
+	}
+	return out.String()
 }

@@ -1,27 +1,30 @@
 <p>
 Anything can be captioned. Also captions are not real, correct captions but just a paragraph below the element (bothe wrapped into a div)
 </p>
-<div class="captioned">
+<figure>
 <div class="highlight">
 <pre>
 echo &#34;i have a caption!&#34;
 </pre>
 </div>
-<p class="caption">
+<figcaption>
 captioned soure block
-</p>
-</div>
-<div class="captioned">
+</figcaption>
+</figure>
+<figure>
+<img src="http://placekitten.com/200/200#.png" alt="http://placekitten.com/200/200#.png" title="http://placekitten.com/200/200#.png" /><figcaption>
+captioned link (image in this case)
+</figcaption>
+</figure>
 <p>
-<video src="my-video.mp4" title="my-video.mp4">my-video.mp4</video>
+note that the whole paragraph is captioned, so a linebreak is needed for images to caption correctly
 </p>
-<p class="caption">
-captioned link (video in this case)
-</p>
-</div>
+<figure>
 <p>
-note that only that one line is captioned, not the whole paragraph
+<img src="http://placekitten.com/200/200#.png" alt="http://placekitten.com/200/200#.png" title="http://placekitten.com/200/200#.png" />
+see?
 </p>
-<p>
-also, normal text lines can&#39;t be captioned
-</p>
+<figcaption>
+captioned link (image in this case)
+</figcaption>
+</figure>

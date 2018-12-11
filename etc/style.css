@@ -83,7 +83,11 @@ table, .highlight > pre, pre.example {
   font-size: 0.85rem;
   border: 1px solid rgba(250, 100, 50, 0.5); }
 
-.caption {
+figure {
+  margin: 1em 0;
+}
+
+figcaption {
   font-family: monospace;
   font-size: 0.75em;
   text-align: center;
