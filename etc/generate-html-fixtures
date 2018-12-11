@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for org_file in org/testdata/*.org; do
+    ./go-org $org_file html > org/testdata/$(basename $org_file .org).html
+done

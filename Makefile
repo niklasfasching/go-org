@@ -25,3 +25,7 @@ render:
 .PHONY: generate-gh-pages
 generate-gh-pages: build
 	./etc/generate-gh-pages
+
+.PHONY: generate-html-fixtures
+generate-html-fixtures: build
+	./etc/generate-html-fixtures

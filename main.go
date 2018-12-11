@@ -38,7 +38,7 @@ func main() {
 	default:
 		log.Fatal("Unsupported output format")
 	}
-	log.Println(out)
+	log.Print(out)
 }
 
 func highlightCodeBlock(source, lang string) string {
