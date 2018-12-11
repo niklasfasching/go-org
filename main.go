@@ -50,5 +50,5 @@ func highlightCodeBlock(source, lang string) string {
 	l = chroma.Coalesce(l)
 	it, _ := l.Tokenise(nil, source)
 	_ = html.New().Format(&w, styles.Get("friendly"), it)
-	return `<div class="highlight">` + w.String() + `</div>`
+	return `<div class="highlight">` + "\n" + w.String() + "\n" + `</div>`
 }
