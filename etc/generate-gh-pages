@@ -21,7 +21,7 @@ for org_file in $org_files; do
     content+="
       <h2><a id='${name}' href='#toc-${name}'>${name}</a></h2>
       <div class='source'>
-        <pre class='org'>$(cat $org_file)</pre>
+        <pre class='org'>$(sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g;' $org_file)</pre>
         <div class='html'>$(./go-org $org_file html-chroma)</div>
       </div>"
 done
