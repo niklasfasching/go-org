@@ -4,18 +4,15 @@ A basic org-mode parser in go
 - have a org-mode AST to play around with building an org-mode language server
 - hopefully add reasonable org-mode support to hugo - sadly [[https://github.com/chaseadamsio/goorgeous][goorgeous]] is broken & abandoned
 * next
+- handle #+RESULTS: raw and stuff
+- support more keywords: https://orgmode.org/manual/In_002dbuffer-settings.html
+  - #+LINK
+  - #+INCLUDE
+- table colgroups https://orgmode.org/worg/org-tutorials/tables.html
+- table pretty printing
 *** TODO [[https://github.com/chaseadamsio/goorgeous/issues/10][#10]]: Support noexport
 *** TODO [[https://github.com/chaseadamsio/goorgeous/issues/31][#31]]: Support #+INCLUDE
 - see https://orgmode.org/manual/Include-files.html
-* later
-- hugo frontmatter - see https://gohugo.io/content-management/front-matter/ -> actually seems to be handled by hugo itself
-- handle #+RESULTS: raw and stuff
-- affiliated keywords: see org-element.el - org-element-affiliated-keywords
-- keywords: support both multi (e.g. LINK, TODO) & normal (e.g. AUTHOR, TITLE) keywords
-  https://orgmode.org/manual/In_002dbuffer-settings.html
-- links based on #+LINK
-- table colgroups https://orgmode.org/worg/org-tutorials/tables.html
-- table pretty printing
 * resources
 - syntax
   - https://orgmode.org/worg/dev/org-syntax.html
