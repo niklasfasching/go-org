@@ -211,8 +211,9 @@ func (w *OrgWriter) writeTable(t Table) {
 }
 
 func (w *OrgWriter) writeTableHeader(th TableHeader) {
+	w.writeNodes(th.SeparatorBefore)
 	w.writeTableColumns(th.Columns)
-	w.writeNodes(th.Separator)
+	w.writeNodes(th.SeparatorAfter)
 }
 
 func (w *OrgWriter) writeTableRow(tr TableRow) {

@@ -13,8 +13,9 @@ type Table struct {
 type TableSeparator struct{ Content string }
 
 type TableHeader struct {
-	Columns   [][]Node
-	Separator TableSeparator
+	SeparatorBefore Node
+	Columns         [][]Node
+	SeparatorAfter  Node
 }
 
 type TableRow struct{ Columns [][]Node }
@@ -40,13 +41,24 @@ func (d *Document) parseTable(i int, parentStop stopFn) (int, Node) {
 	}
 
 	consumed := i - start
+
 	if len(rows) >= 2 {
 		if row, ok := rows[0].(TableRow); ok {
 			if separator, ok := rows[1].(TableSeparator); ok {
-				return consumed, Table{TableHeader{row.Columns, separator}, rows[2:]}
+				return consumed, Table{TableHeader{nil, row.Columns, separator}, rows[2:]}
 			}
 		}
 	}
+	if len(rows) >= 3 {
+		if separatorBefore, ok := rows[0].(TableSeparator); ok {
+			if row, ok := rows[1].(TableRow); ok {
+				if separatorAfter, ok := rows[2].(TableSeparator); ok {
+					return consumed, Table{TableHeader{separatorBefore, row.Columns, separatorAfter}, rows[3:]}
+				}
+			}
+		}
+	}
+
 	return consumed, Table{nil, rows}
 }
 
