@@ -47,7 +47,11 @@ func (d *Document) parseKeyword(i int, stop stopFn) (int, Node) {
 			return consumed, node
 		}
 	}
-	d.BufferSettings[k.Key] = strings.Join([]string{d.BufferSettings[k.Key], k.Value}, "\n")
+	if _, ok := d.BufferSettings[k.Key]; ok {
+		d.BufferSettings[k.Key] = strings.Join([]string{d.BufferSettings[k.Key], k.Value}, "\n")
+	} else {
+		d.BufferSettings[k.Key] = k.Value
+	}
 	return 1, k
 }
 

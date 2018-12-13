@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strings"
 )
 
 type Document struct {
@@ -51,6 +52,15 @@ var lexFns = []lexFn{
 
 var nilToken = token{"nil", -1, "", nil}
 
+var DefaultFrontMatterHandler = func(k, v string) interface{} {
+	switch k {
+	case "TAGS":
+		return strings.Fields(v)
+	default:
+		return v
+	}
+}
+
 func NewDocument() *Document {
 	return &Document{
 		Footnotes: &Footnotes{
@@ -78,6 +88,29 @@ func (d *Document) Write(w Writer) Writer {
 }
 
 func (d *Document) Parse(input io.Reader) *Document {
+	d.tokenize(input)
+	_, nodes := d.parseMany(0, func(d *Document, i int) bool { return !(i < len(d.tokens)) })
+	d.Nodes = nodes
+	return d
+}
+
+func (d *Document) FrontMatter(input io.Reader, f func(string, string) interface{}) map[string]interface{} {
+	d.tokenize(input)
+	d.parseMany(0, func(d *Document, i int) bool {
+		if !(i < len(d.tokens)) {
+			return true
+		}
+		t := d.tokens[i]
+		return t.kind != "keyword" && !(t.kind == "text" && t.content == "")
+	})
+	frontMatter := make(map[string]interface{}, len(d.BufferSettings))
+	for k, v := range d.BufferSettings {
+		frontMatter[k] = f(k, v)
+	}
+	return frontMatter
+}
+
+func (d *Document) tokenize(input io.Reader) {
 	d.tokens = []token{}
 	scanner := bufio.NewScanner(input)
 	for scanner.Scan() {
@@ -86,9 +119,6 @@ func (d *Document) Parse(input io.Reader) *Document {
 	if err := scanner.Err(); err != nil {
 		panic(err)
 	}
-	_, nodes := d.parseMany(0, func(d *Document, i int) bool { return !(i < len(d.tokens)) })
-	d.Nodes = nodes
-	return d
 }
 
 func (d *Document) Get(key string) string {
