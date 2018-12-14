@@ -1,17 +1,13 @@
 * go-org [[https://travis-ci.org/niklasfasching/go-org.svg?branch=master]]
-A basic org-mode parser in go
-* motivation
-- have a org-mode AST to play around with building an org-mode language server
-- hopefully add reasonable org-mode support to hugo - sadly [[https://github.com/chaseadamsio/goorgeous][goorgeous]] is broken & abandoned
+A basic org-mode parser in go. Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some output examples.
 * next
 - lists with checkboxes
 - property drawers
 - support more keywords: https://orgmode.org/manual/In_002dbuffer-settings.html
+- ...?
 * resources
-- syntax
-  - https://orgmode.org/worg/dev/org-syntax.html
-  - https://github.com/abo-abo/org-mode/blob/mirror/lisp/org.el
-  - https://github.com/abo-abo/org-mode/blob/mirror/lisp/org-element.el
-- test cases
-  - [[https://github.com/bdewey/org-ruby/blob/master/spec/html_examples][org-ruby]]
-  - pandoc, goorgeous
+- https://orgmode.org/manual/
+- https://orgmode.org/worg/dev/org-syntax.html
+- https://github.com/abo-abo/org-mode/blob/mirror/lisp/org.el
+- https://github.com/abo-abo/org-mode/blob/mirror/lisp/org-element.el
+- existing org-mode implementations: [[https://github.com/emacsmirror/org][org]], [[https://github.com/bdewey/org-ruby/blob/master/spec/html_examples][org-ruby]], [[https://github.com/chaseadamsio/goorgeous/][goorgeous]], [[https://github.com/jgm/pandoc/][pandoc]]
