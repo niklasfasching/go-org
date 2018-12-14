@@ -84,12 +84,6 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 
 		case Table:
 			w.writeTable(n)
-		case TableHeader:
-			w.writeTableHeader(n)
-		case TableRow:
-			w.writeTableRow(n)
-		case TableSeparator:
-			w.writeTableSeparator(n)
 
 		case Paragraph:
 			w.writeParagraph(n)
@@ -283,34 +277,39 @@ func (w *HTMLWriter) writeNodeWithMeta(n NodeWithMeta) {
 
 func (w *HTMLWriter) writeTable(t Table) {
 	w.WriteString("<table>\n")
-	w.writeNodes(t.Header)
-	w.WriteString("<tbody>\n")
-	w.writeNodes(t.Rows...)
+	beforeFirstContentRow := true
+	for i, row := range t.Rows {
+		if row.IsSpecial || len(row.Columns) == 0 {
+			continue
+		}
+		if beforeFirstContentRow {
+			beforeFirstContentRow = false
+			if i+1 < len(t.Rows) && len(t.Rows[i+1].Columns) == 0 {
+				w.WriteString("<thead>\n")
+				w.writeTableColumns(row.Columns, "th")
+				w.WriteString("</thead>\n<tbody>\n")
+				continue
+			} else {
+				w.WriteString("<tbody>\n")
+			}
+		}
+		w.writeTableColumns(row.Columns, "td")
+	}
 	w.WriteString("</tbody>\n</table>\n")
 }
 
-func (w *HTMLWriter) writeTableRow(t TableRow) {
+func (w *HTMLWriter) writeTableColumns(columns []Column, tag string) {
 	w.WriteString("<tr>\n")
-	for _, column := range t.Columns {
-		w.WriteString("<td>")
-		w.writeNodes(column...)
-		w.WriteString("</td>")
+	for _, column := range columns {
+		if column.Align == "" {
+			w.WriteString(fmt.Sprintf("<%s>", tag))
+		} else {
+			w.WriteString(fmt.Sprintf(`<%s class="align-%s">`, tag, column.Align))
+		}
+		w.writeNodes(column.Children...)
+		w.WriteString(fmt.Sprintf("</%s>\n", tag))
 	}
-	w.WriteString("\n</tr>\n")
-}
-
-func (w *HTMLWriter) writeTableHeader(t TableHeader) {
-	w.WriteString("<thead>\n")
-	for _, column := range t.Columns {
-		w.WriteString("<th>")
-		w.writeNodes(column...)
-		w.WriteString("</th>")
-	}
-	w.WriteString("\n</thead>\n")
-}
-
-func (w *HTMLWriter) writeTableSeparator(t TableSeparator) {
-	w.WriteString("<tr></tr>\n")
+	w.WriteString("</tr>\n")
 }
 
 func withHTMLAttributes(input string, kvs ...string) string {

@@ -41,6 +41,12 @@ func (w *OrgWriter) emptyClone() *OrgWriter {
 	return &wcopy
 }
 
+func (w *OrgWriter) nodesAsString(nodes ...Node) string {
+	tmp := w.emptyClone()
+	tmp.writeNodes(nodes...)
+	return tmp.String()
+}
+
 func (w *OrgWriter) writeNodes(ns ...Node) {
 	for _, n := range ns {
 		switch n := n.(type) {
@@ -65,12 +71,6 @@ func (w *OrgWriter) writeNodes(ns ...Node) {
 
 		case Table:
 			w.writeTable(n)
-		case TableHeader:
-			w.writeTableHeader(n)
-		case TableRow:
-			w.writeTableRow(n)
-		case TableSeparator:
-			w.writeTableSeparator(n)
 
 		case Paragraph:
 			w.writeParagraph(n)
@@ -206,34 +206,45 @@ func (w *OrgWriter) writeListItem(li ListItem) {
 }
 
 func (w *OrgWriter) writeTable(t Table) {
-	w.writeNodes(t.Header)
-	w.writeNodes(t.Rows...)
-}
+	for _, row := range t.Rows {
+		w.WriteString(w.indent)
+		if len(row.Columns) == 0 {
+			w.WriteString(`|`)
+			for i := 0; i < len(t.ColumnInfos); i++ {
+				w.WriteString(strings.Repeat("-", t.ColumnInfos[i].Len+2))
+				if i < len(t.ColumnInfos)-1 {
+					w.WriteString("+")
+				}
+			}
+			w.WriteString(`|`)
 
-func (w *OrgWriter) writeTableHeader(th TableHeader) {
-	w.writeNodes(th.SeparatorBefore)
-	w.writeTableColumns(th.Columns)
-	w.writeNodes(th.SeparatorAfter)
-}
-
-func (w *OrgWriter) writeTableRow(tr TableRow) {
-	w.writeTableColumns(tr.Columns)
-}
-
-func (w *OrgWriter) writeTableSeparator(ts TableSeparator) {
-	w.WriteString(w.indent + ts.Content + "\n")
-}
-
-func (w *OrgWriter) writeTableColumns(columns [][]Node) {
-	w.WriteString(w.indent + "| ")
-	for i, columnNodes := range columns {
-		w.writeNodes(columnNodes...)
-		w.WriteString(" |")
-		if i < len(columns)-1 {
-			w.WriteString(" ")
+		} else {
+			w.WriteString(`|`)
+			for _, column := range row.Columns {
+				w.WriteString(` `)
+				content := w.nodesAsString(column.Children...)
+				if content == "" {
+					content = " "
+				}
+				n := column.Len - len(content)
+				if n < 0 {
+					n = 0
+				}
+				if column.Align == "center" {
+					if n%2 != 0 {
+						w.WriteString(" ")
+					}
+					w.WriteString(strings.Repeat(" ", n/2) + content + strings.Repeat(" ", n/2))
+				} else if column.Align == "right" {
+					w.WriteString(strings.Repeat(" ", n) + content)
+				} else {
+					w.WriteString(content + strings.Repeat(" ", n))
+				}
+				w.WriteString(` |`)
+			}
 		}
+		w.WriteString("\n")
 	}
-	w.WriteString("\n")
 }
 
 func (w *OrgWriter) writeHorizontalRule(hr HorizontalRule) {

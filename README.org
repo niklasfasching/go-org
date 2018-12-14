@@ -8,8 +8,6 @@ A basic org-mode parser in go
 - support more keywords: https://orgmode.org/manual/In_002dbuffer-settings.html
   - #+LINK
   - #+INCLUDE
-- table colgroups https://orgmode.org/worg/org-tutorials/tables.html
-- table pretty printing
 *** TODO [[https://github.com/chaseadamsio/goorgeous/issues/10][#10]]: Support noexport
 *** TODO [[https://github.com/chaseadamsio/goorgeous/issues/31][#31]]: Support #+INCLUDE
 - see https://orgmode.org/manual/Include-files.html

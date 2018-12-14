@@ -2,26 +2,34 @@ package org
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 )
 
 type Table struct {
-	Header Node
-	Rows   []Node
+	Rows        []Row
+	ColumnInfos []ColumnInfo
 }
 
-type TableSeparator struct{ Content string }
-
-type TableHeader struct {
-	SeparatorBefore Node
-	Columns         [][]Node
-	SeparatorAfter  Node
+type Row struct {
+	Columns   []Column
+	IsSpecial bool
 }
 
-type TableRow struct{ Columns [][]Node }
+type Column struct {
+	Children []Node
+	*ColumnInfo
+}
+
+type ColumnInfo struct {
+	Align string
+	Len   int
+}
 
 var tableSeparatorRegexp = regexp.MustCompile(`^(\s*)(\|[+-|]*)\s*$`)
 var tableRowRegexp = regexp.MustCompile(`^(\s*)(\|.*)`)
+
+var columnAlignRegexp = regexp.MustCompile(`^<(l|c|r)>$`)
 
 func lexTable(line string) (token, bool) {
 	if m := tableSeparatorRegexp.FindStringSubmatch(line); m != nil {
@@ -33,43 +41,87 @@ func lexTable(line string) (token, bool) {
 }
 
 func (d *Document) parseTable(i int, parentStop stopFn) (int, Node) {
-	rows, start := []Node{}, i
-	for !parentStop(d, i) && (d.tokens[i].kind == "tableRow" || d.tokens[i].kind == "tableSeparator") {
-		consumed, row := d.parseTableRowOrSeparator(i, parentStop)
-		i += consumed
-		rows = append(rows, row)
-	}
-
-	consumed := i - start
-
-	if len(rows) >= 2 {
-		if row, ok := rows[0].(TableRow); ok {
-			if separator, ok := rows[1].(TableSeparator); ok {
-				return consumed, Table{TableHeader{nil, row.Columns, separator}, rows[2:]}
+	rawRows, start := [][]string{}, i
+	for ; !parentStop(d, i); i++ {
+		if t := d.tokens[i]; t.kind == "tableRow" {
+			rawRow := strings.FieldsFunc(d.tokens[i].content, func(r rune) bool { return r == '|' })
+			for i := range rawRow {
+				rawRow[i] = strings.TrimSpace(rawRow[i])
 			}
+			rawRows = append(rawRows, rawRow)
+		} else if t.kind == "tableSeparator" {
+			rawRows = append(rawRows, nil)
+		} else {
+			break
 		}
 	}
-	if len(rows) >= 3 {
-		if separatorBefore, ok := rows[0].(TableSeparator); ok {
-			if row, ok := rows[1].(TableRow); ok {
-				if separatorAfter, ok := rows[2].(TableSeparator); ok {
-					return consumed, Table{TableHeader{separatorBefore, row.Columns, separatorAfter}, rows[3:]}
+
+	table := Table{nil, getColumnInfos(rawRows)}
+	for _, rawColumns := range rawRows {
+		row := Row{nil, isSpecialRow(rawColumns)}
+		if len(rawColumns) != 0 {
+			for i := range table.ColumnInfos {
+				column := Column{nil, &table.ColumnInfos[i]}
+				if i < len(rawColumns) {
+					column.Children = d.parseInline(rawColumns[i])
 				}
+				row.Columns = append(row.Columns, column)
 			}
 		}
+		table.Rows = append(table.Rows, row)
 	}
-
-	return consumed, Table{nil, rows}
+	return i - start, table
 }
 
-func (d *Document) parseTableRowOrSeparator(i int, _ stopFn) (int, Node) {
-	if d.tokens[i].kind == "tableSeparator" {
-		return 1, TableSeparator{d.tokens[i].content}
+func getColumnInfos(rows [][]string) []ColumnInfo {
+	columnCount := 0
+	for _, columns := range rows {
+		if n := len(columns); n > columnCount {
+			columnCount = n
+		}
 	}
-	fields := strings.FieldsFunc(d.tokens[i].content, func(r rune) bool { return r == '|' })
-	row := TableRow{}
-	for _, field := range fields {
-		row.Columns = append(row.Columns, d.parseInline(strings.TrimSpace(field)))
+
+	columnInfos := make([]ColumnInfo, columnCount)
+	for i := 0; i < columnCount; i++ {
+		countNumeric, countNonNumeric := 0, 0
+		for _, columns := range rows {
+			if !(i < len(columns)) {
+				continue
+			}
+
+			if len(columns[i]) > columnInfos[i].Len {
+				columnInfos[i].Len = len(columns[i])
+			}
+
+			if m := columnAlignRegexp.FindStringSubmatch(columns[i]); m != nil && isSpecialRow(columns) {
+				switch m[1] {
+				case "l":
+					columnInfos[i].Align = "left"
+				case "c":
+					columnInfos[i].Align = "center"
+				case "r":
+					columnInfos[i].Align = "right"
+				}
+			} else if _, err := strconv.ParseFloat(columns[i], 32); err == nil {
+				countNumeric++
+			} else if strings.TrimSpace(columns[i]) != "" {
+				countNonNumeric++
+			}
+		}
+
+		if columnInfos[i].Align == "" && countNumeric >= countNonNumeric {
+			columnInfos[i].Align = "right"
+		}
 	}
-	return 1, row
+	return columnInfos
+}
+
+func isSpecialRow(rawColumns []string) bool {
+	isAlignRow := true
+	for _, rawColumn := range rawColumns {
+		if !columnAlignRegexp.MatchString(rawColumn) && rawColumn != "" {
+			isAlignRow = false
+		}
+	}
+	return isAlignRow
 }

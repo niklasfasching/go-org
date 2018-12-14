@@ -104,3 +104,7 @@ figcaption {
   background-color: #ccc; }
 .footnote-definition .footnote-body p:only-child {
   margin: 0.2em 0; }
+
+.align-left   { text-align: left;   }
+.align-center { text-align: center; }
+.align-right  { text-align: right;  }

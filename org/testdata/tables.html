@@ -1,11 +1,17 @@
 <figure>
 <table>
 <thead>
-<th>a</th><th>b</th><th>c</th>
+<tr>
+<th class="align-right">a</th>
+<th class="align-right">b</th>
+<th class="align-right">c</th>
+</tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td><td>2</td><td>3</td>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
 </tr>
 </tbody>
 </table>
@@ -16,11 +22,17 @@ table with separator before and after header
 <figure>
 <table>
 <thead>
-<th>a</th><th>b</th><th>c</th>
+<tr>
+<th class="align-right">a</th>
+<th class="align-right">b</th>
+<th class="align-right">c</th>
+</tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td><td>2</td><td>3</td>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
 </tr>
 </tbody>
 </table>
@@ -31,9 +43,10 @@ table with separator after header
 <figure>
 <table>
 <tbody>
-<tr></tr>
 <tr>
-<td>1</td><td>2</td><td>3</td>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
 </tr>
 </tbody>
 </table>
@@ -45,11 +58,60 @@ table without header (but separator before)
 <table>
 <tbody>
 <tr>
-<td>1</td><td>2</td><td>3</td>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
 </tr>
 </tbody>
 </table>
 <figcaption>
 table without header
+</figcaption>
+</figure>
+<figure>
+<table>
+<thead>
+<tr>
+<th class="align-left">left aligned</th>
+<th class="align-right">right aligned</th>
+<th class="align-center">center aligned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="align-left">42</td>
+<td class="align-right">42</td>
+<td class="align-center">42</td>
+</tr>
+<tr>
+<td class="align-left">foobar</td>
+<td class="align-right">foobar</td>
+<td class="align-center">foobar</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+table with aligned columns
+</figcaption>
+</figure>
+<figure>
+<table>
+<thead>
+<tr>
+<th class="align-right">long column a</th>
+<th class="align-right">long column b</th>
+<th class="align-right">long column c</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+table with right aligned columns (because numbers)
 </figcaption>
 </figure>
