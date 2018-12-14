@@ -9,6 +9,7 @@ import (
 )
 
 type Document struct {
+	Path                string
 	tokens              []token
 	Nodes               []Node
 	Footnotes           *Footnotes
@@ -17,6 +18,7 @@ type Document struct {
 	AutoLink            bool
 	BufferSettings      map[string]string
 	DefaultSettings     map[string]string
+	Error               error
 }
 
 type Writer interface {
@@ -77,24 +79,45 @@ func NewDocument() *Document {
 	}
 }
 
-func (d *Document) Write(w Writer) Writer {
-	if d.Nodes == nil {
-		panic("cannot Write() empty document: you must call Parse() first")
+func (d *Document) Write(w Writer) (out string, err error) {
+	defer func() {
+		if recovered := recover(); recovered != nil {
+			err = fmt.Errorf("could not write output: %s", recovered)
+		}
+	}()
+	if d.Error != nil {
+		return "", d.Error
+	} else if d.Nodes == nil {
+		return "", fmt.Errorf("could not write output: parse was not called")
 	}
 	w.before(d)
 	w.writeNodes(d.Nodes...)
 	w.after(d)
-	return w
+	return w.String(), err
 }
 
 func (d *Document) Parse(input io.Reader) *Document {
+	defer func() {
+		if err := recover(); err != nil {
+			d.Error = fmt.Errorf("could not parse input: %s", err)
+		}
+	}()
+	if d.tokens != nil {
+		d.Error = fmt.Errorf("parse was called multiple times")
+	}
 	d.tokenize(input)
 	_, nodes := d.parseMany(0, func(d *Document, i int) bool { return !(i < len(d.tokens)) })
 	d.Nodes = nodes
 	return d
 }
 
-func (d *Document) FrontMatter(input io.Reader, f func(string, string) interface{}) map[string]interface{} {
+func (d *Document) FrontMatter(input io.Reader, f func(string, string) interface{}) (_ map[string]interface{}, err error) {
+	defer func() {
+		d.tokens = nil
+		if recovered := recover(); recovered != nil {
+			err = fmt.Errorf("could not parse input: %s", recovered)
+		}
+	}()
 	d.tokenize(input)
 	d.parseMany(0, func(d *Document, i int) bool {
 		if !(i < len(d.tokens)) {
@@ -107,7 +130,7 @@ func (d *Document) FrontMatter(input io.Reader, f func(string, string) interface
 	for k, v := range d.BufferSettings {
 		frontMatter[k] = f(k, v)
 	}
-	return frontMatter
+	return frontMatter, err
 }
 
 func (d *Document) tokenize(input io.Reader) {
@@ -117,7 +140,7 @@ func (d *Document) tokenize(input io.Reader) {
 		d.tokens = append(d.tokens, tokenize(scanner.Text()))
 	}
 	if err := scanner.Err(); err != nil {
-		panic(err)
+		d.Error = fmt.Errorf("could not tokenize input: %s", err)
 	}
 }
 

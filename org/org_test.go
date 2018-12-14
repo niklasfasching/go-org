@@ -14,7 +14,11 @@ func TestOrgWriter(t *testing.T) {
 	for _, path := range orgTestFiles() {
 		expected := fileString(path)
 		reader, writer := strings.NewReader(expected), NewOrgWriter()
-		actual := NewDocument().Parse(reader).Write(writer).String()
+		actual, err := NewDocument().Parse(reader).Write(writer)
+		if err != nil {
+			t.Errorf("%s\n got error: %s", path, err)
+			continue
+		}
 		if actual != expected {
 			t.Errorf("%s:\n%s'", path, diff(actual, expected))
 		} else {

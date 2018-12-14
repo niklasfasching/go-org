@@ -64,7 +64,11 @@ var frontMatterTests = []frontMatterTest{
 
 func TestParseFrontMatter(t *testing.T) {
 	for _, test := range frontMatterTests {
-		actual := NewDocument().FrontMatter(strings.NewReader(test.input), test.handler)
+		actual, err := NewDocument().FrontMatter(strings.NewReader(test.input), test.handler)
+		if err != nil {
+			t.Errorf("%s\n got error: %s", test.name, err)
+			continue
+		}
 		if !reflect.DeepEqual(test.expected, actual) {
 			t.Errorf("%s\n got: %#v\nexpected: %#v\n%s'", test.name, actual, test.expected, test.input)
 		}

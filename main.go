@@ -25,18 +25,21 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	r, out := bytes.NewReader(bs), ""
+	r, out, err := bytes.NewReader(bs), "", nil
 	switch strings.ToLower(os.Args[2]) {
 	case "org":
-		out = org.NewDocument().Parse(r).Write(org.NewOrgWriter()).String()
+		out, err = org.NewDocument().Parse(r).Write(org.NewOrgWriter())
 	case "html":
-		out = org.NewDocument().Parse(r).Write(org.NewHTMLWriter()).String()
+		out, err = org.NewDocument().Parse(r).Write(org.NewHTMLWriter())
 	case "html-chroma":
 		writer := org.NewHTMLWriter()
 		writer.HighlightCodeBlock = highlightCodeBlock
-		out = org.NewDocument().Parse(r).Write(writer).String()
+		out, err = org.NewDocument().Parse(r).Write(writer)
 	default:
 		log.Fatal("Unsupported output format")
+	}
+	if err != nil {
+		log.Fatal(err)
 	}
 	log.Print(out)
 }
