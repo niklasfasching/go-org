@@ -4,13 +4,9 @@ A basic org-mode parser in go
 - have a org-mode AST to play around with building an org-mode language server
 - hopefully add reasonable org-mode support to hugo - sadly [[https://github.com/chaseadamsio/goorgeous][goorgeous]] is broken & abandoned
 * next
-- handle #+RESULTS: raw and stuff
+- lists with checkboxes
+- property drawers
 - support more keywords: https://orgmode.org/manual/In_002dbuffer-settings.html
-  - #+LINK
-  - #+INCLUDE
-*** TODO [[https://github.com/chaseadamsio/goorgeous/issues/10][#10]]: Support noexport
-*** TODO [[https://github.com/chaseadamsio/goorgeous/issues/31][#31]]: Support #+INCLUDE
-- see https://orgmode.org/manual/Include-files.html
 * resources
 - syntax
   - https://orgmode.org/worg/dev/org-syntax.html

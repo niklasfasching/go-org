@@ -21,20 +21,22 @@ func main() {
 		log.Println("USAGE: org FILE OUTPUT_FORMAT")
 		log.Fatal("supported output formats: org, html, html-chroma")
 	}
-	bs, err := ioutil.ReadFile(os.Args[1])
+	path := os.Args[1]
+	bs, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
 	}
-	r, out, err := bytes.NewReader(bs), "", nil
+	out, err := "", nil
+	d := org.NewDocument().SetPath(path).Parse(bytes.NewReader(bs))
 	switch strings.ToLower(os.Args[2]) {
 	case "org":
-		out, err = org.NewDocument().Parse(r).Write(org.NewOrgWriter())
+		out, err = d.Write(org.NewOrgWriter())
 	case "html":
-		out, err = org.NewDocument().Parse(r).Write(org.NewHTMLWriter())
+		out, err = d.Write(org.NewHTMLWriter())
 	case "html-chroma":
 		writer := org.NewHTMLWriter()
 		writer.HighlightCodeBlock = highlightCodeBlock
-		out, err = org.NewDocument().Parse(r).Write(writer)
+		out, err = d.Write(writer)
 	default:
 		log.Fatal("Unsupported output format")
 	}

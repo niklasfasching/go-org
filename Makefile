@@ -22,6 +22,9 @@ case=example
 render:
 	go run main.go org/testdata/$(case).org html | html2text
 
+.PHONY: generate
+generate: generate-gh-pages generate-html-fixtures
+
 .PHONY: generate-gh-pages
 generate-gh-pages: build
 	./etc/generate-gh-pages

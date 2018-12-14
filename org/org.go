@@ -54,6 +54,8 @@ func (w *OrgWriter) writeNodes(ns ...Node) {
 			w.writeComment(n)
 		case Keyword:
 			w.writeKeyword(n)
+		case Include:
+			w.writeKeyword(n.Keyword)
 		case NodeWithMeta:
 			w.writeNodeWithMeta(n)
 		case Headline:

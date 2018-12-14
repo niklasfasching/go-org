@@ -111,6 +111,11 @@ func (d *Document) Parse(input io.Reader) *Document {
 	return d
 }
 
+func (d *Document) SetPath(path string) *Document {
+	d.Path = path
+	return d
+}
+
 func (d *Document) FrontMatter(input io.Reader, f func(string, string) interface{}) (_ map[string]interface{}, err error) {
 	defer func() {
 		d.tokens = nil

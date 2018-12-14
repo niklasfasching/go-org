@@ -15,6 +15,74 @@ or even a <strong>totally</strong> <em>custom</em> kind of block
 crazy ain&#39;t it?
 </p>
 </div>
+<h3><a href="https://github.com/chaseadamsio/goorgeous/issues/31">#31</a>: Support #+INCLUDE</h3>
+<p>
+Note that only src/example/export block inclusion is supported for now.
+There&#39;s quite a lot more to include (see the <a href="https://orgmode.org/manual/Include-files.html">org manual for include files</a>) but I
+don&#39;t have a use case for this yet and stuff like namespacing footnotes of included files
+adds quite a bit of complexity.
+</p>
+<p>
+for now files can be included as:
+</p>
+<ul>
+<li>
+<p>
+src block
+</p>
+<div class="highlight">
+<pre>
+* Simple Headline
+* TODO [#B] Headline with todo status &amp; priority
+* DONE Headline with TODO status
+* [#A] Headline with tags &amp; priority                                :foo:bar:
+
+
+</pre>
+</div>
+</li>
+<li>
+<p>
+export block
+</p>
+<p>
+Paragraphs are the default element.
+</p>
+<p>
+Empty lines and other elements end paragraphs - but paragraphs
+can
+obviously
+span
+multiple
+lines.
+</p>
+<p>
+Paragraphs can contain inline markup like <em>emphasis</em> <strong>strong</strong>  and links <a href="https://www.example.com">example.com</a> and stuff.
+</p>
+
+</li>
+<li>
+<p>
+example block
+</p>
+<pre class="example">
+language: go
+script:
+  - make test
+  - make generate-gh-pages
+deploy:
+  provider: pages
+  github-token: $GITHUB_TOKEN  # From travis-ci.org repository settings
+  local-dir: gh-pages
+  target-branch: gh-pages
+  skip-cleanup: true
+  verbose: true
+  on:
+    branch: master
+
+</pre>
+</li>
+</ul>
 <h3><a href="https://github.com/chaseadamsio/goorgeous/issues/33">#33</a>: Wrong output when mixing html with org-mode</h3>
 <div class="outline-2" id="meta" style="color: green;">
 <table>

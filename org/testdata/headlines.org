@@ -2,4 +2,4 @@
 * TODO [#B] Headline with todo status & priority
 * DONE Headline with TODO status
 * [#A] Headline with tags & priority                                :foo:bar:
-this one is cheating a little as tags are ALWAYS printed right aligned to a given column number...
+

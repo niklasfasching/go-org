@@ -8,7 +8,7 @@ import (
 func TestHTMLWriter(t *testing.T) {
 	for _, path := range orgTestFiles() {
 		reader, writer := strings.NewReader(fileString(path)), NewHTMLWriter()
-		actual, err := NewDocument().Parse(reader).Write(writer)
+		actual, err := NewDocument().SetPath(path).Parse(reader).Write(writer)
 		if err != nil {
 			t.Errorf("%s\n got error: %s", path, err)
 			continue

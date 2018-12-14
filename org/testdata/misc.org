@@ -12,6 +12,19 @@ verse
 or even a *totally* /custom/ kind of block
 crazy ain't it?
 #+END_CUSTOM
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/31][#31]]: Support #+INCLUDE
+Note that only src/example/export block inclusion is supported for now.
+There's quite a lot more to include (see the [[https://orgmode.org/manual/Include-files.html][org manual for include files]]) but I
+don't have a use case for this yet and stuff like namespacing footnotes of included files
+adds quite a bit of complexity.
+
+for now files can be included as:
+- src block
+  #+INCLUDE: "./headlines.org" src org
+- export block
+  #+INCLUDE: "./paragraphs.html" export html
+- example block
+  #+INCLUDE: "../../.travis.yml" example yaml
 *** DONE [[https://github.com/chaseadamsio/goorgeous/issues/33][#33]]: Wrong output when mixing html with org-mode
 #+HTML: <div class="outline-2" id="meta" style="color: green;">
 | *foo* | foo |

@@ -11,7 +11,6 @@ import (
 
 type HTMLWriter struct {
 	stringBuilder
-	document           *Document
 	HighlightCodeBlock func(source, lang string) string
 }
 
@@ -65,6 +64,8 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 		switch n := n.(type) {
 		case Keyword:
 			w.writeKeyword(n)
+		case Include:
+			w.writeInclude(n)
 		case Comment:
 			continue
 		case NodeWithMeta:
@@ -142,6 +143,10 @@ func (w *HTMLWriter) writeKeyword(k Keyword) {
 	if k.Key == "HTML" {
 		w.WriteString(k.Value + "\n")
 	}
+}
+
+func (w *HTMLWriter) writeInclude(i Include) {
+	w.writeNodes(i.Resolve())
 }
 
 func (w *HTMLWriter) writeFootnoteDefinition(f FootnoteDefinition) {
