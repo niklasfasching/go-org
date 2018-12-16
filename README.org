@@ -1,13 +1,17 @@
 * go-org [[https://travis-ci.org/niklasfasching/go-org.svg?branch=master]]
 A basic org-mode parser in go.
 Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org->html demo.
-
 * next
-- checkboxes
-- definition lists
-- drawers
+- lists
+  definition lists
+  checkboxes
 - more keywords: https://orgmode.org/manual/In_002dbuffer-settings.html
-- ...?
+* other differences to goorgeous
+- no headline ids
+- not changing links to .org files into links to .html files
+- org comments not rendered as html comments (same as ox-html.el)
+- headline priority not exported to html (same as ox-html.el)
+- goorgeous treats all `file:` links as images - go-org checks for an image file extension (same as ox-html.el)
 * resources
 - https://orgmode.org/manual/
 - https://orgmode.org/worg/dev/org-syntax.html
