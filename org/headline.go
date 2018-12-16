@@ -7,12 +7,13 @@ import (
 )
 
 type Headline struct {
-	Lvl      int
-	Status   string
-	Priority string
-	Title    []Node
-	Tags     []string
-	Children []Node
+	Lvl        int
+	Status     string
+	Priority   string
+	Properties Node
+	Title      []Node
+	Tags       []string
+	Children   []Node
 }
 
 var headlineRegexp = regexp.MustCompile(`^([*]+)\s+(.*)`)
@@ -60,6 +61,12 @@ func (d *Document) parseHeadline(i int, parentStop stopFn) (int, Node) {
 		return parentStop(d, i) || d.tokens[i].kind == "headline" && d.tokens[i].lvl <= headline.Lvl
 	}
 	consumed, nodes := d.parseMany(i+1, stop)
+	if len(nodes) > 0 {
+		if d, ok := nodes[0].(Drawer); ok && d.Name == "PROPERTIES" {
+			headline.Properties = d
+			nodes = nodes[1:]
+		}
+	}
 	headline.Children = nodes
 
 	if headline.Lvl == 1 && text == d.Footnotes.Title && d.Footnotes.ExcludeHeading {

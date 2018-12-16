@@ -1,5 +1,14 @@
 * Simple Headline
 * TODO [#B] Headline with todo status & priority
 * DONE Headline with TODO status
-* [#A] Headline with tags & priority                                :foo:bar:
+:PROPERTIES:
+:Note: property drawers are not exported as html like other drawers
+:END:
 
+the *content*
+* [#A] Headline with tags & priority                                :foo:bar:
+Still outside the drawer
+:DRAWERNAME:
+This is inside the drawer
+:END:
+Still outside the drawer

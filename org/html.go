@@ -74,6 +74,8 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 			w.writeHeadline(n)
 		case Block:
 			w.writeBlock(n)
+		case Drawer:
+			w.writeDrawer(n)
 
 		case FootnoteDefinition:
 			w.writeFootnoteDefinition(n)
@@ -139,6 +141,10 @@ func (w *HTMLWriter) writeBlock(b Block) {
 		w.writeNodes(b.Children...)
 		w.WriteString("</div>\n")
 	}
+}
+
+func (w *HTMLWriter) writeDrawer(d Drawer) {
+	w.writeNodes(d.Children...)
 }
 
 func (w *HTMLWriter) writeKeyword(k Keyword) {

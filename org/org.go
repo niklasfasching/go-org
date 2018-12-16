@@ -62,6 +62,8 @@ func (w *OrgWriter) writeNodes(ns ...Node) {
 			w.writeHeadline(n)
 		case Block:
 			w.writeBlock(n)
+		case Drawer:
+			w.writeDrawer(n)
 
 		case FootnoteDefinition:
 			w.writeFootnoteDefinition(n)
@@ -127,6 +129,9 @@ func (w *OrgWriter) writeHeadline(h Headline) {
 	if len(h.Children) != 0 {
 		w.WriteString(w.indent)
 	}
+	if h.Properties != nil {
+		w.writeNodes(h.Properties)
+	}
 	w.writeNodes(h.Children...)
 }
 
@@ -145,6 +150,12 @@ func (w *OrgWriter) writeBlock(b Block) {
 		w.writeNodes(b.Children...)
 	}
 	w.WriteString(w.indent + "#+END_" + b.Name + "\n")
+}
+
+func (w *OrgWriter) writeDrawer(d Drawer) {
+	w.WriteString(w.indent + ":" + d.Name + ":\n")
+	w.writeNodes(d.Children...)
+	w.WriteString(w.indent + ":END:\n")
 }
 
 func (w *OrgWriter) writeFootnotes(d *Document) {
