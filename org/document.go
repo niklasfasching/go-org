@@ -49,6 +49,7 @@ var lexFns = []lexFn{
 	lexHorizontalRule,
 	lexKeywordOrComment,
 	lexFootnoteDefinition,
+	lexExample,
 	lexText,
 }
 
@@ -169,6 +170,8 @@ func (d *Document) parseOne(i int, stop stopFn) (consumed int, node Node) {
 		consumed, node = d.parseBlock(i, stop)
 	case "text":
 		consumed, node = d.parseParagraph(i, stop)
+	case "example":
+		consumed, node = d.parseExample(i, stop)
 	case "horizontalRule":
 		consumed, node = d.parseHorizontalRule(i, stop)
 	case "comment":

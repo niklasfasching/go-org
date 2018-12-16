@@ -21,7 +21,13 @@ multiple lines including
 empty lines!
 
 it also has multiple parameters
+
+note that /inline/ *markup* ignored
 #+END_EXAMPLE
+
+: examples like this
+: are also supported
+: note that /inline/ *markup* ignored
 
 #+BEGIN_QUOTE
 Mongodb is *webscale*. (source: [[http://www.mongodb-is-web-scale.com/][mongodb-is-web-scale]])

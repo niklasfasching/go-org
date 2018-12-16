@@ -76,6 +76,8 @@ func (w *OrgWriter) writeNodes(ns ...Node) {
 
 		case Paragraph:
 			w.writeParagraph(n)
+		case Example:
+			w.writeExample(n)
 		case HorizontalRule:
 			w.writeHorizontalRule(n)
 		case Text:
@@ -169,6 +171,14 @@ func (w *OrgWriter) writeFootnoteDefinition(f FootnoteDefinition) {
 func (w *OrgWriter) writeParagraph(p Paragraph) {
 	w.writeNodes(p.Children...)
 	w.WriteString("\n")
+}
+
+func (w *OrgWriter) writeExample(e Example) {
+	for _, n := range e.Children {
+		w.WriteString(w.indent + ":" + " ")
+		w.writeNodes(n)
+		w.WriteString("\n")
+	}
 }
 
 func (w *OrgWriter) writeKeyword(k Keyword) {

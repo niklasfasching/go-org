@@ -88,6 +88,8 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 
 		case Paragraph:
 			w.writeParagraph(n)
+		case Example:
+			w.writeExample(n)
 		case HorizontalRule:
 			w.writeHorizontalRule(n)
 		case Text:
@@ -262,6 +264,17 @@ func (w *HTMLWriter) writeParagraph(p Paragraph) {
 	}
 	w.writeNodes(p.Children...)
 	w.WriteString("\n</p>\n")
+}
+
+func (w *HTMLWriter) writeExample(e Example) {
+	w.WriteString(`<pre class="example">` + "\n")
+	if len(e.Children) != 0 {
+		for _, n := range e.Children {
+			w.writeNodes(n)
+			w.WriteString("\n")
+		}
+	}
+	w.WriteString("\n</pre>\n")
 }
 
 func (w *HTMLWriter) writeHorizontalRule(h HorizontalRule) {
