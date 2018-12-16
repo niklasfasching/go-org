@@ -1,7 +1,7 @@
 #!/bin/bash
 
 org_files=org/testdata/*.org
-content="
+examples="
 <h1>Sections</h1>
 <style>
 .sections { margin-left: 2rem; }
@@ -11,14 +11,14 @@ content="
 <ul class='sections'>"
 for org_file in $org_files; do
     name=$(basename $org_file)
-    content+="<li><a id='toc-${name}' href='#${name}'>${name}</a>"
+    examples+="<li><a id='toc-${name}' href='#${name}'>${name}</a>"
 done
-content+="</ul><hr>"
+examples+="</ul><hr>"
 
 for org_file in $org_files; do
     echo generating content for $org_file
     name=$(basename $org_file)
-    content+="
+    examples+="
       <h2><a id='${name}' href='#toc-${name}'>${name}</a></h2>
       <div class='source'>
         <pre class='org'>$(sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g;' $org_file)</pre>
@@ -26,7 +26,69 @@ for org_file in $org_files; do
       </div>"
 done
 
-html="<html>
+convert="
+  <h1>Convert</h1>
+  <button id='run' disabled='true' onclick='run()'>
+    RUN (initializing...)
+  </button>
+  or ctrl + return
+  <textarea id='input'>* Hello World</textarea>
+  <div id='output'></div>
+  <style>
+   #run {
+     background-color: #50CCDD;
+     border: none;
+     border-radius: 0.33em;
+     color: #FFF;
+     cursor: pointer;
+     font-weight: bold;
+     letter-spacing: 0.1em;
+     padding: 0.5em 1.5em;
+   }
+
+   #run:hover {
+     background-color: #40AACC;
+     outline: 0;
+   }
+
+   #run:disabled {
+     background-color: #AAA;
+     cursor: wait;
+   }
+
+   #input, #output {
+     display: block;
+     border: 1px dashed grey;
+     margin: 0.5em 0;
+     overflow: auto;
+     padding: 0.25em;
+     width: 100%;
+   }
+   #input { height: 30%; }
+   #output { max-height: 100%; }
+  </style>
+  <script src='wasm_exec.js'></script>
+  <script>
+   const go = new Go();
+   WebAssembly
+     .instantiateStreaming(fetch('main.wasm'), go.importObject)
+     .then((result) => go.run(result.instance));
+
+   function initialized() {
+     const button = document.getElementById('run');
+     button.textContent = 'RUN';
+     button.removeAttribute('disabled');
+   }
+
+   document.getElementById('input').addEventListener('keydown', function(e) {
+   if (e.keyCode == 13 && e.ctrlKey) { // ctrl+enter
+       run();
+       e.preventDefault();
+     }
+   }, false)
+  </script>"
+
+index="<html>
   <head>
     <style>$(cat etc/style.css)</style>
     <style>
@@ -41,8 +103,26 @@ html="<html>
        overflow-x: auto; }
     </style>
   </head>
-  <body>$content</body>
+  <body>
+  $convert
+  $examples
+  </body>
+</html>"
+
+
+convert="<html>
+  <head>
+    <style>$(cat etc/style.css)</style>
+  </head>
+  <body>
+  $convert
+  </body>
 </html>"
 
 mkdir -p gh-pages
-echo "$html" > gh-pages/index.html
+echo "$index" > gh-pages/index.html
+echo "$convert" > gh-pages/convert.html
+cp etc/_wasm.go gh-pages/wasm.go
+GOOS=js GOARCH=wasm go build -o gh-pages/main.wasm gh-pages/wasm.go
+rm gh-pages/wasm.go
+cp $(go env GOROOT)/misc/wasm/wasm_exec.js gh-pages/wasm_exec.js
