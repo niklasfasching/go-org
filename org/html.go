@@ -173,9 +173,20 @@ func (w *HTMLWriter) writeFootnotes(d *Document) {
 }
 
 func (w *HTMLWriter) writeHeadline(h Headline) {
-	w.WriteString(fmt.Sprintf("<h%d>", h.Lvl))
+	w.WriteString(fmt.Sprintf("<h%d>\n", h.Lvl))
+	if h.Status != "" {
+		w.WriteString(fmt.Sprintf(`<span class="todo">%s</span>`, h.Status) + "\n")
+	}
 	w.writeNodes(h.Title...)
-	w.WriteString(fmt.Sprintf("</h%d>\n", h.Lvl))
+	if len(h.Tags) != 0 {
+		tags := make([]string, len(h.Tags))
+		for i, tag := range h.Tags {
+			tags[i] = fmt.Sprintf(`<span>%s</span>`, tag)
+		}
+		w.WriteString("&#xa0;&#xa0;&#xa0;")
+		w.WriteString(fmt.Sprintf(`<span class="tags">%s</span>`, strings.Join(tags, "&#xa0;")))
+	}
+	w.WriteString(fmt.Sprintf("\n</h%d>\n", h.Lvl))
 	w.writeNodes(h.Children...)
 }
 
