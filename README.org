@@ -2,7 +2,16 @@
 A basic org-mode parser in go.
 Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org->html demo.
 * next
+- test against [[https://raw.githubusercontent.com/kaushalmodi/ox-hugo/master/test/site/content-org/all-posts.org][ox-hugo all-posts.org]]
+  - fix attr_html splitting - not whitespace, :x keywords, e.g.
+    #+attr_html: :caption A unicorn! :style width: 100%; height: 100%; :caption foo
+    [[/images/org-mode-unicorn-logo.png]]
 - more keywords: https://orgmode.org/manual/In_002dbuffer-settings.html
+- headlines
+  - export priority as default
+  - unique ids
+    - CUSTOM_ID drawer property
+    - see [[https://github.com/kaushalmodi/ox-hugo/blob/8472cf2d8667754c9da3728255634e8001a1da6d/ox-hugo.el#L1785-L1850][ox-hugo]] for auto generation
 - improve list parsing
   - handle list items with empty first line
   - handle checkboxes & statistic cookies
@@ -14,17 +23,23 @@ https://orgmode.org/manual/Checkboxes.html
 2. [ ] parse statistic cookies of headlines & first line of list items
    -convert to =[sub 1<sup>1</sup>&frasl;<sub>2</sub>] || [90%]=
 
-* other differences to goorgeous
+* differences to goorgeous
+To get a feeling take a look at goorgeous vs go-org html rendering of the examples [[https://niklasfasching.github.io/go-org/go-org-vs-goorgeous][comparison]].
+Please note that a visual comparison is not fair to goorgeous as the stylesheet is not adapted to it.
+Nonetheless, the html output can be compared by taking a look in the developer console where relevant.
+
 - no headline ids
-- not changing links to .org files into links to .html files - this has edge cases like [[https://github.com/chaseadamsio/goorgeous/issues/56][mangling links to e.g. example.org]].
-  could be supported for file: links though i guess
+- not changing links to .org files into links to .html files
+  - do not plan to implement this, too many edge cases (e.g. [[https://github.com/chaseadamsio/goorgeous/issues/56][mangling links to e.g. example.org]].)
 - org comments not rendered as html comments (same as ox-html.el)
 - headline priority not exported to html (same as ox-html.el)
 - goorgeous treats all `file:` links as images - go-org checks for an image file extension (same as ox-html.el)
 - no support for [@10] in ordered lists https://github.com/chaseadamsio/goorgeous/issues/18
+  - do not plan to implement this
 * resources
 - https://orgmode.org/manual/
 - https://orgmode.org/worg/dev/org-syntax.html
-- https://github.com/abo-abo/org-mode/blob/mirror/lisp/org.el
-- https://github.com/abo-abo/org-mode/blob/mirror/lisp/org-element.el
+- https://code.orgmode.org/bzg/org-mode/src/master/lisp/org.el
+  - https://code.orgmode.org/bzg/org-mode/src/master/lisp/org-element.el
+  - mostly those & ox-html.el, but yeah, all of [[https://code.orgmode.org/bzg/org-mode/src/master/lisp/]]
 - existing org-mode implementations: [[https://github.com/emacsmirror/org][org]], [[https://github.com/bdewey/org-ruby/blob/master/spec/html_examples][org-ruby]], [[https://github.com/chaseadamsio/goorgeous/][goorgeous]], [[https://github.com/jgm/pandoc/][pandoc]]
