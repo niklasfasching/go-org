@@ -68,9 +68,5 @@ func (d *Document) parseHeadline(i int, parentStop stopFn) (int, Node) {
 		}
 	}
 	headline.Children = nodes
-
-	if headline.Lvl == 1 && text == d.Footnotes.Title && d.Footnotes.ExcludeHeading {
-		return consumed + 1, nil
-	}
 	return consumed + 1, headline
 }

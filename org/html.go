@@ -11,7 +11,8 @@ import (
 
 type HTMLWriter struct {
 	stringBuilder
-	HighlightCodeBlock func(source, lang string) string
+	HighlightCodeBlock    func(source, lang string) string
+	FootnotesHeadingTitle string
 }
 
 var emphasisTags = map[string][]string{
@@ -33,6 +34,7 @@ var listTags = map[string][]string{
 
 func NewHTMLWriter() *HTMLWriter {
 	return &HTMLWriter{
+		FootnotesHeadingTitle: "Footnotes",
 		HighlightCodeBlock: func(source, lang string) string {
 			return fmt.Sprintf("%s\n<pre>\n%s\n</pre>\n</div>", `<div class="highlight">`, html.EscapeString(source))
 		},
@@ -181,11 +183,15 @@ func (w *HTMLWriter) writeFootnotes(d *Document) {
 }
 
 func (w *HTMLWriter) writeHeadline(h Headline) {
+	title := w.nodesAsString(h.Title...)
+	if h.Lvl == 1 && title == w.FootnotesHeadingTitle {
+		return
+	}
 	w.WriteString(fmt.Sprintf("<h%d>\n", h.Lvl))
 	if h.Status != "" {
 		w.WriteString(fmt.Sprintf(`<span class="todo">%s</span>`, h.Status) + "\n")
 	}
-	w.writeNodes(h.Title...)
+	w.WriteString(title)
 	if len(h.Tags) != 0 {
 		tags := make([]string, len(h.Tags))
 		for i, tag := range h.Tags {

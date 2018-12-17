@@ -68,9 +68,8 @@ var DefaultFrontMatterHandler = func(k, v string) interface{} {
 func NewDocument() *Document {
 	return &Document{
 		Footnotes: &Footnotes{
-			ExcludeHeading: true,
-			Title:          "Footnotes",
-			Definitions:    map[string]*FootnoteDefinition{},
+			Title:       "Footnotes",
+			Definitions: map[string]*FootnoteDefinition{},
 		},
 		AutoLink:            true,
 		MaxEmphasisNewLines: 1,

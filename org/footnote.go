@@ -5,10 +5,9 @@ import (
 )
 
 type Footnotes struct {
-	ExcludeHeading bool
-	Title          string
-	Definitions    map[string]*FootnoteDefinition
-	addOrder       []string
+	Title       string
+	Definitions map[string]*FootnoteDefinition
+	addOrder    []string
 }
 
 type FootnoteDefinition struct {
@@ -35,8 +34,9 @@ func (d *Document) parseFootnoteDefinition(i int, parentStop stopFn) (int, Node)
 			d.tokens[i].kind == "headline" || d.tokens[i].kind == "footnoteDefinition"
 	}
 	consumed, nodes := d.parseMany(i, stop)
-	d.Footnotes.add(name, &FootnoteDefinition{name, nodes, false})
-	return consumed, nil
+	definition := FootnoteDefinition{name, nodes, false}
+	d.Footnotes.add(name, &definition)
+	return consumed, definition
 }
 
 func (fs *Footnotes) add(name string, definition *FootnoteDefinition) {

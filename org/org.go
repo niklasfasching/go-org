@@ -31,9 +31,7 @@ func NewOrgWriter() *OrgWriter {
 }
 
 func (w *OrgWriter) before(d *Document) {}
-func (w *OrgWriter) after(d *Document) {
-	w.writeFootnotes(d)
-}
+func (w *OrgWriter) after(d *Document)  {}
 
 func (w *OrgWriter) emptyClone() *OrgWriter {
 	wcopy := *w
@@ -158,19 +156,6 @@ func (w *OrgWriter) writeDrawer(d Drawer) {
 	w.WriteString(w.indent + ":" + d.Name + ":\n")
 	w.writeNodes(d.Children...)
 	w.WriteString(w.indent + ":END:\n")
-}
-
-func (w *OrgWriter) writeFootnotes(d *Document) {
-	fs := d.Footnotes
-	if len(fs.Definitions) == 0 {
-		return
-	}
-	w.WriteString("* " + fs.Title + "\n")
-	for _, definition := range fs.Ordered() {
-		if !definition.Inline {
-			w.writeNodes(definition)
-		}
-	}
 }
 
 func (w *OrgWriter) writeFootnoteDefinition(f FootnoteDefinition) {
