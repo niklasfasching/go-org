@@ -8,7 +8,6 @@ Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for so
     [[/images/org-mode-unicorn-logo.png]]
 - more keywords: https://orgmode.org/manual/In_002dbuffer-settings.html
 - headlines
-  - export priority as default
   - unique ids
     - CUSTOM_ID drawer property
     - see [[https://github.com/kaushalmodi/ox-hugo/blob/8472cf2d8667754c9da3728255634e8001a1da6d/ox-hugo.el#L1785-L1850][ox-hugo]] for auto generation
