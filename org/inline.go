@@ -7,7 +7,10 @@ import (
 	"unicode"
 )
 
-type Text struct{ Content string }
+type Text struct {
+	Content string
+	IsRaw   bool
+}
 
 type LineBreak struct{ Count int }
 type ExplicitLineBreak struct{}
@@ -46,8 +49,10 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 			consumed, node = d.parseSubOrSuperScript(input, current)
 		case '_':
 			consumed, node = d.parseSubScriptOrEmphasis(input, current)
-		case '*', '/', '=', '~', '+':
-			consumed, node = d.parseEmphasis(input, current)
+		case '*', '/', '+':
+			consumed, node = d.parseEmphasis(input, current, false)
+		case '=', '~':
+			consumed, node = d.parseEmphasis(input, current, true)
 		case '[':
 			consumed, node = d.parseRegularLinkOrFootnoteReference(input, current)
 		case '\\':
@@ -60,7 +65,7 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 		}
 		if consumed != 0 {
 			if current > previous {
-				nodes = append(nodes, Text{input[previous:current]})
+				nodes = append(nodes, Text{input[previous:current], false})
 			}
 			if node != nil {
 				nodes = append(nodes, node)
@@ -73,7 +78,28 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 	}
 
 	if previous < len(input) {
-		nodes = append(nodes, Text{input[previous:]})
+		nodes = append(nodes, Text{input[previous:], false})
+	}
+	return nodes
+}
+
+func (d *Document) parseRawInline(input string) (nodes []Node) {
+	previous, current := 0, 0
+	for current < len(input) {
+		if input[current] == '\n' {
+			consumed, node := d.parseLineBreak(input, current)
+			if current > previous {
+				nodes = append(nodes, Text{input[previous:current], true})
+			}
+			nodes = append(nodes, node)
+			current += consumed
+			previous = current
+		} else {
+			current++
+		}
+	}
+	if previous < len(input) {
+		nodes = append(nodes, Text{input[previous:], true})
 	}
 	return nodes
 }
@@ -102,7 +128,7 @@ func (d *Document) parseExplicitLineBreak(input string, start int) (int, Node) {
 
 func (d *Document) parseSubOrSuperScript(input string, start int) (int, Node) {
 	if m := subScriptSuperScriptRegexp.FindStringSubmatch(input[start:]); m != nil {
-		return len(m[2]) + 3, Emphasis{m[1] + "{}", []Node{Text{m[2]}}}
+		return len(m[2]) + 3, Emphasis{m[1] + "{}", []Node{Text{m[2], false}}}
 	}
 	return 0, nil
 }
@@ -111,7 +137,7 @@ func (d *Document) parseSubScriptOrEmphasis(input string, start int) (int, Node)
 	if consumed, node := d.parseSubOrSuperScript(input, start); consumed != 0 {
 		return consumed, node
 	}
-	return d.parseEmphasis(input, start)
+	return d.parseEmphasis(input, start, false)
 }
 
 func (d *Document) parseRegularLinkOrFootnoteReference(input string, start int) (int, Node) {
@@ -180,7 +206,7 @@ func (d *Document) parseRegularLink(input string, start int) (int, Node) {
 	return consumed, RegularLink{protocol, description, link, false}
 }
 
-func (d *Document) parseEmphasis(input string, start int) (int, Node) {
+func (d *Document) parseEmphasis(input string, start int, isRaw bool) (int, Node) {
 	marker, i := input[start], start
 	if !hasValidPreAndBorderChars(input, i) {
 		return 0, nil
@@ -191,6 +217,9 @@ func (d *Document) parseEmphasis(input string, start int) (int, Node) {
 		}
 
 		if input[i] == marker && i != start+1 && hasValidPostAndBorderChars(input, i) {
+			if isRaw {
+				return i + 1 - start, Emphasis{input[start : start+1], d.parseRawInline(input[start+1 : i])}
+			}
 			return i + 1 - start, Emphasis{input[start : start+1], d.parseInline(input[start+1 : i])}
 		}
 	}

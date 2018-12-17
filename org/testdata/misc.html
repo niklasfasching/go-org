@@ -57,7 +57,6 @@ Still outside the drawer
 This is inside the drawer
 :END:
 Still outside the drawer
-
 </pre>
 </div>
 </li>
@@ -79,7 +78,6 @@ lines.
 <p>
 Paragraphs can contain inline markup like <em>emphasis</em> <strong>strong</strong>  and links <a href="https://www.example.com">example.com</a> and stuff.
 </p>
-
 </li>
 <li>
 <p>
@@ -87,7 +85,7 @@ example block
 </p>
 <pre class="example">
 language: go
-go: &#34;1.x&#34;
+go: "1.x"
 script:
   - make test
   - make generate-gh-pages
@@ -100,7 +98,6 @@ deploy:
   verbose: true
   on:
     branch: master
-
 </pre>
 </li>
 </ul>
@@ -270,3 +267,89 @@ Bar
 <p>
 Bar paragraph
 </p>
+<h3>
+<span class="todo">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/86">#86</a>: Multiple hyphens not converted to dashes
+</h3>
+<p>
+just like #46
+</p>
+<ul>
+<li>
+<p>
+<code class="verbatim">--</code> -&gt; – (en dash)
+</p>
+</li>
+<li>
+<p>
+<code class="verbatim">---</code> -&gt; — (em dash)
+</p>
+</li>
+</ul>
+<p>
+also, consecutive dashes inside
+</p>
+<ul>
+<li>
+<p>
+inline code <code class="verbatim">--</code> <code class="verbatim">---</code> and verbatim <code>--</code> <code>---</code>
+</p>
+</li>
+<li>
+<p>
+src/example/export blocks should not be converted!
+</p>
+<div class="highlight">
+<pre>
+--, ---
+</pre>
+</div>
+<pre class="example">
+--, ---
+</pre>
+--, ---
+<pre class="example">
+--, ---
+</pre>
+</li>
+</ul>
+<h3>
+<span class="todo">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/87">#87</a>: Markup in footnotes is rendered literally
+</h3>
+<p>
+footnotes can contain <strong>markup</strong> - and other elements and stuff <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup>
+</p>
+<div class="footnotes">
+<h1 class="footnotes-title">Footnotes</h1>
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>
+a footnote <em>with</em> <strong>markup</strong>
+</p>
+<ul>
+<li>
+<p>
+and a <strong>list</strong>
+</p>
+</li>
+<li>
+<p>
+because that&#39;s possible
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-2"><a href="#footnote-reference-2">2</a></sup>
+<div class="footnote-body">
+<p>
+that also goes for <strong>inline</strong> footnote <em>definitions</em>
+</p>
+</div>
+</div>
+</div>
+</div>

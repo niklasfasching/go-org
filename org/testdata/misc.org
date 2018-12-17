@@ -82,3 +82,33 @@ just a space as title...
 Foo paragraph.
 **** Bar
 Bar paragraph
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/86][#86]]: Multiple hyphens not converted to dashes
+just like #46
+- =--= -> -- (en dash)
+- =---= -> --- (em dash)
+
+also, consecutive dashes inside
+- inline code =--= =---= and verbatim ~--~ ~---~
+- src/example/export blocks should not be converted!
+  #+BEGIN_SRC sh
+  --, ---
+  #+END_SRC
+
+  #+BEGIN_EXAMPLE
+  --, ---
+  #+END_EXAMPLE
+
+  #+BEGIN_EXPORT html
+  --, ---
+  #+END_EXPORT
+
+  : --, ---
+
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/87][#87]]: Markup in footnotes is rendered literally
+footnotes can contain *markup* - and other elements and stuff [fn:2:that also goes for *inline* footnote /definitions/]
+
+* Footnotes
+
+[fn:1] a footnote /with/ *markup*
+- and a *list*
+- because that's possible

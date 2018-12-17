@@ -20,7 +20,7 @@ func lexExample(line string) (token, bool) {
 func (d *Document) parseExample(i int, parentStop stopFn) (int, Node) {
 	example, start := Example{}, i
 	for ; !parentStop(d, i) && d.tokens[i].kind == "example"; i++ {
-		example.Children = append(example.Children, Text{d.tokens[i].content})
+		example.Children = append(example.Children, Text{d.tokens[i].content, true})
 	}
 	return i - start, example
 }

@@ -117,7 +117,7 @@ func (d *Document) newInclude(k Keyword) (int, Node) {
 			if err != nil {
 				panic(fmt.Sprintf("bad include '#+INCLUDE: %s': %s", k.Value, err))
 			}
-			return Block{strings.ToUpper(kind), []string{lang}, []Node{Text{string(bs)}}}
+			return Block{strings.ToUpper(kind), []string{lang}, d.parseRawInline(string(bs))}
 		}
 	}
 	return 1, Include{k, resolve}

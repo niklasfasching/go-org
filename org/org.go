@@ -140,16 +140,9 @@ func (w *OrgWriter) writeBlock(b Block) {
 	if len(b.Parameters) != 0 {
 		w.WriteString(" " + strings.Join(b.Parameters, " "))
 	}
-	w.WriteString("\n")
-
-	if isRawTextBlock(b.Name) {
-		for _, line := range strings.Split(b.Children[0].(Text).Content, "\n") {
-			w.WriteString(w.indent + line + "\n")
-		}
-	} else {
-		w.writeNodes(b.Children...)
-	}
-	w.WriteString(w.indent + "#+END_" + b.Name + "\n")
+	w.WriteString("\n" + w.indent)
+	w.writeNodes(b.Children...)
+	w.WriteString("#+END_" + b.Name + "\n")
 }
 
 func (w *OrgWriter) writeDrawer(d Drawer) {

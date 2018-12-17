@@ -27,7 +27,7 @@ func lexBlock(line string) (token, bool) {
 func isRawTextBlock(name string) bool { return name == "SRC" || name == "EXAMPLE" || name == "EXPORT" }
 
 func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
-	t, start, lines := d.tokens[i], i, []string{}
+	t, start := d.tokens[i], i
 	name, parameters := t.content, strings.Fields(t.matches[3])
 	trim := trimIndentUpTo(d.tokens[i].lvl)
 	stop := func(d *Document, i int) bool {
@@ -35,11 +35,12 @@ func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
 	}
 	block, consumed, i := Block{name, parameters, nil}, 0, i+1
 	if isRawTextBlock(name) {
+		rawText := ""
 		for ; !stop(d, i); i++ {
-			lines = append(lines, trim(d.tokens[i].matches[0]))
+			rawText += trim(d.tokens[i].matches[0]) + "\n"
 		}
 		consumed = i - start
-		block.Children = []Node{Text{strings.Join(lines, "\n")}}
+		block.Children = d.parseRawInline(rawText)
 	} else {
 		consumed, block.Children = d.parseMany(i, stop)
 		consumed++ // line with BEGIN

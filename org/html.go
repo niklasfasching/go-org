@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"strings"
+	"unicode"
 
 	h "golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
@@ -13,6 +14,7 @@ type HTMLWriter struct {
 	stringBuilder
 	HighlightCodeBlock    func(source, lang string) string
 	FootnotesHeadingTitle string
+	htmlEscape            bool
 }
 
 var emphasisTags = map[string][]string{
@@ -34,6 +36,7 @@ var listTags = map[string][]string{
 
 func NewHTMLWriter() *HTMLWriter {
 	return &HTMLWriter{
+		htmlEscape:            true,
 		FootnotesHeadingTitle: "Footnotes",
 		HighlightCodeBlock: func(source, lang string) string {
 			return fmt.Sprintf("%s\n<pre>\n%s\n</pre>\n</div>", `<div class="highlight">`, html.EscapeString(source))
@@ -117,31 +120,34 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 }
 
 func (w *HTMLWriter) writeBlock(b Block) {
+	content := ""
+	if isRawTextBlock(b.Name) {
+		exportWriter := w.emptyClone()
+		exportWriter.htmlEscape = false
+		exportWriter.writeNodes(b.Children...)
+		content = strings.TrimRightFunc(exportWriter.String(), unicode.IsSpace)
+	} else {
+		content = w.nodesAsString(b.Children...)
+	}
 	switch name := b.Name; {
 	case name == "SRC":
-		source, lang := b.Children[0].(Text).Content, "text"
+		lang := "text"
 		if len(b.Parameters) >= 1 {
 			lang = strings.ToLower(b.Parameters[0])
 		}
-		w.WriteString(w.HighlightCodeBlock(source, lang) + "\n")
+		w.WriteString(w.HighlightCodeBlock(content, lang) + "\n")
 	case name == "EXAMPLE":
-		w.WriteString(`<pre class="example">` + "\n")
-		w.writeNodes(b.Children...)
-		w.WriteString("\n</pre>\n")
+		w.WriteString(`<pre class="example">` + "\n" + content + "\n</pre>\n")
 	case name == "EXPORT" && len(b.Parameters) >= 1 && strings.ToLower(b.Parameters[0]) == "html":
-		w.WriteString(b.Children[0].(Text).Content + "\n")
+		w.WriteString(content + "\n")
 	case name == "QUOTE":
-		w.WriteString("<blockquote>\n")
-		w.writeNodes(b.Children...)
-		w.WriteString("</blockquote>\n")
+		w.WriteString("<blockquote>\n" + content + "</blockquote>\n")
 	case name == "CENTER":
 		w.WriteString(`<div class="center-block" style="text-align: center; margin-left: auto; margin-right: auto;">` + "\n")
-		w.writeNodes(b.Children...)
-		w.WriteString("</div>\n")
+		w.WriteString(content + "</div>\n")
 	default:
 		w.WriteString(fmt.Sprintf(`<div class="%s-block">`, strings.ToLower(b.Name)) + "\n")
-		w.writeNodes(b.Children...)
-		w.WriteString("</div>\n")
+		w.WriteString(content + "</div>\n")
 	}
 }
 
@@ -205,7 +211,13 @@ func (w *HTMLWriter) writeHeadline(h Headline) {
 }
 
 func (w *HTMLWriter) writeText(t Text) {
-	w.WriteString(html.EscapeString(htmlEntityReplacer.Replace(t.Content)))
+	if !w.htmlEscape {
+		w.WriteString(t.Content)
+	} else if t.IsRaw {
+		w.WriteString(html.EscapeString(t.Content))
+	} else {
+		w.WriteString(html.EscapeString(htmlEntityReplacer.Replace(t.Content)))
+	}
 }
 
 func (w *HTMLWriter) writeEmphasis(e Emphasis) {
@@ -219,7 +231,7 @@ func (w *HTMLWriter) writeEmphasis(e Emphasis) {
 }
 
 func (w *HTMLWriter) writeLineBreak(l LineBreak) {
-	w.WriteString("\n")
+	w.WriteString(strings.Repeat("\n", l.Count))
 }
 
 func (w *HTMLWriter) writeExplicitLineBreak(l ExplicitLineBreak) {
@@ -298,7 +310,7 @@ func (w *HTMLWriter) writeExample(e Example) {
 			w.WriteString("\n")
 		}
 	}
-	w.WriteString("\n</pre>\n")
+	w.WriteString("</pre>\n")
 }
 
 func (w *HTMLWriter) writeHorizontalRule(h HorizontalRule) {
