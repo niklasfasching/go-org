@@ -2,9 +2,7 @@
 A basic org-mode parser in go.
 Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org->html demo.
 * next
-- lists
-  definition lists
-  checkboxes
+- list checkboxes
 - more keywords: https://orgmode.org/manual/In_002dbuffer-settings.html
 * other differences to goorgeous
 - no headline ids

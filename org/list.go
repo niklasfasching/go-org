@@ -17,8 +17,15 @@ type ListItem struct {
 	Children []Node
 }
 
+type DescriptiveListItem struct {
+	Bullet  string
+	Term    []Node
+	Details []Node
+}
+
 var unorderedListRegexp = regexp.MustCompile(`^(\s*)([-]|[+]|[*])\s(.*)`)
 var orderedListRegexp = regexp.MustCompile(`^(\s*)(([0-9]+|[a-zA-Z])[.)])\s+(.*)`)
+var descriptiveListItemRegexp = regexp.MustCompile(`\s::(\s|$)`)
 
 func lexList(line string) (token, bool) {
 	if m := unorderedListRegexp.FindStringSubmatch(line); m != nil {
@@ -39,12 +46,12 @@ func stopIndentBelow(t token, minIndent int) bool {
 
 func listKind(t token) string {
 	switch bullet := t.matches[2]; {
+	case descriptiveListItemRegexp.MatchString(t.content):
+		return "descriptive"
 	case bullet == "*" || bullet == "+" || bullet == "-":
-		return bullet
-	case unicode.IsLetter(rune(bullet[0])):
-		return "letter"
-	case unicode.IsDigit(rune(bullet[0])):
-		return "number"
+		return "unordered"
+	case unicode.IsLetter(rune(bullet[0])), unicode.IsDigit(rune(bullet[0])):
+		return "ordered"
 	default:
 		panic(fmt.Sprintf("bad list bullet '%s': %#v", bullet, t))
 	}
@@ -52,20 +59,36 @@ func listKind(t token) string {
 
 func (d *Document) parseList(i int, parentStop stopFn) (int, Node) {
 	start, lvl := i, d.tokens[i].lvl
-
 	list := List{Kind: listKind(d.tokens[i])}
-	for !parentStop(d, i) && d.tokens[i].lvl == lvl && isListToken(d.tokens[i]) && listKind(d.tokens[i]) == list.Kind {
-		consumed, node := d.parseListItem(i, parentStop)
+	stop := func(*Document, int) bool {
+		if parentStop(d, i) || d.tokens[i].lvl != lvl || !isListToken(d.tokens[i]) {
+			return true
+		}
+		if list.Kind == "descriptive" {
+			return false
+		}
+		return listKind(d.tokens[i]) != list.Kind
+	}
+	for !stop(d, i) {
+		consumed, node := d.parseListItem(list, i, parentStop)
 		i += consumed
 		list.Items = append(list.Items, node)
 	}
 	return i - start, list
 }
 
-func (d *Document) parseListItem(i int, parentStop stopFn) (int, Node) {
+func (d *Document) parseListItem(l List, i int, parentStop stopFn) (int, Node) {
 	start, nodes, bullet := i, []Node{}, d.tokens[i].matches[2]
-	minIndent := d.tokens[i].lvl + len(bullet)
-	d.tokens[i] = tokenize(strings.Repeat(" ", minIndent) + d.tokens[i].content)
+	minIndent, dterm, content := d.tokens[i].lvl+len(bullet), "", d.tokens[i].content
+	if l.Kind == "descriptive" {
+		if m := descriptiveListItemRegexp.FindStringIndex(content); m != nil {
+			dterm, content = content[:m[0]], content[m[1]:]
+			if len(content) == 0 {
+				content = "\n"
+			}
+		}
+	}
+	d.tokens[i] = tokenize(strings.Repeat(" ", minIndent) + content)
 	stop := func(d *Document, i int) bool {
 		if parentStop(d, i) {
 			return true
@@ -77,6 +100,9 @@ func (d *Document) parseListItem(i int, parentStop stopFn) (int, Node) {
 		consumed, node := d.parseOne(i, stop)
 		i += consumed
 		nodes = append(nodes, node)
+	}
+	if l.Kind == "descriptive" {
+		return i - start, DescriptiveListItem{bullet, d.parseInline(dterm), nodes}
 	}
 	return i - start, ListItem{bullet, nodes}
 }

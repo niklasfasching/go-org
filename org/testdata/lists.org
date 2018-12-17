@@ -21,3 +21,11 @@
   : with an example
   : 
   : that spans multiple lines
+
+
+descriptive lists
+
+- term :: description
+- without term
+- term ::
+  description

@@ -108,3 +108,8 @@ figcaption {
 .align-left   { text-align: left;   }
 .align-center { text-align: center; }
 .align-right  { text-align: right;  }
+
+
+dl { font-family: monospace, monospace; }
+dl > dt { font-weight: bold; }
+dl > dd { margin: -1em 0 1em 1em; }

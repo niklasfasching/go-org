@@ -72,6 +72,8 @@ func (w *OrgWriter) writeNodes(ns ...Node) {
 			w.writeList(n)
 		case ListItem:
 			w.writeListItem(n)
+		case DescriptiveListItem:
+			w.writeDescriptiveListItem(n)
 
 		case Table:
 			w.writeTable(n)
@@ -226,6 +228,22 @@ func (w *OrgWriter) writeListItem(li ListItem) {
 	liWriter.indent = w.indent + strings.Repeat(" ", len(li.Bullet)+1)
 	liWriter.writeNodes(li.Children...)
 	w.WriteString(strings.TrimPrefix(liWriter.String(), liWriter.indent))
+}
+
+func (w *OrgWriter) writeDescriptiveListItem(di DescriptiveListItem) {
+	diWriter := w.emptyClone()
+	diWriter.indent = w.indent + strings.Repeat(" ", len(di.Bullet)+1)
+	diWriter.writeNodes(di.Details...)
+	details := strings.TrimPrefix(diWriter.String(), diWriter.indent)
+	w.WriteString(w.indent + di.Bullet)
+	if len(di.Term) != 0 {
+		w.WriteString(" " + w.nodesAsString(di.Term...) + " ::")
+	}
+	if len(details) > 0 && details[0] == '\n' {
+		w.WriteString(details)
+	} else {
+		w.WriteString(" " + details)
+	}
 }
 
 func (w *OrgWriter) writeTable(t Table) {

@@ -26,11 +26,9 @@ var emphasisTags = map[string][]string{
 }
 
 var listTags = map[string][]string{
-	"+":      []string{"<ul>", "</ul>"},
-	"-":      []string{"<ul>", "</ul>"},
-	"*":      []string{"<ul>", "</ul>"},
-	"number": []string{"<ol>", "</ol>"},
-	"letter": []string{"<ol>", "</ol>"},
+	"unordered":   []string{"<ul>", "</ul>"},
+	"ordered":     []string{"<ol>", "</ol>"},
+	"descriptive": []string{"<dl>", "</dl>"},
 }
 
 func NewHTMLWriter() *HTMLWriter {
@@ -84,6 +82,8 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 			w.writeList(n)
 		case ListItem:
 			w.writeListItem(n)
+		case DescriptiveListItem:
+			w.writeDescriptiveListItem(n)
 
 		case Table:
 			w.writeTable(n)
@@ -258,6 +258,18 @@ func (w *HTMLWriter) writeListItem(li ListItem) {
 	w.WriteString("<li>\n")
 	w.writeNodes(li.Children...)
 	w.WriteString("</li>\n")
+}
+
+func (w *HTMLWriter) writeDescriptiveListItem(di DescriptiveListItem) {
+	w.WriteString("<dt>\n")
+	if len(di.Term) != 0 {
+		w.writeNodes(di.Term...)
+	} else {
+		w.WriteString("?")
+	}
+	w.WriteString("<dd>\n")
+	w.writeNodes(di.Details...)
+	w.WriteString("<dd>\n")
 }
 
 func (w *HTMLWriter) writeParagraph(p Paragraph) {
