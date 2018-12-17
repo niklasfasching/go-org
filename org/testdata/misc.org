@@ -25,7 +25,7 @@ for now files can be included as:
   #+INCLUDE: "./paragraphs.html" export html
 - example block
   #+INCLUDE: "../../.travis.yml" example yaml
-*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/33][#33]]: Wrong output when mixing html with org-mode
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/33][#33]]: Wrong output when mixing html with Org mode
 #+HTML: <div class="outline-2" id="meta" style="color: green;">
 | *foo* | foo |
 | *bar* | bar |

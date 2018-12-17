@@ -1,6 +1,6 @@
 * go-org [[https://travis-ci.org/niklasfasching/go-org.svg?branch=master]]
-A basic org-mode parser in go.
-Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org->html demo.
+A basic Org mode parser in go.
+Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org -> html demo (requires wasm support).
 * next
 - test against [[https://raw.githubusercontent.com/kaushalmodi/ox-hugo/master/test/site/content-org/all-posts.org][ox-hugo all-posts.org]]
   - fix attr_html splitting - not whitespace, :x keywords, e.g.
@@ -42,4 +42,4 @@ Nonetheless, the html output can be compared by taking a look in the developer c
 - https://code.orgmode.org/bzg/org-mode/src/master/lisp/org.el
   - https://code.orgmode.org/bzg/org-mode/src/master/lisp/org-element.el
   - mostly those & ox-html.el, but yeah, all of [[https://code.orgmode.org/bzg/org-mode/src/master/lisp/]]
-- existing org-mode implementations: [[https://github.com/emacsmirror/org][org]], [[https://github.com/bdewey/org-ruby/blob/master/spec/html_examples][org-ruby]], [[https://github.com/chaseadamsio/goorgeous/][goorgeous]], [[https://github.com/jgm/pandoc/][pandoc]]
+- existing Org mode implementations: [[https://github.com/emacsmirror/org][org]], [[https://github.com/bdewey/org-ruby/blob/master/spec/html_examples][org-ruby]], [[https://github.com/chaseadamsio/goorgeous/][goorgeous]], [[https://github.com/jgm/pandoc/][pandoc]]
