@@ -1,24 +1,35 @@
 #!/bin/bash
 
-org_files=org/testdata/*.org
-examples="
-<h1>Sections</h1>
-<style>
+examples_style="
+.source {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
+}
+.org, .html {
+  border: 1px dashed grey;
+  padding: 1em;
+  overflow-x: auto;
+}
 .sections { margin-left: 2rem; }
 .sections a { display: block; padding: 0.25em 0; }
-.sections a:hover, .sections a:focus, .sections a:active { background: rgba(200, 200, 200, 0.2); }
-</style>
+.sections a:hover, .sections a:focus, .sections a:active { background: rgba(200, 200, 200, 0.2); }"
+
+org_files=org/testdata/*.org
+go_org_examples="
+<h1>Sections</h1>
+<style>$examples_style</style>
 <ul class='sections'>"
 for org_file in $org_files; do
     name=$(basename $org_file)
-    examples+="<li><a id='toc-${name}' href='#${name}'>${name}</a>"
+    go_org_examples+="<li><a id='toc-${name}' href='#${name}'>${name}</a>"
 done
 examples+="</ul><hr>"
 
 for org_file in $org_files; do
     echo generating content for $org_file
     name=$(basename $org_file)
-    examples+="
+    go_org_examples+="
       <h2><a id='${name}' href='#toc-${name}'>${name}</a></h2>
       <div class='source'>
         <pre class='org'>$(sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g;' $org_file)</pre>
@@ -91,21 +102,10 @@ convert="
 index="<html>
   <head>
     <style>$(cat etc/style.css)</style>
-    <style>
-     .source {
-       display: grid;
-       grid-template-columns: 1fr 1fr;
-       grid-gap: 1rem; }
-
-     .org, .html {
-       border: 1px dashed grey;
-       padding: 1em;
-       overflow-x: auto; }
-    </style>
   </head>
   <body>
   $convert
-  $examples
+  $go_org_examples
   </body>
 </html>"
 
@@ -120,8 +120,33 @@ convert="<html>
 </html>"
 
 mkdir -p gh-pages
+go get github.com/chaseadamsio/goorgeous
+cp etc/_goorgeous.go gh-pages/goorgeous.go
+go build -o gh-pages/goorgeous gh-pages/goorgeous.go
+go_org_vs_goorgeous_examples="<html>
+  <head>
+    <style>
+     $(cat etc/style.css)
+     $examples_style
+  </style>
+  </head>
+  <body>"
+for org_file in $org_files; do
+    echo generating content for $org_file
+    name=$(basename $org_file)
+    go_org_vs_goorgeous_examples+="
+      <h2><a id='${name}' href='#toc-${name}'>${name}</a></h2>
+      <div class='source'>
+        <div class='html'>$(./gh-pages/goorgeous $org_file)</div>
+        <div class='html'>$(./go-org $org_file html-chroma)</div>
+      </div>"
+done
+go_org_vs_goorgeous_examples+="</body></html>"
+rm gh-pages/goorgeous gh-pages/goorgeous.go
+
 echo "$index" > gh-pages/index.html
 echo "$convert" > gh-pages/convert.html
+echo "$go_org_vs_goorgeous_examples" > gh-pages/go-org-vs-goorgeous.html
 cp etc/_wasm.go gh-pages/wasm.go
 GOOS=js GOARCH=wasm go build -o gh-pages/main.wasm gh-pages/wasm.go
 rm gh-pages/wasm.go
