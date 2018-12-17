@@ -184,11 +184,6 @@ func (w *OrgWriter) writeNodeWithMeta(n NodeWithMeta) {
 	}
 	for _, attributes := range n.Meta.HTMLAttributes {
 		w.WriteString("#+ATTR_HTML: ")
-		for i := 0; i < len(attributes)-1; i += 2 {
-			if strings.ContainsAny(attributes[i+1], "\t ") {
-				attributes[i+1] = fmt.Sprintf(`"%s"`, attributes[i+1])
-			}
-		}
 		w.WriteString(strings.Join(attributes, " ") + "\n")
 	}
 	w.writeNodes(n.Node)

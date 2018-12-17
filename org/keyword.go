@@ -1,7 +1,6 @@
 package org
 
 import (
-	"encoding/csv"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
@@ -35,6 +34,7 @@ var keywordRegexp = regexp.MustCompile(`^(\s*)#\+([^:]+):(\s+(.*)|(\s*)$)`)
 var commentRegexp = regexp.MustCompile(`^(\s*)#(.*)`)
 
 var includeFileRegexp = regexp.MustCompile(`(?i)^"([^"]+)" (src|example|export) (\w+)$`)
+var attributeRegexp = regexp.MustCompile(`(?:^|\s+)(:[-\w]+)\s+(.*)$`)
 
 func lexKeywordOrComment(line string) (token, bool) {
 	if m := keywordRegexp.FindStringSubmatch(line); m != nil {
@@ -77,11 +77,21 @@ func (d *Document) parseAffiliated(i int, stop stopFn) (int, Node) {
 		case "CAPTION":
 			meta.Caption = append(meta.Caption, d.parseInline(k.Value))
 		case "ATTR_HTML":
-			r := csv.NewReader(strings.NewReader(k.Value))
-			r.Comma = ' '
-			attributes, err := r.Read()
-			if err != nil {
-				return 0, nil
+			attributes, rest := []string{}, k.Value
+			for {
+				if k, m := "", attributeRegexp.FindStringSubmatch(rest); m != nil {
+					k, rest = m[1], m[2]
+					attributes = append(attributes, k)
+					if v, m := "", attributeRegexp.FindStringSubmatchIndex(rest); m != nil {
+						v, rest = rest[:m[0]], rest[m[0]:]
+						attributes = append(attributes, v)
+					} else {
+						attributes = append(attributes, strings.TrimSpace(rest))
+						break
+					}
+				} else {
+					break
+				}
 			}
 			meta.HTMLAttributes = append(meta.HTMLAttributes, attributes)
 		default:

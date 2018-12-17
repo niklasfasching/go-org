@@ -3,9 +3,6 @@ A basic Org mode parser in go.
 Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org -> html demo (requires wasm support).
 * next
 - test against [[https://raw.githubusercontent.com/kaushalmodi/ox-hugo/master/test/site/content-org/all-posts.org][ox-hugo all-posts.org]]
-  - fix attr_html splitting - not whitespace, :x keywords, e.g.
-    #+attr_html: :caption A unicorn! :style width: 100%; height: 100%; :caption foo
-    [[/images/org-mode-unicorn-logo.png]]
 - more keywords: https://orgmode.org/manual/In_002dbuffer-settings.html
 - headlines
   - unique ids
