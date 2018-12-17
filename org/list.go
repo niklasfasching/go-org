@@ -83,9 +83,6 @@ func (d *Document) parseListItem(l List, i int, parentStop stopFn) (int, Node) {
 	if l.Kind == "descriptive" {
 		if m := descriptiveListItemRegexp.FindStringIndex(content); m != nil {
 			dterm, content = content[:m[0]], content[m[1]:]
-			if len(content) == 0 {
-				content = "\n"
-			}
 		}
 	}
 	d.tokens[i] = tokenize(strings.Repeat(" ", minIndent) + content)
@@ -96,7 +93,7 @@ func (d *Document) parseListItem(l List, i int, parentStop stopFn) (int, Node) {
 		t := d.tokens[i]
 		return t.lvl < minIndent && !(t.kind == "text" && t.content == "")
 	}
-	for !stop(d, i) && !isSecondBlankLine(d, i) {
+	for !stop(d, i) && (i <= start+1 || !isSecondBlankLine(d, i)) {
 		consumed, node := d.parseOne(i, stop)
 		i += consumed
 		nodes = append(nodes, node)

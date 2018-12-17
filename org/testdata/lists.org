@@ -24,8 +24,15 @@
 
 
 descriptive lists
-
-- term :: description
-- without term
+- term :: details
+          continued details
+- details without a term
 - term ::
-  description
+          details on a new line
+- term ::
+
+          details on a new line (with an empty line in between)
+          *continued*
+          #+BEGIN_SRC bash
+          echo "Hello World!"
+          #+END_SRC

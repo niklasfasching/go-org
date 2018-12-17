@@ -3,6 +3,10 @@ A basic org-mode parser in go.
 Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org->html demo.
 * next
 - more keywords: https://orgmode.org/manual/In_002dbuffer-settings.html
+- improve list parsing
+  - handle list items with empty first line
+  - handle checkboxes & statistic cookies
+  - handle ordered list overrides [@10]
 ** TODO list checkboxes & statistics [0/2]
 https://orgmode.org/manual/Checkboxes.html
 1. [ ] parse checkbox of list item

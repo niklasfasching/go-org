@@ -201,22 +201,30 @@ func (w *OrgWriter) writeComment(c Comment) {
 func (w *OrgWriter) writeList(l List) { w.writeNodes(l.Items...) }
 
 func (w *OrgWriter) writeListItem(li ListItem) {
-	w.WriteString(w.indent + li.Bullet + " ")
 	liWriter := w.emptyClone()
 	liWriter.indent = w.indent + strings.Repeat(" ", len(li.Bullet)+1)
 	liWriter.writeNodes(li.Children...)
-	w.WriteString(strings.TrimPrefix(liWriter.String(), liWriter.indent))
+	content := strings.TrimPrefix(liWriter.String(), liWriter.indent)
+	w.WriteString(w.indent + li.Bullet)
+	if len(content) > 0 && content[0] == '\n' {
+		w.WriteString(content)
+	} else {
+		w.WriteString(" " + content)
+	}
 }
 
 func (w *OrgWriter) writeDescriptiveListItem(di DescriptiveListItem) {
+	w.WriteString(w.indent + di.Bullet)
+	indent := w.indent + strings.Repeat(" ", len(di.Bullet)+1)
+	if len(di.Term) != 0 {
+		term := w.nodesAsString(di.Term...)
+		w.WriteString(" " + term + " ::")
+		indent = indent + strings.Repeat(" ", len(term)+4)
+	}
 	diWriter := w.emptyClone()
-	diWriter.indent = w.indent + strings.Repeat(" ", len(di.Bullet)+1)
+	diWriter.indent = indent
 	diWriter.writeNodes(di.Details...)
 	details := strings.TrimPrefix(diWriter.String(), diWriter.indent)
-	w.WriteString(w.indent + di.Bullet)
-	if len(di.Term) != 0 {
-		w.WriteString(" " + w.nodesAsString(di.Term...) + " ::")
-	}
 	if len(details) > 0 && details[0] == '\n' {
 		w.WriteString(details)
 	} else {
