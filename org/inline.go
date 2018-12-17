@@ -80,7 +80,7 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 
 func (d *Document) parseLineBreak(input string, start int) (int, Node) {
 	i := start
-	for ; input[i] == '\n'; i++ {
+	for ; i < len(input) && input[i] == '\n'; i++ {
 	}
 	return i - start, LineBreak{i - start}
 }
