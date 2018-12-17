@@ -2,14 +2,22 @@
 A basic org-mode parser in go.
 Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org->html demo.
 * next
-- list checkboxes
 - more keywords: https://orgmode.org/manual/In_002dbuffer-settings.html
+** TODO list checkboxes & statistics [0/2]
+https://orgmode.org/manual/Checkboxes.html
+1. [ ] parse checkbox of list item
+   - convert to html radio button unchecked, indeterminate (visual only), checked
+2. [ ] parse statistic cookies of headlines & first line of list items
+   -convert to =[sub 1<sup>1</sup>&frasl;<sub>2</sub>] || [90%]=
+
 * other differences to goorgeous
 - no headline ids
-- not changing links to .org files into links to .html files
+- not changing links to .org files into links to .html files - this has edge cases like [[https://github.com/chaseadamsio/goorgeous/issues/56][mangling links to e.g. example.org]].
+  could be supported for file: links though i guess
 - org comments not rendered as html comments (same as ox-html.el)
 - headline priority not exported to html (same as ox-html.el)
 - goorgeous treats all `file:` links as images - go-org checks for an image file extension (same as ox-html.el)
+- no support for [@10] in ordered lists https://github.com/chaseadamsio/goorgeous/issues/18
 * resources
 - https://orgmode.org/manual/
 - https://orgmode.org/worg/dev/org-syntax.html
