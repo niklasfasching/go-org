@@ -162,8 +162,11 @@ func (w *OrgWriter) writeFootnoteDefinition(f FootnoteDefinition) {
 }
 
 func (w *OrgWriter) writeParagraph(p Paragraph) {
-	w.writeNodes(p.Children...)
-	w.WriteString("\n")
+	content := w.nodesAsString(p.Children...)
+	if len(content) > 0 && content[0] != '\n' {
+		w.WriteString(w.indent)
+	}
+	w.WriteString(content + "\n")
 }
 
 func (w *OrgWriter) writeExample(e Example) {

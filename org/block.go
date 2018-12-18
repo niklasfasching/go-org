@@ -31,24 +31,24 @@ func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
 	name, parameters := t.content, strings.Fields(t.matches[3])
 	trim := trimIndentUpTo(d.tokens[i].lvl)
 	stop := func(d *Document, i int) bool {
-		return parentStop(d, i) || (d.tokens[i].kind == "endBlock" && d.tokens[i].content == name)
+		return i >= len(d.tokens) || (d.tokens[i].kind == "endBlock" && d.tokens[i].content == name)
 	}
-	block, consumed, i := Block{name, parameters, nil}, 0, i+1
+	block, i := Block{name, parameters, nil}, i+1
 	if isRawTextBlock(name) {
 		rawText := ""
 		for ; !stop(d, i); i++ {
 			rawText += trim(d.tokens[i].matches[0]) + "\n"
 		}
-		consumed = i - start
 		block.Children = d.parseRawInline(rawText)
 	} else {
-		consumed, block.Children = d.parseMany(i, stop)
-		consumed++ // line with BEGIN
+		consumed, nodes := d.parseMany(i, stop)
+		block.Children = nodes
+		i += consumed
 	}
-	if parentStop(d, i) {
-		return 0, nil
+	if i < len(d.tokens) && d.tokens[i].kind == "endBlock" && d.tokens[i].content == name {
+		return i + 1 - start, block
 	}
-	return consumed + 1, block
+	return 0, nil
 }
 
 func trimIndentUpTo(max int) func(string) string {

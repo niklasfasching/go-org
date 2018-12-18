@@ -86,3 +86,41 @@ paragraphs
 <script>
 console.log("Hello World!")
 </script>
+<ul>
+<li>
+<p>
+list item 1
+blocks can contain unindented lines that would normally end a list item
+</p>
+<pre class="example">
+this line is not indented - if it was outside of a block the list item would end
+</pre>
+<p>
+now we&#39;re outside the block again and the following unindented line will be outside of the list item
+</p>
+</li>
+</ul>
+<p>
+this unindented line is outside of the list item
+</p>
+<ul>
+<li>
+<p>
+list item 2
+</p>
+<div class="highlight">
+<pre>
+#+BEGIN_EXAMPLE
+</pre>
+</div>
+<p>
+#+END_EXAMPLE
+</p>
+<p>
+#+BEGIN_QUOTE
+</p>
+<pre class="example">
+#+END_QUOTE
+</pre>
+</li>
+</ul>

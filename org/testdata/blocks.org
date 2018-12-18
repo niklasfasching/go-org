@@ -48,3 +48,21 @@ blocks can contain other elements like
 console.log("Hello World!")
 </script>
 #+END_EXPORT
+
+- list item 1
+  blocks can contain unindented lines that would normally end a list item
+  #+BEGIN_EXAMPLE
+this line is not indented - if it was outside of a block the list item would end
+  #+END_EXAMPLE
+  now we're outside the block again and the following unindented line will be outside of the list item
+this unindented line is outside of the list item
+- list item 2
+  #+BEGIN_SRC
+  #+BEGIN_EXAMPLE
+  #+END_SRC
+  #+END_EXAMPLE
+
+  #+BEGIN_QUOTE
+  #+BEGIN_EXAMPLE
+  #+END_QUOTE
+  #+END_EXAMPLE
