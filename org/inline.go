@@ -15,6 +15,8 @@ type Text struct {
 type LineBreak struct{ Count int }
 type ExplicitLineBreak struct{}
 
+type StatisticToken struct{ Content string }
+
 type Emphasis struct {
 	Kind    string
 	Content []Node
@@ -39,6 +41,7 @@ var videoExtensionRegexp = regexp.MustCompile(`^[.](webm|mp4)$`)
 
 var subScriptSuperScriptRegexp = regexp.MustCompile(`([_^])\{(.*?)\}`)
 var footnoteRegexp = regexp.MustCompile(`\[fn:([\w-]+?)(:(.*?))?\]`)
+var statisticsTokenRegexp = regexp.MustCompile(`\[(\d+/\d+|\d+%)\]`)
 
 func (d *Document) parseInline(input string) (nodes []Node) {
 	previous, current := 0, 0
@@ -54,7 +57,7 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 		case '=', '~':
 			consumed, node = d.parseEmphasis(input, current, true)
 		case '[':
-			consumed, node = d.parseRegularLinkOrFootnoteReference(input, current)
+			consumed, node = d.parseOpeningBracket(input, current)
 		case '\\':
 			consumed, node = d.parseExplicitLineBreak(input, current)
 		case '\n':
@@ -140,11 +143,13 @@ func (d *Document) parseSubScriptOrEmphasis(input string, start int) (int, Node)
 	return d.parseEmphasis(input, start, false)
 }
 
-func (d *Document) parseRegularLinkOrFootnoteReference(input string, start int) (int, Node) {
+func (d *Document) parseOpeningBracket(input string, start int) (int, Node) {
 	if len(input[start:]) >= 2 && input[start] == '[' && input[start+1] == '[' {
 		return d.parseRegularLink(input, start)
-	} else if len(input[start:]) >= 1 && input[start] == '[' {
+	} else if footnoteRegexp.MatchString(input[start:]) {
 		return d.parseFootnoteReference(input, start)
+	} else if statisticsTokenRegexp.MatchString(input[start:]) {
+		return d.parseStatisticToken(input, start)
 	}
 	return 0, nil
 }
@@ -158,6 +163,13 @@ func (d *Document) parseFootnoteReference(input string, start int) (int, Node) {
 			d.Footnotes.add(name, link.Definition)
 		}
 		return len(m[0]), link
+	}
+	return 0, nil
+}
+
+func (d *Document) parseStatisticToken(input string, start int) (int, Node) {
+	if m := statisticsTokenRegexp.FindStringSubmatch(input[start:]); m != nil {
+		return len(m[1]) + 2, StatisticToken{m[1]}
 	}
 	return 0, nil
 }

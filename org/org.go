@@ -86,6 +86,8 @@ func (w *OrgWriter) writeNodes(ns ...Node) {
 			w.writeText(n)
 		case Emphasis:
 			w.writeEmphasis(n)
+		case StatisticToken:
+			w.writeStatisticToken(n)
 		case LineBreak:
 			w.writeLineBreak(n)
 		case ExplicitLineBreak:
@@ -283,6 +285,10 @@ func (w *OrgWriter) writeEmphasis(e Emphasis) {
 	w.WriteString(borders[0])
 	w.writeNodes(e.Content...)
 	w.WriteString(borders[1])
+}
+
+func (w *OrgWriter) writeStatisticToken(s StatisticToken) {
+	w.WriteString(fmt.Sprintf("[%s]", s.Content))
 }
 
 func (w *OrgWriter) writeLineBreak(l LineBreak) {

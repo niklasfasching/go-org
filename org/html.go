@@ -103,6 +103,8 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 			w.writeText(n)
 		case Emphasis:
 			w.writeEmphasis(n)
+		case StatisticToken:
+			w.writeStatisticToken(n)
 		case ExplicitLineBreak:
 			w.writeExplicitLineBreak(n)
 		case LineBreak:
@@ -232,6 +234,10 @@ func (w *HTMLWriter) writeEmphasis(e Emphasis) {
 	w.WriteString(tags[0])
 	w.writeNodes(e.Content...)
 	w.WriteString(tags[1])
+}
+
+func (w *HTMLWriter) writeStatisticToken(s StatisticToken) {
+	w.WriteString(fmt.Sprintf(`<code class="statistic">[%s]</code>`, s.Content))
 }
 
 func (w *HTMLWriter) writeLineBreak(l LineBreak) {
