@@ -1,11 +1,11 @@
-- unordered list item 1
+- [ ] unordered list item 1
 - unordered list item 2 - with ~inline~ /markup/
-  1. ordered sublist item 1
-     a) ordered sublist item 1
-     b) ordered sublist item 2
-     c) ordered sublist item 3
+  1. [-] ordered sublist item 1
+     a) [X] ordered sublist item 1
+     b) [ ] ordered sublist item 2
+     c) [X] ordered sublist item 3
   2. ordered sublist item 2
-- unordered list item 3 - and a [[https://example.com][link]]
+- [X] unordered list item 3 - and a [[https://example.com][link]]
   and some lines of text
   1. and another subitem
      #+BEGIN_SRC sh
@@ -24,10 +24,10 @@
 
 
 descriptive lists
-- term :: details
+- [ ] term :: details
           continued details
-- details without a term
-- term ::
+- [ ] details without a term
+- [X] term ::
           details on a new line
 - term ::
 

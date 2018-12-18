@@ -203,6 +203,9 @@ func (w *OrgWriter) writeListItem(li ListItem) {
 	liWriter.writeNodes(li.Children...)
 	content := strings.TrimPrefix(liWriter.String(), liWriter.indent)
 	w.WriteString(w.indent + li.Bullet)
+	if li.Status != "" {
+		w.WriteString(fmt.Sprintf(" [%s]", li.Status))
+	}
 	if len(content) > 0 && content[0] == '\n' {
 		w.WriteString(content)
 	} else {
@@ -212,6 +215,9 @@ func (w *OrgWriter) writeListItem(li ListItem) {
 
 func (w *OrgWriter) writeDescriptiveListItem(di DescriptiveListItem) {
 	w.WriteString(w.indent + di.Bullet)
+	if di.Status != "" {
+		w.WriteString(fmt.Sprintf(" [%s]", di.Status))
+	}
 	indent := w.indent + strings.Repeat(" ", len(di.Bullet)+1)
 	if len(di.Term) != 0 {
 		term := w.nodesAsString(di.Term...)

@@ -34,6 +34,12 @@ var listTags = map[string][]string{
 	"descriptive": []string{"<dl>", "</dl>"},
 }
 
+var listItemStatuses = map[string]string{
+	" ": "unchecked",
+	"-": "indeterminate",
+	"X": "checked",
+}
+
 func NewHTMLWriter() *HTMLWriter {
 	return &HTMLWriter{
 		htmlEscape:            true,
@@ -283,13 +289,22 @@ func (w *HTMLWriter) writeList(l List) {
 }
 
 func (w *HTMLWriter) writeListItem(li ListItem) {
-	w.WriteString("<li>\n")
+	if li.Status != "" {
+		w.WriteString(fmt.Sprintf("<li class=\"%s\">\n", listItemStatuses[li.Status]))
+	} else {
+		w.WriteString("<li>\n")
+	}
 	w.writeNodes(li.Children...)
 	w.WriteString("</li>\n")
 }
 
 func (w *HTMLWriter) writeDescriptiveListItem(di DescriptiveListItem) {
-	w.WriteString("<dt>\n")
+	if di.Status != "" {
+		w.WriteString(fmt.Sprintf("<dt class=\"%s\">\n", listItemStatuses[di.Status]))
+	} else {
+		w.WriteString("<dt>\n")
+	}
+
 	if len(di.Term) != 0 {
 		w.writeNodes(di.Term...)
 	} else {
