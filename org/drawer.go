@@ -26,12 +26,26 @@ func (d *Document) parseDrawer(i int, parentStop stopFn) (int, Node) {
 	drawer, start := Drawer{Name: strings.ToUpper(d.tokens[i].content)}, i
 	i++
 	stop := func(d *Document, i int) bool {
-		return parentStop(d, i) || d.tokens[i].kind == "endDrawer" || d.tokens[i].kind == "headline"
+		if parentStop(d, i) {
+			return true
+		}
+		kind := d.tokens[i].kind
+		return kind == "beginDrawer" || kind == "endDrawer" || kind == "headline"
 	}
-	consumed, nodes := d.parseMany(i, stop)
-	drawer.Children = nodes
-	if d.tokens[i+consumed].kind == "endDrawer" {
-		consumed++
+	for {
+		consumed, nodes := d.parseMany(i, stop)
+		i += consumed
+		drawer.Children = append(drawer.Children, nodes...)
+		if i < len(d.tokens) && d.tokens[i].kind == "beginDrawer" {
+			p := Paragraph{[]Node{Text{d.tokens[i].content, false}}}
+			drawer.Children = append(drawer.Children, p)
+			i++
+		} else {
+			break
+		}
 	}
-	return i + consumed - start, drawer
+	if i < len(d.tokens) && d.tokens[i].kind == "endDrawer" {
+		i++
+	}
+	return i - start, drawer
 }
