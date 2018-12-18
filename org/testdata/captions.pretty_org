@@ -1,0 +1,16 @@
+Anything can be captioned. Also captions are not real, correct captions but just a paragraph below the element (bothe wrapped into a div)
+
+#+CAPTION: captioned soure block
+#+BEGIN_SRC sh
+echo "i have a caption!"
+#+END_SRC
+
+#+CAPTION: captioned link (image in this case)
+[[https://placekitten.com/200/200#.png]]
+
+note that the whole paragraph is captioned, so a linebreak is needed for images to caption correctly
+
+#+CAPTION: captioned link (image in this case)
+[[https://placekitten.com/200/200#.png]]
+see?
+

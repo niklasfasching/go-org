@@ -2,4 +2,5 @@
 
 for org_file in org/testdata/*.org; do
     ./go-org $org_file html > org/testdata/$(basename $org_file .org).html
+    ./go-org $org_file org > org/testdata/$(basename $org_file .org).pretty_org
 done

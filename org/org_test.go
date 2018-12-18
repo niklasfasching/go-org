@@ -12,8 +12,8 @@ import (
 
 func TestOrgWriter(t *testing.T) {
 	for _, path := range orgTestFiles() {
-		expected := fileString(path)
-		reader, writer := strings.NewReader(expected), NewOrgWriter()
+		expected := fileString(path[:len(path)-len(".org")] + ".pretty_org")
+		reader, writer := strings.NewReader(fileString(path)), NewOrgWriter()
 		actual, err := NewDocument().SetPath(path).Parse(reader).Write(writer)
 		if err != nil {
 			t.Errorf("%s\n got error: %s", path, err)

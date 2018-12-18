@@ -1,0 +1,14 @@
+
+#+CAPTION: and _multiple_
+#+CAPTION: lines of *captions*!
+#+ATTR_HTML: :class a b
+#+ATTR_HTML: :id it :class c d
+#+BEGIN_SRC sh
+echo "a bash source block with custom html attributes"
+#+END_SRC
+
+and an image with custom html attributes and a caption
+#+CAPTION: kittens!
+#+ATTR_HTML: :style height: 100%; :id overwritten
+#+ATTR_HTML: :style border: 10px solid black; :id kittens
+[[https://placekitten.com/200/200#.png]]

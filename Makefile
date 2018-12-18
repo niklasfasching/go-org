@@ -23,12 +23,12 @@ render:
 	go run main.go org/testdata/$(case).org html | html2text
 
 .PHONY: generate
-generate: generate-gh-pages generate-html-fixtures
+generate: generate-gh-pages generate-fixtures
 
 .PHONY: generate-gh-pages
 generate-gh-pages: build
 	./etc/generate-gh-pages
 
-.PHONY: generate-html-fixtures
-generate-html-fixtures: build
-	./etc/generate-html-fixtures
+.PHONY: generate-fixtures
+generate-fixtures: build
+	./etc/generate-fixtures

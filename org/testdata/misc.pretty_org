@@ -1,0 +1,114 @@
+** issues from goorgeous (free test cases, yay!)
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/19][#19]]: Support #+HTML
+#+HTML: <p style="border: 1px dotted grey">neato!</p>
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/29][#29:]] Support verse block
+#+BEGIN_VERSE
+This
+*is*
+verse
+#+END_VERSE
+
+#+BEGIN_CUSTOM
+or even a *totally* /custom/ kind of block
+crazy ain't it?
+#+END_CUSTOM
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/31][#31]]: Support #+INCLUDE
+Note that only src/example/export block inclusion is supported for now.
+There's quite a lot more to include (see the [[https://orgmode.org/manual/Include-files.html][org manual for include files]]) but I
+don't have a use case for this yet and stuff like namespacing footnotes of included files
+adds quite a bit of complexity.
+
+for now files can be included as:
+- src block
+  #+INCLUDE: "./headlines.org" src org
+- export block
+  #+INCLUDE: "./paragraphs.html" export html
+- example block
+  #+INCLUDE: "../../.travis.yml" example yaml
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/33][#33]]: Wrong output when mixing html with Org mode
+#+HTML: <div class="outline-2" id="meta" style="color: green;">
+| *foo* | foo |
+| *bar* | bar |
+#+HTML: </div>
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/46][#46]]: Support for symbols like ndash and mdash
+- ndash --
+- mdash ---
+- ellipsis ...
+- acute \Aacute and so on
+- note that ------ is replaced with 2 mdashes and .... becomes ellipsis+. and so on - that's how org also does it
+
+
+
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/47][#47:]] Consecutive ~code~ wrapped text gets joined
+either ~this~ or ~that~ foo.
+either ~this~
+or ~that~ foo.
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/50][#50]]: LineBreaks in lists are preserved
+- this list item
+  has
+  multiple
+  linbreaks - but it's still just one paragraph (i.e. no line breaks are rendered)
+- foobar
+1. same
+   goes
+   for
+   ordered
+   lists
+2. foo
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/68][#68]]: Quote block with inline markup
+#+BEGIN_QUOTE
+[[https://www.example.com][/this/ *is* _markup_!]]
+#+END_QUOTE
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/72][#72]]: Support for #+ATTR_HTML
+#+ATTR_HTML: :alt Go is fine though. :id gopher-image
+#+ATTR_HTML: :width 300 :style border:2px solid black;
+[[https://golang.org/doc/gopher/pkg.png]]
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/75][#75]]: Not parsing nested lists correctly
+- bullet 1
+  - sub bullet
+
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/77][#77]]: Recognize =code=--- as code plus dash
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/78][#78]]: Emphasis at beginning of line
+/italics/
+
+
+Text
+/italics/
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/82][#82]]: Crash on empty headline
+**** 
+just a space as title...
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/84][#84]]: Paragraphs that are not followed by an empty line are not parsed correctly
+**** Foo
+Foo paragraph.
+**** Bar
+Bar paragraph
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/86][#86]]: Multiple hyphens not converted to dashes
+just like #46
+- =--= -> -- (en dash)
+- =---= -> --- (em dash)
+
+also, consecutive dashes inside
+- inline code =--= =---= and verbatim ~--~ ~---~
+- src/example/export blocks should not be converted!
+  #+BEGIN_SRC sh
+  --, ---
+  #+END_SRC
+
+  #+BEGIN_EXAMPLE
+  --, ---
+  #+END_EXAMPLE
+
+  #+BEGIN_EXPORT html
+  --, ---
+  #+END_EXPORT
+
+  : --, ---
+
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/87][#87]]: Markup in footnotes is rendered literally
+footnotes can contain *markup* - and other elements and stuff [fn:2:that also goes for *inline* footnote /definitions/]
+
+* Footnotes
+
+[fn:1] a footnote /with/ *markup*
+- and a *list*
+- because that's possible

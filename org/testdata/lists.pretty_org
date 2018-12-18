@@ -1,0 +1,38 @@
+- [ ] unordered list item 1
+- unordered list item 2 - with ~inline~ /markup/
+  1. [-] ordered sublist item 1
+     a) [X] ordered sublist item 1
+     b) [ ] ordered sublist item 2
+     c) [X] ordered sublist item 3
+  2. ordered sublist item 2
+- [X] unordered list item 3 - and a [[https://example.com][link]]
+  and some lines of text
+  1. and another subitem
+     #+BEGIN_SRC sh
+     echo with a block
+     #+END_SRC
+  2. and another one with a table
+     | a | b | c |
+     |---+---+---|
+     | 1 | 2 | 3 |
+
+     and text with an empty line in between as well!
+- unordered list item 4
+  : with an example
+  : 
+  : that spans multiple lines
+
+
+descriptive lists
+- [ ] term :: details
+          continued details
+- [ ] details without a term
+- [X] term ::
+          details on a new line
+- term ::
+
+          details on a new line (with an empty line in between)
+          *continued*
+          #+BEGIN_SRC bash
+          echo "Hello World!"
+          #+END_SRC

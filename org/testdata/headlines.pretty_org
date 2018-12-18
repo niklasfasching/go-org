@@ -1,0 +1,19 @@
+* Simple Headline [1/2]
+- [X] checked
+- [ ] unchecked
+- note that statistic tokens are marked up anywhere
+  not just where they are actually meant to be - even here > [100%] <
+  (Org mode proper does the same)
+* TODO [#B] Headline with todo status & priority
+* DONE Headline with TODO status
+:PROPERTIES:
+:Note: property drawers are not exported as html like other drawers
+:END:
+
+the *content*
+* [#A] Headline with tags & priority                                :foo:bar:
+Still outside the drawer
+:DRAWERNAME:
+This is inside the drawer
+:END:
+Still outside the drawer

@@ -1,0 +1,29 @@
+#+CAPTION: table with separator before and after header
+|---+---+---|
+| a | b | c |
+|---+---+---|
+| 1 | 2 | 3 |
+
+#+CAPTION: table with separator after header
+| a | b | c |
+|---+---+---|
+| 1 | 2 | 3 |
+
+#+CAPTION: table without header (but separator before)
+|---+---+---|
+| 1 | 2 | 3 |
+
+#+CAPTION: table without header
+| 1 | 2 | 3 |
+
+#+CAPTION: table with aligned columns
+| left aligned | right aligned | center aligned |
+|--------------+---------------+----------------|
+| <l>          |           <r> |       <c>      |
+| 42           |            42 |       42       |
+| foobar       |        foobar |     foobar     |
+
+#+CAPTION: table with right aligned columns (because numbers)
+| long column a | long column b | long column c |
+|---------------+---------------+---------------|
+|             1 |             2 |             3 |
