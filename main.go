@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -15,11 +16,10 @@ import (
 )
 
 func main() {
-	log.SetFlags(0)
-	log.SetOutput(os.Stdout)
+	log := log.New(os.Stderr, "", 0)
 	if len(os.Args) < 3 {
 		log.Println("USAGE: org FILE OUTPUT_FORMAT")
-		log.Fatal("supported output formats: org, html, html-chroma")
+		log.Fatal("Supported output formats: org, html, html-chroma")
 	}
 	path := os.Args[1]
 	bs, err := ioutil.ReadFile(path)
@@ -43,7 +43,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Print(out)
+	fmt.Fprint(os.Stdout, out)
 }
 
 func highlightCodeBlock(source, lang string) string {
