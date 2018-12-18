@@ -111,8 +111,7 @@ func (d *Document) parseAffiliated(i int, stop stopFn) (int, Node) {
 
 func parseKeyword(t token) Keyword {
 	k, v := t.matches[2], t.matches[4]
-	k = strings.ToUpper(k)
-	return Keyword{k, v}
+	return Keyword{strings.ToUpper(k), strings.TrimSpace(v)}
 }
 
 func (d *Document) newInclude(k Keyword) (int, Node) {
