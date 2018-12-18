@@ -206,7 +206,7 @@ func (w *HTMLWriter) writeHeadline(h Headline) {
 		w.WriteString(fmt.Sprintf(`<span class="todo">%s</span>`, h.Status) + "\n")
 	}
 	if h.Priority != "" {
-		w.WriteString(fmt.Sprintf(`<span class="priority">%s</span>`, h.Priority) + "\n")
+		w.WriteString(fmt.Sprintf(`<span class="priority">[%s]</span>`, h.Priority) + "\n")
 	}
 
 	w.WriteString(title)
