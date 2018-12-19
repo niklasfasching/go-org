@@ -28,7 +28,9 @@ empty lines!
 
 it also has multiple parameters
 
-note that /inline/ *markup* ignored
+src, example & export blocks treat their content as raw text
+/inline/ *markup* is ignored
+      and whitespace is honored and not removed
 </pre>
 <pre class="example">
 examples like this
@@ -40,7 +42,7 @@ note that /inline/ *markup* ignored
 Mongodb is <strong>webscale</strong>. (source: <a href="http://www.mongodb-is-web-scale.com/">mongodb-is-web-scale</a>)
 </p>
 <p>
-blocks can contain other elements like
+blocks like the quote block parse their content and can contain
 </p>
 <ul>
 <li>
@@ -82,6 +84,10 @@ paragraphs
 </p>
 </li>
 </ul>
+<p>
+also whitespace is not significant
+and superfluous whitespace (at the beginning of the line) is removed
+</p>
 </blockquote>
 <script>
 console.log("Hello World!")
@@ -95,6 +101,11 @@ blocks can contain unindented lines that would normally end a list item
 <pre class="example">
 this line is not indented - if it was outside of a block the list item would end
 </pre>
+<blockquote>
+<p>
+this line is not indented - if it was outside of a block the list item would end
+</p>
+</blockquote>
 <p>
 now we&#39;re outside the block again and the following unindented line will be outside of the list item
 </p>

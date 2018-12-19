@@ -117,12 +117,11 @@ func (w *OrgWriter) writeHeadline(h Headline) {
 	tmp.writeNodes(h.Title...)
 	hString := tmp.String()
 	if len(h.Tags) != 0 {
-		hString += " "
 		tString := ":" + strings.Join(h.Tags, ":") + ":"
 		if n := w.TagsColumn - len(tString) - len(hString); n > 0 {
 			w.WriteString(hString + strings.Repeat(" ", n) + tString)
 		} else {
-			w.WriteString(hString + tString)
+			w.WriteString(hString + " " + tString)
 		}
 	} else {
 		w.WriteString(hString)
@@ -142,8 +141,14 @@ func (w *OrgWriter) writeBlock(b Block) {
 	if len(b.Parameters) != 0 {
 		w.WriteString(" " + strings.Join(b.Parameters, " "))
 	}
-	w.WriteString("\n" + w.indent)
+	w.WriteString("\n")
+	if isRawTextBlock(b.Name) {
+		w.WriteString(w.indent)
+	}
 	w.writeNodes(b.Children...)
+	if !isRawTextBlock(b.Name) {
+		w.WriteString(w.indent)
+	}
 	w.WriteString("#+END_" + b.Name + "\n")
 }
 
@@ -178,7 +183,11 @@ func (w *OrgWriter) writeExample(e Example) {
 }
 
 func (w *OrgWriter) writeKeyword(k Keyword) {
-	w.WriteString(w.indent + fmt.Sprintf("#+%s: %s\n", k.Key, k.Value))
+	w.WriteString(w.indent + "#+" + k.Key + ":")
+	if k.Value != "" {
+		w.WriteString(" " + k.Value)
+	}
+	w.WriteString("\n")
 }
 
 func (w *OrgWriter) writeNodeWithMeta(n NodeWithMeta) {
@@ -195,7 +204,7 @@ func (w *OrgWriter) writeNodeWithMeta(n NodeWithMeta) {
 }
 
 func (w *OrgWriter) writeComment(c Comment) {
-	w.WriteString(w.indent + "#" + c.Content)
+	w.WriteString(w.indent + "#" + c.Content + "\n")
 }
 
 func (w *OrgWriter) writeList(l List) { w.writeNodes(l.Items...) }

@@ -22,7 +22,9 @@ empty lines!
 
 it also has multiple parameters
 
-note that /inline/ *markup* ignored
+src, example & export blocks treat their content as raw text
+/inline/ *markup* is ignored
+      and whitespace is honored and not removed
 #+END_EXAMPLE
 
 : examples like this
@@ -32,7 +34,7 @@ note that /inline/ *markup* ignored
 #+BEGIN_QUOTE
 Mongodb is *webscale*. (source: [[http://www.mongodb-is-web-scale.com/][mongodb-is-web-scale]])
 
-blocks can contain other elements like
+blocks like the quote block parse their content and can contain
 - lists
 - inline /markup/
 - tables
@@ -41,6 +43,10 @@ blocks can contain other elements like
   | baz |
 - paragraphs
 - ...
+
+
+      also whitespace is not significant
+            and superfluous whitespace (at the beginning of the line) is removed
 #+END_QUOTE
 
 #+BEGIN_EXPORT html
@@ -54,6 +60,9 @@ console.log("Hello World!")
   #+BEGIN_EXAMPLE
 this line is not indented - if it was outside of a block the list item would end
   #+END_EXAMPLE
+  #+BEGIN_QUOTE
+this line is not indented - if it was outside of a block the list item would end
+  #+END_QUOTE
   now we're outside the block again and the following unindented line will be outside of the list item
 this unindented line is outside of the list item
 - list item 2
