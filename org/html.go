@@ -169,11 +169,9 @@ func (w *HTMLWriter) writeDrawer(d Drawer) {
 	w.writeNodes(d.Children...)
 }
 
-func (w *HTMLWriter) writeKeyword(kw Keyword) {
-	if k, v := kw.Key, kw.Value; k == "HTML" {
-		w.WriteString(v + "\n")
-	} else if k == "HUGO" && v == "more" {
-		w.WriteString("<!--more-->\n")
+func (w *HTMLWriter) writeKeyword(k Keyword) {
+	if k.Key == "HTML" {
+		w.WriteString(k.Value + "\n")
 	}
 }
 

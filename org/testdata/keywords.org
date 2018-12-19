@@ -12,7 +12,3 @@ and an image with custom html attributes and a caption
 #+ATTR_HTML: :style height: 100%; :id overwritten
 #+ATTR_HTML: :style border: 10px solid black; :id kittens
 [[https://placekitten.com/200/200#.png]]
-
-
-This will be exported as <!--more--> just for hugo
-#+HUGO: more
