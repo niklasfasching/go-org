@@ -100,10 +100,11 @@ func (d *Document) Write(w Writer) (out string, err error) {
 	return w.String(), err
 }
 
-func (d *Document) Parse(input io.Reader) *Document {
+func (dIn *Document) Parse(input io.Reader) (d *Document) {
+	d = dIn
 	defer func() {
-		if err := recover(); err != nil {
-			d.Error = fmt.Errorf("could not parse input: %s", err)
+		if recovered := recover(); recovered != nil {
+			d.Error = fmt.Errorf("could not parse input: %v", recovered)
 		}
 	}()
 	if d.tokens != nil {
