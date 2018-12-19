@@ -36,3 +36,28 @@ descriptive lists
           #+BEGIN_SRC bash
           echo "Hello World!"
           #+END_SRC
+
+some list termination tests
+
+- unordered 1
+- unordered 2
+1. ordered 1
+2. ordered 2
+
+
+1. ordered 1
+2. ordered 2
+- unordered 1
+- unordered 2
+
+
+1. ordered 1
+2. ordered 2
+- unordered descriptive :: 1
+- unordered descriptive :: 2
+
+
+1. ordered descriptive :: 1
+2. ordered descriptive :: 2
+- unordered 1
+- unordered 2

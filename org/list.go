@@ -25,7 +25,7 @@ type DescriptiveListItem struct {
 	Details []Node
 }
 
-var unorderedListRegexp = regexp.MustCompile(`^(\s*)([-]|[+]|[*])\s(.*)`)
+var unorderedListRegexp = regexp.MustCompile(`^(\s*)([+*-])\s(.*)`)
 var orderedListRegexp = regexp.MustCompile(`^(\s*)(([0-9]+|[a-zA-Z])[.)])\s+(.*)`)
 var descriptiveListItemRegexp = regexp.MustCompile(`\s::(\s|$)`)
 var listItemStatusRegexp = regexp.MustCompile(`\[( |X|-)\]\s`)
@@ -47,30 +47,32 @@ func stopIndentBelow(t token, minIndent int) bool {
 	return t.lvl < minIndent && !(t.kind == "text" && t.content == "")
 }
 
-func listKind(t token) string {
+func listKind(t token) (string, string) {
+	kind := ""
 	switch bullet := t.matches[2]; {
-	case descriptiveListItemRegexp.MatchString(t.content):
-		return "descriptive"
 	case bullet == "*" || bullet == "+" || bullet == "-":
-		return "unordered"
+		kind = "unordered"
 	case unicode.IsLetter(rune(bullet[0])), unicode.IsDigit(rune(bullet[0])):
-		return "ordered"
+		kind = "ordered"
 	default:
 		panic(fmt.Sprintf("bad list bullet '%s': %#v", bullet, t))
 	}
+	if descriptiveListItemRegexp.MatchString(t.content) {
+		return kind, "descriptive"
+	}
+	return kind, kind
 }
 
 func (d *Document) parseList(i int, parentStop stopFn) (int, Node) {
 	start, lvl := i, d.tokens[i].lvl
-	list := List{Kind: listKind(d.tokens[i])}
+	listMainKind, kind := listKind(d.tokens[i])
+	list := List{Kind: kind}
 	stop := func(*Document, int) bool {
 		if parentStop(d, i) || d.tokens[i].lvl != lvl || !isListToken(d.tokens[i]) {
 			return true
 		}
-		if list.Kind == "descriptive" {
-			return false
-		}
-		return listKind(d.tokens[i]) != list.Kind
+		itemMainKind, _ := listKind(d.tokens[i])
+		return itemMainKind != listMainKind
 	}
 	for !stop(d, i) {
 		consumed, node := d.parseListItem(list, i, parentStop)
