@@ -9,18 +9,18 @@ import (
 type frontMatterTest struct {
 	name     string
 	input    string
-	handler  func(string, string) interface{}
+	handler  func(FrontMatter, string, string) error
 	expected map[string]interface{}
 }
 
 var frontMatterTests = []frontMatterTest{
 	{`basic`,
 		`#+TITLE: The Title`,
-		DefaultFrontMatterHandler,
-		map[string]interface{}{"TITLE": "The Title"}},
+		FrontMatterHandler,
+		map[string]interface{}{"title": "The Title"}},
 	{`empty`,
 		`* No frontmatter here`,
-		DefaultFrontMatterHandler,
+		FrontMatterHandler,
 		map[string]interface{}{}},
 	{`custom handler`,
 		`
@@ -29,17 +29,18 @@ var frontMatterTests = []frontMatterTest{
         #+TAGS: foo bar
 
         `,
-		func(k, v string) interface{} {
-			switch k {
-			case "TITLE":
-				return "Thanks For All The Fish"
+		func(fm FrontMatter, k, v string) error {
+			switch k := strings.ToLower(k); k {
+			case "title":
+				fm[k] = "Thanks For All The Fish"
+				return nil
 			default:
-				return DefaultFrontMatterHandler(k, v)
+				return FrontMatterHandler(fm, k, v)
 			}
 		},
 		map[string]interface{}{
-			"TITLE": "Thanks For All The Fish",
-			"TAGS":  []string{"foo", "bar"},
+			"title": "Thanks For All The Fish",
+			"tags":  []string{"foo", "bar"},
 		}},
 	{`multiple + ignored keyword`,
 		`
@@ -49,22 +50,28 @@ var frontMatterTests = []frontMatterTest{
          #+OTHER: some other keyword
          #+TAGS: this will become []string
 
+         #+ALIASES: foo bar
+         #+ALIASES: baz bam
+         #+categories: foo bar
+
          something that's not a keyword or a text line without content
 
          #+SUBTITLE: The Subtitle`,
-		DefaultFrontMatterHandler,
+		FrontMatterHandler,
 		map[string]interface{}{
-			"TITLE":  "The Title",
-			"AUTHOR": "The Author",
-			"OTHER":  "some other keyword",
-			"TAGS":   []string{"this", "will", "become", "[]string"},
+			"title":      "The Title",
+			"author":     "The Author",
+			"other":      "some other keyword",
+			"tags":       []string{"this", "will", "become", "[]string"},
+			"aliases":    []string{"foo", "bar", "baz", "bam"},
+			"categories": []string{"foo", "bar"},
 		},
 	},
 }
 
 func TestParseFrontMatter(t *testing.T) {
 	for _, test := range frontMatterTests {
-		actual, err := NewDocument().FrontMatter(strings.NewReader(test.input), test.handler)
+		actual, err := GetFrontMatter(strings.NewReader(test.input), test.handler)
 		if err != nil {
 			t.Errorf("%s\n got error: %s", test.name, err)
 			continue

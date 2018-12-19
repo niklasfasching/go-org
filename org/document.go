@@ -30,6 +30,7 @@ type Writer interface {
 }
 
 type Node interface{}
+type FrontMatter = map[string]interface{}
 
 type lexFn = func(line string) (t token, ok bool)
 type parseFn = func(*Document, int, stopFn) (int, Node)
@@ -57,13 +58,14 @@ var lexFns = []lexFn{
 
 var nilToken = token{"nil", -1, "", nil}
 
-var DefaultFrontMatterHandler = func(k, v string) interface{} {
-	switch k {
-	case "TAGS", "CATEGORIES", "ALIASES":
-		return strings.Fields(v)
+func FrontMatterHandler(fm FrontMatter, k, v string) error {
+	switch k := strings.ToLower(k); k {
+	case "tags", "categories", "aliases":
+		fm[k] = strings.Fields(v)
 	default:
-		return v
+		fm[k] = v
 	}
+	return nil
 }
 
 func NewDocument() *Document {
@@ -118,9 +120,9 @@ func (d *Document) SetPath(path string) *Document {
 	return d
 }
 
-func (d *Document) FrontMatter(input io.Reader, f func(string, string) interface{}) (_ map[string]interface{}, err error) {
+func GetFrontMatter(input io.Reader, f func(FrontMatter, string, string) error) (_ FrontMatter, err error) {
+	d := NewDocument()
 	defer func() {
-		d.tokens = nil
 		if recovered := recover(); recovered != nil {
 			err = fmt.Errorf("could not parse input: %s", recovered)
 		}
@@ -133,9 +135,12 @@ func (d *Document) FrontMatter(input io.Reader, f func(string, string) interface
 		t := d.tokens[i]
 		return t.kind != "keyword" && !(t.kind == "text" && t.content == "")
 	})
-	frontMatter := make(map[string]interface{}, len(d.BufferSettings))
+	frontMatter := make(FrontMatter, len(d.BufferSettings))
 	for k, v := range d.BufferSettings {
-		frontMatter[k] = f(k, v)
+		err := f(frontMatter, k, v)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return frontMatter, err
 }
