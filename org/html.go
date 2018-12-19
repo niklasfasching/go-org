@@ -89,6 +89,8 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 			w.writeBlock(n)
 		case Drawer:
 			w.writeDrawer(n)
+		case PropertyDrawer:
+			continue
 
 		case FootnoteDefinition:
 			w.writeFootnoteDefinition(n)
@@ -207,7 +209,13 @@ func (w *HTMLWriter) writeHeadline(h Headline) {
 	if h.Lvl == 1 && title == w.FootnotesHeadingTitle {
 		return
 	}
-	w.WriteString(fmt.Sprintf("<h%d>\n", h.Lvl))
+
+	if id, ok := h.Properties.Get("CUSTOM_ID"); ok {
+		w.WriteString(fmt.Sprintf(`<h%d id="%s">`, h.Lvl, id) + "\n")
+	} else {
+		w.WriteString(fmt.Sprintf("<h%d>\n", h.Lvl))
+	}
+
 	if h.Status != "" {
 		w.WriteString(fmt.Sprintf(`<span class="todo">%s</span>`, h.Status) + "\n")
 	}

@@ -10,7 +10,7 @@ type Headline struct {
 	Lvl        int
 	Status     string
 	Priority   string
-	Properties Node
+	Properties *PropertyDrawer
 	Title      []Node
 	Tags       []string
 	Children   []Node
@@ -62,8 +62,8 @@ func (d *Document) parseHeadline(i int, parentStop stopFn) (int, Node) {
 	}
 	consumed, nodes := d.parseMany(i+1, stop)
 	if len(nodes) > 0 {
-		if d, ok := nodes[0].(Drawer); ok && d.Name == "PROPERTIES" {
-			headline.Properties = d
+		if d, ok := nodes[0].(PropertyDrawer); ok {
+			headline.Properties = &d
 			nodes = nodes[1:]
 		}
 	}

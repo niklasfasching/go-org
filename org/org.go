@@ -63,6 +63,8 @@ func (w *OrgWriter) writeNodes(ns ...Node) {
 			w.writeBlock(n)
 		case Drawer:
 			w.writeDrawer(n)
+		case PropertyDrawer:
+			w.writePropertyDrawer(n)
 
 		case FootnoteDefinition:
 			w.writeFootnoteDefinition(n)
@@ -132,7 +134,7 @@ func (w *OrgWriter) writeHeadline(h Headline) {
 		w.WriteString(w.indent)
 	}
 	if h.Properties != nil {
-		w.writeNodes(h.Properties)
+		w.writeNodes(*h.Properties)
 	}
 	w.writeNodes(h.Children...)
 }
@@ -157,6 +159,18 @@ func (w *OrgWriter) writeDrawer(d Drawer) {
 	w.WriteString(w.indent + ":" + d.Name + ":\n")
 	w.writeNodes(d.Children...)
 	w.WriteString(w.indent + ":END:\n")
+}
+
+func (w *OrgWriter) writePropertyDrawer(d PropertyDrawer) {
+	w.WriteString(":PROPERTIES:\n")
+	for _, kvPair := range d.Properties {
+		k, v := kvPair[0], kvPair[1]
+		if v != "" {
+			v = " " + v
+		}
+		w.WriteString(fmt.Sprintf(":%s:%s\n", k, v))
+	}
+	w.WriteString(":END:\n")
 }
 
 func (w *OrgWriter) writeFootnoteDefinition(f FootnoteDefinition) {
