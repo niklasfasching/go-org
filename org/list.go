@@ -25,16 +25,16 @@ type DescriptiveListItem struct {
 	Details []Node
 }
 
-var unorderedListRegexp = regexp.MustCompile(`^(\s*)([+*-])\s(.*)`)
-var orderedListRegexp = regexp.MustCompile(`^(\s*)(([0-9]+|[a-zA-Z])[.)])\s+(.*)`)
+var unorderedListRegexp = regexp.MustCompile(`^(\s*)([+*-])(\s+(.*)|\s*$)`)
+var orderedListRegexp = regexp.MustCompile(`^(\s*)(([0-9]+|[a-zA-Z])[.)])(\s+(.*)|\s*$)`)
 var descriptiveListItemRegexp = regexp.MustCompile(`\s::(\s|$)`)
 var listItemStatusRegexp = regexp.MustCompile(`\[( |X|-)\]\s`)
 
 func lexList(line string) (token, bool) {
 	if m := unorderedListRegexp.FindStringSubmatch(line); m != nil {
-		return token{"unorderedList", len(m[1]), m[3], m}, true
+		return token{"unorderedList", len(m[1]), m[4], m}, true
 	} else if m := orderedListRegexp.FindStringSubmatch(line); m != nil {
-		return token{"orderedList", len(m[1]), m[4], m}, true
+		return token{"orderedList", len(m[1]), m[5], m}, true
 	}
 	return nilToken, false
 }
