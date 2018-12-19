@@ -210,6 +210,9 @@ func (d *Document) parseRegularLink(input string, start int) (int, Node) {
 	if len(rawLinkParts) == 2 {
 		link, description = rawLinkParts[0], d.parseInline(rawLinkParts[1])
 	}
+	if strings.ContainsRune(link, '\n') {
+		return 0, nil
+	}
 	consumed := end + 2
 	protocol, linkParts := "", strings.SplitN(link, ":", 2)
 	if len(linkParts) == 2 {

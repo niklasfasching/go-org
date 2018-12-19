@@ -9,6 +9,14 @@
 |---+---+---|
 | 1 | 2 | 3 |
 
+#+CAPTION: table with unicode characters
+| Character | Org       | Rendered HTML |
+|-----------+-----------+---------------|
+| Hyphen    | =a - b=   | a - b         |
+| Ndash     | =a -- b=  | a – b         |
+| Mdash     | =a --- b= | a — b         |
+| Ellipsis  | =a ... b= | a … b         |
+
 #+CAPTION: table without header (but separator before)
 |---+---+---|
 | 1 | 2 | 3 |

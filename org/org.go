@@ -3,6 +3,7 @@ package org
 import (
 	"fmt"
 	"strings"
+	"unicode/utf8"
 )
 
 type stringBuilder = strings.Builder
@@ -268,7 +269,7 @@ func (w *OrgWriter) writeTable(t Table) {
 				if content == "" {
 					content = " "
 				}
-				n := column.Len - len(content)
+				n := column.Len - utf8.RuneCountInString(content)
 				if n < 0 {
 					n = 0
 				}

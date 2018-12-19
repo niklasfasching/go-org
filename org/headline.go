@@ -17,7 +17,7 @@ type Headline struct {
 }
 
 var headlineRegexp = regexp.MustCompile(`^([*]+)\s+(.*)`)
-var tagRegexp = regexp.MustCompile(`(.*?)\s*(:[A-Za-z0-9@#%:]+:\s*$)`)
+var tagRegexp = regexp.MustCompile(`(.*?)\s+(:[A-Za-z0-9_@#%:]+:\s*$)`)
 
 func lexHeadline(line string) (token, bool) {
 	if m := headlineRegexp.FindStringSubmatch(line); m != nil {

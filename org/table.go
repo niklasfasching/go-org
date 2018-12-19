@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 )
 
 type Table struct {
@@ -89,8 +90,8 @@ func getColumnInfos(rows [][]string) []ColumnInfo {
 				continue
 			}
 
-			if len(columns[i]) > columnInfos[i].Len {
-				columnInfos[i].Len = len(columns[i])
+			if n := utf8.RuneCountInString(columns[i]); n > columnInfos[i].Len {
+				columnInfos[i].Len = n
 			}
 
 			if m := columnAlignRegexp.FindStringSubmatch(columns[i]); m != nil && isSpecialRow(columns) {
