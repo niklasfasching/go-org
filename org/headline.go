@@ -26,18 +26,12 @@ func lexHeadline(line string) (token, bool) {
 	return nilToken, false
 }
 
-func (d *Document) todoKeywords() []string {
-	return strings.FieldsFunc(d.Get("TODO"), func(r rune) bool {
-		return unicode.IsSpace(r) || r == '|'
-	})
-}
-
 func (d *Document) parseHeadline(i int, parentStop stopFn) (int, Node) {
 	t, headline := d.tokens[i], Headline{}
 	headline.Lvl = len(t.matches[1])
 	text := t.content
-
-	for _, k := range d.todoKeywords() {
+	todoKeywords := strings.FieldsFunc(d.Get("TODO"), func(r rune) bool { return unicode.IsSpace(r) || r == '|' })
+	for _, k := range todoKeywords {
 		if strings.HasPrefix(text, k) && len(text) > len(k) && unicode.IsSpace(rune(text[len(k)])) {
 			headline.Status = k
 			text = text[len(k)+1:]
