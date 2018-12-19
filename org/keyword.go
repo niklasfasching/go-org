@@ -1,8 +1,10 @@
 package org
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -52,6 +54,8 @@ func (d *Document) parseComment(i int, stop stopFn) (int, Node) {
 func (d *Document) parseKeyword(i int, stop stopFn) (int, Node) {
 	k := parseKeyword(d.tokens[i])
 	switch k.Key {
+	case "SETUP_FILE":
+		return d.loadSetupFile(k)
 	case "INCLUDE":
 		return d.newInclude(k)
 	case "CAPTION", "ATTR_HTML":
@@ -130,4 +134,29 @@ func (d *Document) newInclude(k Keyword) (int, Node) {
 		}
 	}
 	return 1, Include{k, resolve}
+}
+
+func (d *Document) loadSetupFile(k Keyword) (int, Node) {
+	path := k.Value
+	if !filepath.IsAbs(path) {
+		path = filepath.Join(filepath.Dir(d.Path), path)
+	}
+	bs, err := ioutil.ReadFile(path)
+	if err != nil {
+		if d.Debug {
+			log.Printf("Bad setup file: %#v: %s", k, err)
+		}
+		return 1, k
+	}
+	setupDocument := NewDocument().Parse(bytes.NewReader(bs))
+	if err := setupDocument.Error; err != nil {
+		if d.Debug {
+			log.Printf("Bad setup file: %#v: %s", k, err)
+		}
+		return 1, k
+	}
+	for k, v := range setupDocument.BufferSettings {
+		d.BufferSettings[k] = v
+	}
+	return 1, k
 }

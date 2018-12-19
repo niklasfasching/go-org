@@ -1,3 +1,4 @@
+#+SETUP_FILE: setup_file_org
 * Simple Headline [1/2]
 - [X] checked
 - [ ] unchecked
@@ -18,3 +19,7 @@ Still outside the drawer
 This is inside the drawer
 :END:
 Still outside the drawer
+* CUSTOM headline with custom status
+it's possible to use =#+SETUP_FILE= - in this case the setup file contains the following
+
+#+INCLUDE: "setup_file_org" src org
