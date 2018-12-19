@@ -32,3 +32,13 @@ generate-gh-pages: build
 .PHONY: generate-fixtures
 generate-fixtures: build
 	./etc/generate-fixtures
+
+.PHONY: fuzz
+fuzz: build
+	@echo also see "http://lcamtuf.coredump.cx/afl/README.txt"
+	go get github.com/dvyukov/go-fuzz/go-fuzz
+	go get github.com/dvyukov/go-fuzz/go-fuzz-build
+	mkdir -p fuzz fuzz/corpus
+	cp org/testdata/*.org fuzz/corpus
+	go-fuzz-build github.com/niklasfasching/go-org/org
+	go-fuzz -bin=./org-fuzz.zip -workdir=fuzz
