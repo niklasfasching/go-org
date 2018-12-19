@@ -25,4 +25,5 @@
   4. regular link to a file (video) [[my-video.mp4]]
   5. regular link to http (image) [[http://placekitten.com/200/200#.png]]
   6. regular link to https (image) [[https://placekitten.com/200/200#.png]]
-  7. auto link, i.e. not inside =\[[square brackets]\]= https://www.example.com
+  7. regular link enclosed in [] [[[https://www.example.com]]] [[[https://www.example.com][example.com]]]
+  8. auto link, i.e. not inside =\[[square brackets]\]= https://www.example.com

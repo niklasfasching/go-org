@@ -197,7 +197,7 @@ func (d *Document) parseAutoLink(input string, start int) (int, int, Node) {
 }
 
 func (d *Document) parseRegularLink(input string, start int) (int, Node) {
-	if len(input[start:]) == 0 || input[start+1] != '[' {
+	if len(input[start:]) < 2 || input[start+1] != '[' || input[start+2] == '[' {
 		return 0, nil
 	}
 	input = input[start:]
