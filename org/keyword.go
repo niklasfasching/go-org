@@ -2,9 +2,7 @@ package org
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
-	"log"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -119,7 +117,10 @@ func parseKeyword(t token) Keyword {
 }
 
 func (d *Document) newInclude(k Keyword) (int, Node) {
-	resolve := func() Node { panic(fmt.Sprintf("bad include: '#+INCLUDE: %s'", k.Value)) }
+	resolve := func() Node {
+		d.Log.Printf("Bad include %#v", k)
+		return k
+	}
 	if m := includeFileRegexp.FindStringSubmatch(k.Value); m != nil {
 		path, kind, lang := m[1], m[2], m[3]
 		if !filepath.IsAbs(path) {
@@ -128,7 +129,8 @@ func (d *Document) newInclude(k Keyword) (int, Node) {
 		resolve = func() Node {
 			bs, err := ioutil.ReadFile(path)
 			if err != nil {
-				panic(fmt.Sprintf("bad include '#+INCLUDE: %s': %s", k.Value, err))
+				d.Log.Printf("Bad include %#v: %s", k, err)
+				return k
 			}
 			return Block{strings.ToUpper(kind), []string{lang}, d.parseRawInline(string(bs))}
 		}
@@ -143,16 +145,12 @@ func (d *Document) loadSetupFile(k Keyword) (int, Node) {
 	}
 	bs, err := ioutil.ReadFile(path)
 	if err != nil {
-		if d.Debug {
-			log.Printf("Bad setup file: %#v: %s", k, err)
-		}
+		d.Log.Printf("Bad setup file: %#v: %s", k, err)
 		return 1, k
 	}
 	setupDocument := NewDocument().Parse(bytes.NewReader(bs))
 	if err := setupDocument.Error; err != nil {
-		if d.Debug {
-			log.Printf("Bad setup file: %#v: %s", k, err)
-		}
+		d.Log.Printf("Bad setup file: %#v: %s", k, err)
 		return 1, k
 	}
 	for k, v := range setupDocument.BufferSettings {

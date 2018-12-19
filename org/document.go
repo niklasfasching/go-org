@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 )
 
@@ -19,7 +21,7 @@ type Document struct {
 	BufferSettings      map[string]string
 	DefaultSettings     map[string]string
 	Error               error
-	Debug               bool
+	Log                 *log.Logger
 }
 
 type Writer interface {
@@ -80,6 +82,7 @@ func NewDocument() *Document {
 		DefaultSettings: map[string]string{
 			"TODO": "TODO | DONE",
 		},
+		Log: log.New(os.Stderr, "go-org: ", 0),
 	}
 }
 
@@ -118,6 +121,12 @@ func (dIn *Document) Parse(input io.Reader) (d *Document) {
 
 func (d *Document) SetPath(path string) *Document {
 	d.Path = path
+	d.Log.SetPrefix(fmt.Sprintf("%s(%s): ", d.Log.Prefix(), path))
+	return d
+}
+
+func (d *Document) Silent() *Document {
+	d.Log = log.New(ioutil.Discard, "", 0)
 	return d
 }
 
@@ -196,9 +205,7 @@ func (d *Document) parseOne(i int, stop stopFn) (consumed int, node Node) {
 	if consumed != 0 {
 		return consumed, node
 	}
-	if d.Debug {
-		log.Printf("Could not parse token %#v: Falling back to treating it as plain text.", d.tokens[i])
-	}
+	d.Log.Printf("Could not parse token %#v: Falling back to treating it as plain text.", d.tokens[i])
 	m := plainTextRegexp.FindStringSubmatch(d.tokens[i].matches[0])
 	d.tokens[i] = token{"text", len(m[1]), m[2], m}
 	return d.parseOne(i, stop)

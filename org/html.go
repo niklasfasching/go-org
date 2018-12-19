@@ -16,7 +16,7 @@ type HTMLWriter struct {
 	HighlightCodeBlock    func(source, lang string) string
 	FootnotesHeadingTitle string
 	htmlEscape            bool
-	debug                 bool
+	log                   *log.Logger
 }
 
 var emphasisTags = map[string][]string{
@@ -65,7 +65,7 @@ func (w *HTMLWriter) nodesAsString(nodes ...Node) string {
 }
 
 func (w *HTMLWriter) before(d *Document) {
-	w.debug = w.debug || d.Debug
+	w.log = d.Log
 }
 
 func (w *HTMLWriter) after(d *Document) {
@@ -362,7 +362,7 @@ func (w *HTMLWriter) writeNodeWithMeta(n NodeWithMeta) {
 		}
 	}
 	for _, attributes := range n.Meta.HTMLAttributes {
-		out = withHTMLAttributes(w.debug, out, attributes...) + "\n"
+		out = w.withHTMLAttributes(out, attributes...) + "\n"
 	}
 	if len(n.Meta.Caption) != 0 {
 		caption := ""
@@ -414,19 +414,15 @@ func (w *HTMLWriter) writeTableColumns(columns []Column, tag string) {
 	w.WriteString("</tr>\n")
 }
 
-func withHTMLAttributes(debug bool, input string, kvs ...string) string {
+func (w *HTMLWriter) withHTMLAttributes(input string, kvs ...string) string {
 	if len(kvs)%2 != 0 {
-		if debug {
-			log.Printf("withHTMLAttributes: Len of kvs must be even: %#v", kvs)
-		}
+		w.log.Printf("withHTMLAttributes: Len of kvs must be even: %#v", kvs)
 		return input
 	}
 	context := &h.Node{Type: h.ElementNode, Data: "body", DataAtom: atom.Body}
 	nodes, err := h.ParseFragment(strings.NewReader(strings.TrimSpace(input)), context)
 	if err != nil || len(nodes) != 1 {
-		if debug {
-			log.Printf("withHTMLAttributes: Could not extend attributes of %s: %v (%s)", input, nodes, err)
-		}
+		w.log.Printf("withHTMLAttributes: Could not extend attributes of %s: %v (%s)", input, nodes, err)
 		return input
 	}
 	out, node := strings.Builder{}, nodes[0]
@@ -435,9 +431,7 @@ func withHTMLAttributes(debug bool, input string, kvs ...string) string {
 	}
 	err = h.Render(&out, nodes[0])
 	if err != nil {
-		if debug {
-			log.Printf("withHTMLAttributes: Could not extend attributes of %s: %v (%s)", input, node, err)
-		}
+		w.log.Printf("withHTMLAttributes: Could not extend attributes of %s: %v (%s)", input, node, err)
 		return input
 	}
 	return out.String()
