@@ -59,7 +59,7 @@ var nilToken = token{"nil", -1, "", nil}
 
 var DefaultFrontMatterHandler = func(k, v string) interface{} {
 	switch k {
-	case "TAGS":
+	case "TAGS", "CATEGORIES", "ALIASES":
 		return strings.Fields(v)
 	default:
 		return v
