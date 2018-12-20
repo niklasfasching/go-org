@@ -43,10 +43,6 @@ func isListToken(t token) bool {
 	return t.kind == "unorderedList" || t.kind == "orderedList"
 }
 
-func stopIndentBelow(t token, minIndent int) bool {
-	return t.lvl < minIndent && !(t.kind == "text" && t.content == "")
-}
-
 func listKind(t token) (string, string) {
 	kind := ""
 	switch bullet := t.matches[2]; {
