@@ -16,7 +16,7 @@ type FootnoteDefinition struct {
 	Inline   bool
 }
 
-var footnoteDefinitionRegexp = regexp.MustCompile(`^\[fn:([\w-]+)\](\s+(.+)|$)`)
+var footnoteDefinitionRegexp = regexp.MustCompile(`^\[fn:([\w-]+)\](\s+(.+)|\s*$)`)
 
 func lexFootnoteDefinition(line string) (token, bool) {
 	if m := footnoteDefinitionRegexp.FindStringSubmatch(line); m != nil {

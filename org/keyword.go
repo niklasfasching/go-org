@@ -30,7 +30,7 @@ type Include struct {
 	Resolve func() Node
 }
 
-var keywordRegexp = regexp.MustCompile(`^(\s*)#\+([^:]+):(\s+(.*)|(\s*)$)`)
+var keywordRegexp = regexp.MustCompile(`^(\s*)#\+([^:]+):(\s+(.*)|$)`)
 var commentRegexp = regexp.MustCompile(`^(\s*)#(.*)`)
 
 var includeFileRegexp = regexp.MustCompile(`(?i)^"([^"]+)" (src|example|export) (\w+)$`)

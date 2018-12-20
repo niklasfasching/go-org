@@ -25,8 +25,8 @@ type DescriptiveListItem struct {
 	Details []Node
 }
 
-var unorderedListRegexp = regexp.MustCompile(`^(\s*)([+*-])(\s+(.*)|\s*$)`)
-var orderedListRegexp = regexp.MustCompile(`^(\s*)(([0-9]+|[a-zA-Z])[.)])(\s+(.*)|\s*$)`)
+var unorderedListRegexp = regexp.MustCompile(`^(\s*)([+*-])(\s+(.*)|$)`)
+var orderedListRegexp = regexp.MustCompile(`^(\s*)(([0-9]+|[a-zA-Z])[.)])(\s+(.*)|$)`)
 var descriptiveListItemRegexp = regexp.MustCompile(`\s::(\s|$)`)
 var listItemStatusRegexp = regexp.MustCompile(`\[( |X|-)\]\s`)
 
