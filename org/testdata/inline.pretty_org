@@ -17,7 +17,7 @@
   is
   not emphasized/
 - empty emphasis markers like ++ // __ and so on are ignored
-- subscript_{sub} and superscript^{super}
+- use _{} for subscript_{sub} and ^{} for superscript^{super}
 - links
   1. regular link [[https://example.com]] link without description
   2. regular link [[https://example.com][example.com]] link with description

@@ -35,13 +35,13 @@ type RegularLink struct {
 }
 
 var validURLCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;="
-var autolinkProtocols = regexp.MustCompile(`(https?|ftp|file)`)
+var autolinkProtocols = regexp.MustCompile(`^(https?|ftp|file)$`)
 var imageExtensionRegexp = regexp.MustCompile(`^[.](png|gif|jpe?g|svg|tiff?)$`)
 var videoExtensionRegexp = regexp.MustCompile(`^[.](webm|mp4)$`)
 
-var subScriptSuperScriptRegexp = regexp.MustCompile(`([_^])\{(.*?)\}`)
-var footnoteRegexp = regexp.MustCompile(`\[fn:([\w-]+?)(:(.*?))?\]`)
-var statisticsTokenRegexp = regexp.MustCompile(`\[(\d+/\d+|\d+%)\]`)
+var subScriptSuperScriptRegexp = regexp.MustCompile(`^([_^]){([^{}]+?)}`)
+var footnoteRegexp = regexp.MustCompile(`^\[fn:([\w-]+?)(:(.*?))?\]`)
+var statisticsTokenRegexp = regexp.MustCompile(`^\[(\d+/\d+|\d+%)\]`)
 
 func (d *Document) parseInline(input string) (nodes []Node) {
 	previous, current := 0, 0
@@ -179,7 +179,11 @@ func (d *Document) parseAutoLink(input string, start int) (int, int, Node) {
 		return 0, 0, nil
 	}
 	protocolStart, protocol := start-1, ""
-	for ; protocolStart > 0 && unicode.IsLetter(rune(input[protocolStart])); protocolStart-- {
+	for ; protocolStart > 0; protocolStart-- {
+		if !unicode.IsLetter(rune(input[protocolStart])) {
+			protocolStart++
+			break
+		}
 	}
 	if m := autolinkProtocols.FindStringSubmatch(input[protocolStart:start]); m != nil {
 		protocol = m[1]
