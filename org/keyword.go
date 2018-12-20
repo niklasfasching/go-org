@@ -52,7 +52,7 @@ func (d *Document) parseComment(i int, stop stopFn) (int, Node) {
 func (d *Document) parseKeyword(i int, stop stopFn) (int, Node) {
 	k := parseKeyword(d.tokens[i])
 	switch k.Key {
-	case "SETUP_FILE":
+	case "SETUPFILE":
 		return d.loadSetupFile(k)
 	case "INCLUDE":
 		return d.newInclude(k)

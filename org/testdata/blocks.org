@@ -29,6 +29,7 @@ src, example & export blocks treat their content as raw text
 
 : examples like this
 : are also supported
+:
 : note that /inline/ *markup* ignored
 
 #+BEGIN_QUOTE

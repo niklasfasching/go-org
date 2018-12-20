@@ -191,8 +191,10 @@ func (w *OrgWriter) writeParagraph(p Paragraph) {
 
 func (w *OrgWriter) writeExample(e Example) {
 	for _, n := range e.Children {
-		w.WriteString(w.indent + ":" + " ")
-		w.writeNodes(n)
+		w.WriteString(w.indent + ":")
+		if content := w.nodesAsString(n); content != "" {
+			w.WriteString(" " + content)
+		}
 		w.WriteString("\n")
 	}
 }

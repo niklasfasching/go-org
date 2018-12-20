@@ -8,11 +8,11 @@ type Example struct {
 	Children []Node
 }
 
-var exampleLineRegexp = regexp.MustCompile(`^(\s*): (.*)`)
+var exampleLineRegexp = regexp.MustCompile(`^(\s*):(\s(.*)|\s*$)`)
 
 func lexExample(line string) (token, bool) {
 	if m := exampleLineRegexp.FindStringSubmatch(line); m != nil {
-		return token{"example", len(m[1]), m[2], m}, true
+		return token{"example", len(m[1]), m[3], m}, true
 	}
 	return nilToken, false
 }

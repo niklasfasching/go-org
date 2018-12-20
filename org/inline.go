@@ -118,12 +118,9 @@ func (d *Document) parseExplicitLineBreak(input string, start int) (int, Node) {
 	if start == 0 || input[start-1] == '\n' || start+1 >= len(input) || input[start+1] != '\\' {
 		return 0, nil
 	}
-	for i := start + 2; ; i++ {
-		if i == len(input)-1 || input[i] == '\n' {
+	for i := start + 2; unicode.IsSpace(rune(input[i])); i++ {
+		if i >= len(input) || input[i] == '\n' {
 			return i + 1 - start, ExplicitLineBreak{}
-		}
-		if !unicode.IsSpace(rune(input[i])) {
-			break
 		}
 	}
 	return 0, nil
@@ -202,7 +199,7 @@ func (d *Document) parseAutoLink(input string, start int) (int, int, Node) {
 
 func (d *Document) parseRegularLink(input string, start int) (int, Node) {
 	input = input[start:]
-	if len(input) < 3 || input[1] != '[' || input[2] == '[' {
+	if len(input) < 3 || input[:2] != "[[" || input[2] == '[' {
 		return 0, nil
 	}
 	end := strings.Index(input, "]]")
