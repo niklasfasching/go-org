@@ -175,7 +175,7 @@ func (d *Document) parseStatisticToken(input string, start int) (int, Node) {
 }
 
 func (d *Document) parseAutoLink(input string, start int) (int, int, Node) {
-	if !d.AutoLink || len(input[start:]) < 3 || input[start+1] != '/' || input[start+2] != '/' {
+	if !d.AutoLink || start == 0 || len(input[start:]) < 3 || input[start:start+3] != "://" {
 		return 0, 0, nil
 	}
 	protocolStart, protocol := start-1, ""
@@ -197,10 +197,10 @@ func (d *Document) parseAutoLink(input string, start int) (int, int, Node) {
 }
 
 func (d *Document) parseRegularLink(input string, start int) (int, Node) {
-	if len(input[start:]) < 2 || input[start+1] != '[' || input[start+2] == '[' {
+	input = input[start:]
+	if len(input) < 3 || input[1] != '[' || input[2] == '[' {
 		return 0, nil
 	}
-	input = input[start:]
 	end := strings.Index(input, "]]")
 	if end == -1 {
 		return 0, nil
