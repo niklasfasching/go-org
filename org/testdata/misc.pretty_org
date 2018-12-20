@@ -107,6 +107,20 @@ also, consecutive dashes inside
 *** DONE [[https://github.com/chaseadamsio/goorgeous/issues/87][#87]]: Markup in footnotes is rendered literally
 footnotes can contain *markup* - and other elements and stuff [fn:2:that also goes for *inline* footnote /definitions/]
 
+** issues (wrongly) filed with hugo
+*** [[https://github.com/gohugoio/hugo/issues/3874][#3874]] exporting images in org mode
+Hello, I'm writing hugo blogs using org-mode.
+
+When inserting an image link like [[/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png]], hugo doesn't export the image.
+*** [[https://github.com/gohugoio/hugo/issues/4006][#4006]] source code blocks in org not rendered correctly
+#+BEGIN_SRC emacs-lisp
+(defun small-shell ()
+  (interactive)
+  (split-window-vertically)
+  (other-window 1)
+  (shrink-window (- (window-height) 12))
+  (ansi-term))
+#+END_SRC
 * Footnotes
 
 [fn:1] a footnote /with/ *markup*

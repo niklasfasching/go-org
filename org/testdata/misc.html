@@ -65,7 +65,7 @@ This is inside the drawer
 :END:
 Still outside the drawer
 * CUSTOM headline with custom status
-it&#39;s possible to use =#+SETUP_FILE= - in this case the setup file contains the following
+it&#39;s possible to use =#+SETUPFILE= - in this case the setup file contains the following
 
 #+INCLUDE: &#34;setup_file_org&#34; src org
 </pre>
@@ -331,6 +331,31 @@ src/example/export blocks should not be converted!
 <p>
 footnotes can contain <strong>markup</strong> - and other elements and stuff <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup>
 </p>
+<h2>
+issues (wrongly) filed with hugo
+</h2>
+<h3>
+<a href="https://github.com/gohugoio/hugo/issues/3874">#3874</a> exporting images in org mode
+</h3>
+<p>
+Hello, I&#39;m writing hugo blogs using org-mode.
+</p>
+<p>
+When inserting an image link like <img src="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" alt="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" title="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" />, hugo doesn&#39;t export the image.
+</p>
+<h3>
+<a href="https://github.com/gohugoio/hugo/issues/4006">#4006</a> source code blocks in org not rendered correctly
+</h3>
+<div class="highlight">
+<pre>
+(defun small-shell ()
+  (interactive)
+  (split-window-vertically)
+  (other-window 1)
+  (shrink-window (- (window-height) 12))
+  (ansi-term))
+</pre>
+</div>
 <div class="footnotes">
 <h1 class="footnotes-title">Footnotes</h1>
 <div class="footnote-definitions">
