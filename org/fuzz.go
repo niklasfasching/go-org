@@ -2,18 +2,25 @@
 
 package org
 
-import "bytes"
+import (
+	"bytes"
+	"strings"
+)
 
 // Fuzz function to be used by https://github.com/dvyukov/go-fuzz
-func Fuzz(data []byte) int {
-	d := NewDocument().Silent().Parse(bytes.NewReader(data))
-	_, err := d.Write(NewOrgWriter())
+func Fuzz(input []byte) int {
+	d := NewDocument().Silent().Parse(bytes.NewReader(input))
+	orgOutput, err := d.Write(NewOrgWriter())
 	if err != nil {
 		panic(err)
 	}
-	_, err = d.Write(NewHTMLWriter())
+	htmlOutputA, err := d.Write(NewHTMLWriter())
 	if err != nil {
 		panic(err)
+	}
+	htmlOutputB, err := NewDocument().Silent().Parse(strings.NewReader(orgOutput)).Write(NewHTMLWriter())
+	if htmlOutputA != htmlOutputB {
+		panic("rendered org results in different html than original input")
 	}
 	return 0
 }
