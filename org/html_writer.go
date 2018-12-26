@@ -14,9 +14,9 @@ import (
 
 type HTMLWriter struct {
 	stringBuilder
+	document           *Document
 	HighlightCodeBlock func(source, lang string) string
 	htmlEscape         bool
-	excludeTags        []string
 	log                *log.Logger
 }
 
@@ -67,7 +67,7 @@ func (w *HTMLWriter) nodesAsString(nodes ...Node) string {
 }
 
 func (w *HTMLWriter) before(d *Document) {
-	w.excludeTags = strings.Fields(d.Get("EXCLUDE_TAGS"))
+	w.document = d
 	w.log = d.Log
 	w.writeOutline(d)
 }
@@ -193,7 +193,7 @@ func (w *HTMLWriter) writeFootnoteDefinition(f FootnoteDefinition) {
 }
 
 func (w *HTMLWriter) writeFootnotes(d *Document) {
-	if len(d.Footnotes.Definitions) == 0 {
+	if !w.document.GetOption("f") || len(d.Footnotes.Definitions) == 0 {
 		return
 	}
 	w.WriteString(`<div class="footnotes">` + "\n")
@@ -206,7 +206,7 @@ func (w *HTMLWriter) writeFootnotes(d *Document) {
 }
 
 func (w *HTMLWriter) writeOutline(d *Document) {
-	if len(d.Outline.Children) != 0 {
+	if w.document.GetOption("toc") && len(d.Outline.Children) != 0 {
 		w.WriteString("<nav>\n<ul>\n")
 		for _, section := range d.Outline.Children {
 			w.writeSection(section)
@@ -231,7 +231,7 @@ func (w *HTMLWriter) writeSection(section *Section) {
 }
 
 func (w *HTMLWriter) writeHeadline(h Headline) {
-	for _, excludeTag := range w.excludeTags {
+	for _, excludeTag := range strings.Fields(w.document.Get("EXCLUDE_TAGS")) {
 		for _, tag := range h.Tags {
 			if excludeTag == tag {
 				return
@@ -240,15 +240,15 @@ func (w *HTMLWriter) writeHeadline(h Headline) {
 	}
 
 	w.WriteString(fmt.Sprintf(`<h%d id="%s">`, h.Lvl, h.ID()) + "\n")
-	if h.Status != "" {
+	if w.document.GetOption("todo") && h.Status != "" {
 		w.WriteString(fmt.Sprintf(`<span class="todo">%s</span>`, h.Status) + "\n")
 	}
-	if h.Priority != "" {
+	if w.document.GetOption("pri") && h.Priority != "" {
 		w.WriteString(fmt.Sprintf(`<span class="priority">[%s]</span>`, h.Priority) + "\n")
 	}
 
 	w.writeNodes(h.Title...)
-	if len(h.Tags) != 0 {
+	if w.document.GetOption("tags") && len(h.Tags) != 0 {
 		tags := make([]string, len(h.Tags))
 		for i, tag := range h.Tags {
 			tags[i] = fmt.Sprintf(`<span>%s</span>`, tag)
@@ -263,7 +263,7 @@ func (w *HTMLWriter) writeHeadline(h Headline) {
 func (w *HTMLWriter) writeText(t Text) {
 	if !w.htmlEscape {
 		w.WriteString(t.Content)
-	} else if t.IsRaw {
+	} else if !w.document.GetOption("e") || t.IsRaw {
 		w.WriteString(html.EscapeString(t.Content))
 	} else {
 		w.WriteString(html.EscapeString(htmlEntityReplacer.Replace(t.Content)))
@@ -293,6 +293,9 @@ func (w *HTMLWriter) writeExplicitLineBreak(l ExplicitLineBreak) {
 }
 
 func (w *HTMLWriter) writeFootnoteLink(l FootnoteLink) {
+	if !w.document.GetOption("f") {
+		return
+	}
 	n := html.EscapeString(l.Name)
 	w.WriteString(fmt.Sprintf(`<sup class="footnote-reference"><a id="footnote-reference-%s" href="#footnote-%s">%s</a></sup>`, n, n, n))
 }

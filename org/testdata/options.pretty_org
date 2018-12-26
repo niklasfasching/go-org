@@ -1,0 +1,22 @@
+#+OPTIONS:
+
+* DONE [#A] =#+OPTIONS:= toggles supported by =go-org=            :tag1:tag2:
+=go-org= supports multiple export toggles as described in the [[https://orgmode.org/manual/Export-settings.html][export settings]] Org mode manual.
+By default those toggles are enabled. This files starts with =#+OPTIONS:= (empty options) and thus
+disables all settings.
+That means, entities like =---= --- (mdash) will be left untouched, footnotes like =[fn:1]= [fn:1] will
+not be exported and there won't be a table of contents at the top.
+Also, the above headline will be exported without priority, todo status & tags.
+
+
+| key  | description                                               |
+|------+-----------------------------------------------------------|
+| f    | Include footnotes (definitions & links)                   |
+| e    | Include entities                                          |
+| toc  | Include table of contents (outline)                       |
+|------+-----------------------------------------------------------|
+| pri  | Include priority =[#A]=, =[#B]=, =[#C]= in headline title |
+| todo | Include todo status in headline title                     |
+| tags | Include tags in headline title                            |
+
+[fn:1] This footnote definition won't be printed

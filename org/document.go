@@ -85,6 +85,7 @@ func NewDocument() *Document {
 		DefaultSettings: map[string]string{
 			"TODO":         "TODO | DONE",
 			"EXCLUDE_TAGS": "noexport",
+			"OPTIONS":      "toc:t e:t f:t pri:t todo:t tags:t",
 		},
 		Log: log.New(os.Stderr, "go-org: ", 0),
 	}
@@ -178,6 +179,24 @@ func (d *Document) Get(key string) string {
 		return v
 	}
 	return ""
+}
+
+// see https://orgmode.org/manual/Export-settings.html
+func (d *Document) GetOption(key string) bool {
+	for _, field := range strings.Fields(d.Get("OPTIONS")) {
+		if strings.HasPrefix(field, key) {
+			switch field[len(key)+len(":"):] {
+			case "t":
+				return true
+			case "nil":
+				return false
+			default:
+				d.Log.Printf("Bad value for export option %s (%s)", key, field)
+				return false
+			}
+		}
+	}
+	return false
 }
 
 func (d *Document) parseOne(i int, stop stopFn) (consumed int, node Node) {
