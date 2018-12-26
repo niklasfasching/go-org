@@ -255,8 +255,10 @@ func (d *Document) addFootnote(name string, definition *FootnoteDefinition) {
 }
 
 func (d *Document) addHeadline(headline *Headline) int {
-	d.Outline.last.add(&Section{Headline: headline})
+	current := &Section{Headline: headline}
+	d.Outline.last.add(current)
 	d.Outline.count++
+	d.Outline.last = current
 	return d.Outline.count
 }
 
