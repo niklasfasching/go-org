@@ -1,21 +1,9 @@
 * go-org [[https://travis-ci.org/niklasfasching/go-org.svg?branch=master]]
 A basic Org mode parser in go.
 Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org -> html demo (requires wasm support).
-* next
-- more keywords: https://orgmode.org/manual/In_002dbuffer-settings.html
-- table of contents
-  - see hugo ExtractTOC
-  - loop the headlines and print an hX for each headline, ul for children
-- rethink frontmatter
-  - use toml/yaml/json frontmatter from hugo (see [[https://github.com/gohugoio/hugo/issues/5436][hugo #5436]]):
-    - complex values are a requirement of hugo, not Org mode
-    - by giving up on the ability to mix front matter in org keyword (=#+=) and other formats we save a lot of complexity (that has little benefit)
-    - Maybe allow for []string via KEYWORD[]: Tag Foo Bar - can be done in hugo
-    -> the other problem is that org mode normally allows markup in the title - but we would have to render - and to what format
-** headlines
-- auto-generate unique ids: see [[https://github.com/kaushalmodi/ox-hugo/blob/8472cf2d8667754c9da3728255634e8001a1da6d/ox-hugo.el#L1785-L1850][ox-hugo]]
-   - what about name conflicts?
-** links
+[[https://raw.githubusercontent.com/niklasfasching/go-org/master/etc/example.png]]
+* todos
+** more links?
 https://orgmode.org/manual/External-links.html
 https://orgmode.org/manual/Internal-links.html
 radio target <<<MyTarget>>>
@@ -27,6 +15,7 @@ MyTarget <- this will automatically become a link - not sure i want this...
 To get a feeling take a look at goorgeous vs go-org html rendering of the examples [[https://niklasfasching.github.io/go-org/go-org-vs-goorgeous][comparison]].
 Please note that a visual comparison is not fair to goorgeous as the stylesheet is not adapted to it.
 Nonetheless, the html output can be compared by taking a look in the developer console where relevant.
+- different html output - existing css will have to be adapted
 - not changing links to .org files into links to .html files
   - do not plan to implement this, too many edge cases (e.g. [[https://github.com/chaseadamsio/goorgeous/issues/56][mangling links to e.g. example.org]].)
 - org comments not rendered as html comments (same as ox-html.el)
