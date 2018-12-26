@@ -16,6 +16,7 @@ type HTMLWriter struct {
 	HighlightCodeBlock    func(source, lang string) string
 	FootnotesHeadingTitle string
 	htmlEscape            bool
+	excludeTags           []string
 	log                   *log.Logger
 }
 
@@ -65,6 +66,7 @@ func (w *HTMLWriter) nodesAsString(nodes ...Node) string {
 }
 
 func (w *HTMLWriter) before(d *Document) {
+	w.excludeTags = strings.Fields(d.Get("EXCLUDE_TAGS"))
 	w.log = d.Log
 }
 
@@ -206,6 +208,13 @@ func (w *HTMLWriter) writeHeadline(h Headline) {
 	title := w.nodesAsString(h.Title...)
 	if h.Lvl == 1 && title == w.FootnotesHeadingTitle {
 		return
+	}
+	for _, excludeTag := range w.excludeTags {
+		for _, tag := range h.Tags {
+			if excludeTag == tag {
+				return
+			}
+		}
 	}
 
 	if id, ok := h.Properties.Get("CUSTOM_ID"); ok {

@@ -80,7 +80,8 @@ func NewDocument() *Document {
 		MaxEmphasisNewLines: 1,
 		BufferSettings:      map[string]string{},
 		DefaultSettings: map[string]string{
-			"TODO": "TODO | DONE",
+			"TODO":         "TODO | DONE",
+			"EXCLUDE_TAGS": "noexport",
 		},
 		Log: log.New(os.Stderr, "go-org: ", 0),
 	}
