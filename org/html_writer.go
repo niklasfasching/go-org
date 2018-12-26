@@ -216,7 +216,8 @@ func (w *HTMLWriter) writeOutline(d *Document) {
 }
 
 func (w *HTMLWriter) writeSection(section *Section) {
-	w.WriteString("<li>\n")
+	// NOTE: To satisfy hugo ExtractTOC() check we cannot use `<li>\n` here. Doesn't really matter, just a note.
+	w.WriteString("<li>")
 	h := section.Headline
 	title := cleanHeadlineTitleForHTMLAnchorRegexp.ReplaceAllString(w.nodesAsString(h.Title...), "")
 	w.WriteString(fmt.Sprintf("<a href=\"#%s\">%s</a>\n", h.ID(), title))
