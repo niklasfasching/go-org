@@ -3,6 +3,7 @@ package org
 import (
 	"fmt"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -175,10 +176,11 @@ func (w *OrgWriter) writePropertyDrawer(d PropertyDrawer) {
 
 func (w *OrgWriter) writeFootnoteDefinition(f FootnoteDefinition) {
 	w.WriteString(fmt.Sprintf("[fn:%s]", f.Name))
-	if !(len(f.Children) >= 1 && isEmptyLineParagraph(f.Children[0])) {
+	content := w.nodesAsString(f.Children...)
+	if content != "" && !unicode.IsSpace(rune(content[0])) {
 		w.WriteString(" ")
 	}
-	w.writeNodes(f.Children...)
+	w.WriteString(content)
 }
 
 func (w *OrgWriter) writeParagraph(p Paragraph) {

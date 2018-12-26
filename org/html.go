@@ -13,11 +13,10 @@ import (
 
 type HTMLWriter struct {
 	stringBuilder
-	HighlightCodeBlock    func(source, lang string) string
-	FootnotesHeadingTitle string
-	htmlEscape            bool
-	excludeTags           []string
-	log                   *log.Logger
+	HighlightCodeBlock func(source, lang string) string
+	htmlEscape         bool
+	excludeTags        []string
+	log                *log.Logger
 }
 
 var emphasisTags = map[string][]string{
@@ -45,8 +44,7 @@ var listItemStatuses = map[string]string{
 
 func NewHTMLWriter() *HTMLWriter {
 	return &HTMLWriter{
-		htmlEscape:            true,
-		FootnotesHeadingTitle: "Footnotes",
+		htmlEscape: true,
 		HighlightCodeBlock: func(source, lang string) string {
 			return fmt.Sprintf("%s\n<pre>\n%s\n</pre>\n</div>", `<div class="highlight">`, html.EscapeString(source))
 		},
@@ -95,7 +93,7 @@ func (w *HTMLWriter) writeNodes(ns ...Node) {
 			continue
 
 		case FootnoteDefinition:
-			w.writeFootnoteDefinition(n)
+			continue
 
 		case List:
 			w.writeList(n)
@@ -191,24 +189,19 @@ func (w *HTMLWriter) writeFootnoteDefinition(f FootnoteDefinition) {
 }
 
 func (w *HTMLWriter) writeFootnotes(d *Document) {
-	fs := d.Footnotes
-	if len(fs.Definitions) == 0 {
+	if len(d.Footnotes.Definitions) == 0 {
 		return
 	}
 	w.WriteString(`<div class="footnotes">` + "\n")
-	w.WriteString(`<h1 class="footnotes-title">` + fs.Title + `</h1>` + "\n")
+	w.WriteString(`<hr class="footnotes-separatator">` + "\n")
 	w.WriteString(`<div class="footnote-definitions">` + "\n")
 	for _, definition := range d.Footnotes.Ordered() {
-		w.writeNodes(definition)
+		w.writeFootnoteDefinition(definition)
 	}
 	w.WriteString("</div>\n</div>\n")
 }
 
 func (w *HTMLWriter) writeHeadline(h Headline) {
-	title := w.nodesAsString(h.Title...)
-	if h.Lvl == 1 && title == w.FootnotesHeadingTitle {
-		return
-	}
 	for _, excludeTag := range w.excludeTags {
 		for _, tag := range h.Tags {
 			if excludeTag == tag {
@@ -230,7 +223,7 @@ func (w *HTMLWriter) writeHeadline(h Headline) {
 		w.WriteString(fmt.Sprintf(`<span class="priority">[%s]</span>`, h.Priority) + "\n")
 	}
 
-	w.WriteString(title)
+	w.writeNodes(h.Title...)
 	if len(h.Tags) != 0 {
 		tags := make([]string, len(h.Tags))
 		for i, tag := range h.Tags {
@@ -337,7 +330,7 @@ func (w *HTMLWriter) writeDescriptiveListItem(di DescriptiveListItem) {
 }
 
 func (w *HTMLWriter) writeParagraph(p Paragraph) {
-	if isEmptyLineParagraph(p) {
+	if len(p.Children) == 0 {
 		return
 	}
 	w.WriteString("<p>")

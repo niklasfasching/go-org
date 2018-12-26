@@ -35,15 +35,8 @@ func (d *Document) parseFootnoteDefinition(i int, parentStop stopFn) (int, Node)
 	}
 	consumed, nodes := d.parseMany(i, stop)
 	definition := FootnoteDefinition{name, nodes, false}
-	d.Footnotes.add(name, &definition)
+	d.addFootnote(name, &definition)
 	return consumed, definition
-}
-
-func (fs *Footnotes) add(name string, definition *FootnoteDefinition) {
-	if definition != nil {
-		fs.Definitions[name] = definition
-	}
-	fs.addOrder = append(fs.addOrder, name)
 }
 
 func (fs *Footnotes) Ordered() []FootnoteDefinition {

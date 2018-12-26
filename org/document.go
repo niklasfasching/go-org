@@ -14,7 +14,7 @@ type Document struct {
 	Path                string
 	tokens              []token
 	Nodes               []Node
-	Footnotes           *Footnotes
+	Footnotes           Footnotes
 	StatusKeywords      []string
 	MaxEmphasisNewLines int
 	AutoLink            bool
@@ -72,7 +72,7 @@ func FrontMatterHandler(fm FrontMatter, k, v string) error {
 
 func NewDocument() *Document {
 	return &Document{
-		Footnotes: &Footnotes{
+		Footnotes: Footnotes{
 			Title:       "Footnotes",
 			Definitions: map[string]*FootnoteDefinition{},
 		},
@@ -220,6 +220,16 @@ func (d *Document) parseMany(i int, stop stopFn) (int, []Node) {
 		nodes = append(nodes, node)
 	}
 	return i - start, nodes
+}
+
+func (d *Document) addFootnote(name string, definition *FootnoteDefinition) {
+	if definition != nil {
+		if _, exists := d.Footnotes.Definitions[name]; exists {
+			d.Log.Printf("Footnote [fn:%s] redefined! %#v", name, definition)
+		}
+		d.Footnotes.Definitions[name] = definition
+	}
+	d.Footnotes.addOrder = append(d.Footnotes.addOrder, name)
 }
 
 func tokenize(line string) token {

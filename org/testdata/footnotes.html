@@ -17,10 +17,42 @@ further references to the same footnote should not <sup class="footnote-referenc
 inline footnotes are also supported via <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup>.
 </p>
 </li>
+<li>
+<p>
+Footnote definitions are not printed where they appear.
+Rather, they are gathered and exported at the end of the document in the footnote section. <sup class="footnote-reference"><a id="footnote-reference-4" href="#footnote-4">4</a></sup>
+</p>
+</li>
 </ul>
+<h1>
+Footnotes
+</h1>
+<p>
+Please note that the footnotes section is not automatically excluded from the export like in emacs. <sup class="footnote-reference"><a id="footnote-reference-7" href="#footnote-7">7</a></sup>
+</p>
+<p>
+this is not part of <sup class="footnote-reference"><a id="footnote-reference-7" href="#footnote-7">7</a></sup> anymore as there are 2 blank lines in between!
+</p>
 <div class="footnotes">
-<h1 class="footnotes-title">Footnotes</h1>
+<hr class="footnotes-separatator">
 <div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-4"><a href="#footnote-reference-4">4</a></sup>
+<div class="footnote-body">
+<p>
+so this definition will not be at the end of this section in the exported document.
+Rather, it will be somewhere down below in the footnotes section.
+</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-5"><a href="#footnote-reference-5">5</a></sup>
+<div class="footnote-body">
+<p>
+another unused footnote (this definition overwrites the previous definition of <code class="verbatim">fn:5</code>)
+</p>
+</div>
+</div>
 <div class="footnote-definition">
 <sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
 <div class="footnote-body">
@@ -83,27 +115,20 @@ and tables
 </div>
 </div>
 <div class="footnote-definition">
-<sup id="footnote-4"><a href="#footnote-reference-4">4</a></sup>
-<div class="footnote-body">
-<p>
-another unused footnote
-</p>
-</div>
-</div>
-<div class="footnote-definition">
-<sup id="footnote-5"><a href="#footnote-reference-5">5</a></sup>
-<div class="footnote-body">
-<p>
-another unused footnote
-</p>
-</div>
-</div>
-<div class="footnote-definition">
 <sup id="footnote-6"><a href="#footnote-reference-6">6</a></sup>
 <div class="footnote-body">
 <p>
 Footnotes break after two consecutive empty lines - just like paragraphs - see <a href="https://orgmode.org/worg/dev/org-syntax.html.">https://orgmode.org/worg/dev/org-syntax.html.</a>
 This shouldn&#39;t happen when the definition line and the line after that are empty.
+</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-7"><a href="#footnote-reference-7">7</a></sup>
+<div class="footnote-body">
+<p>
+There&#39;s multiple reasons for that. Among others, doing so requires i18n (to recognize the section) and silently
+hides content before and after the footnotes.
 </p>
 </div>
 </div>

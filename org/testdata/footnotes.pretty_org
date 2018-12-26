@@ -2,8 +2,17 @@
 - normal footnote reference [fn:1] [fn:6]
 - further references to the same footnote should not [fn:1] render duplicates in the footnote list
 - inline footnotes are also supported via [fn:2:the inline footnote definition].
+- Footnote definitions are not printed where they appear.
+  Rather, they are gathered and exported at the end of the document in the footnote section. [fn:4]
 
+[fn:4] so this definition will not be at the end of this section in the exported document.
+Rather, it will be somewhere down below in the footnotes section.
+
+[fn:5] this definition will also not be exported here - not only that, it will be overwritten by a definition
+of the same name later on in the document. That will log a warning but carry on nonetheless.
 * Footnotes
+Please note that the footnotes section is not automatically excluded from the export like in emacs. [fn:7]
+
 [fn:1] https://www.example.com
 - footnotes can contain *markup*
 - and other elements
@@ -18,11 +27,18 @@
 
 [fn:3] [[http://example.com/unused-footnote][example.com/unused-footnote]]
 
-[fn:4] another unused footnote
-
-[fn:5] another unused footnote
+[fn:5] another unused footnote (this definition overwrites the previous definition of =fn:5=)
 
 [fn:6]
 
 Footnotes break after two consecutive empty lines - just like paragraphs - see https://orgmode.org/worg/dev/org-syntax.html.
 This shouldn't happen when the definition line and the line after that are empty.
+
+
+[fn:7]
+There's multiple reasons for that. Among others, doing so requires i18n (to recognize the section) and silently
+hides content before and after the footnotes.
+
+
+
+this is not part of [fn:7] anymore as there are 2 blank lines in between!
