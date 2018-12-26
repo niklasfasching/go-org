@@ -15,6 +15,7 @@ type Document struct {
 	tokens              []token
 	Nodes               []Node
 	Footnotes           Footnotes
+	Outline             Outline
 	StatusKeywords      []string
 	MaxEmphasisNewLines int
 	AutoLink            bool
@@ -71,6 +72,7 @@ func FrontMatterHandler(fm FrontMatter, k, v string) error {
 }
 
 func NewDocument() *Document {
+	outlineSection := &Section{}
 	return &Document{
 		Footnotes: Footnotes{
 			Title:       "Footnotes",
@@ -78,6 +80,7 @@ func NewDocument() *Document {
 		},
 		AutoLink:            true,
 		MaxEmphasisNewLines: 1,
+		Outline:             Outline{outlineSection, outlineSection, 0},
 		BufferSettings:      map[string]string{},
 		DefaultSettings: map[string]string{
 			"TODO":         "TODO | DONE",
@@ -230,6 +233,12 @@ func (d *Document) addFootnote(name string, definition *FootnoteDefinition) {
 		d.Footnotes.Definitions[name] = definition
 	}
 	d.Footnotes.addOrder = append(d.Footnotes.addOrder, name)
+}
+
+func (d *Document) addHeadline(headline *Headline) int {
+	d.Outline.last.add(&Section{Headline: headline})
+	d.Outline.count++
+	return d.Outline.count
 }
 
 func tokenize(line string) token {

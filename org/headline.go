@@ -1,12 +1,26 @@
 package org
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"unicode"
 )
 
+type Outline struct {
+	*Section
+	last  *Section
+	count int
+}
+
+type Section struct {
+	Headline *Headline
+	Parent   *Section
+	Children []*Section
+}
+
 type Headline struct {
+	Index      int
 	Lvl        int
 	Status     string
 	Priority   string
@@ -29,6 +43,9 @@ func lexHeadline(line string) (token, bool) {
 func (d *Document) parseHeadline(i int, parentStop stopFn) (int, Node) {
 	t, headline := d.tokens[i], Headline{}
 	headline.Lvl = len(t.matches[1])
+
+	headline.Index = d.addHeadline(&headline)
+
 	text := t.content
 	todoKeywords := strings.FieldsFunc(d.Get("TODO"), func(r rune) bool { return unicode.IsSpace(r) || r == '|' })
 	for _, k := range todoKeywords {
@@ -63,4 +80,20 @@ func (d *Document) parseHeadline(i int, parentStop stopFn) (int, Node) {
 	}
 	headline.Children = nodes
 	return consumed + 1, headline
+}
+
+func (h Headline) ID() string {
+	if customID, ok := h.Properties.Get("CUSTOM_ID"); ok {
+		return customID
+	}
+	return fmt.Sprintf("headline-%d", h.Index)
+}
+
+func (parent *Section) add(current *Section) {
+	if parent.Headline == nil || parent.Headline.Lvl < current.Headline.Lvl {
+		parent.Children = append(parent.Children, current)
+		current.Parent = parent
+	} else {
+		parent.Parent.add(current)
+	}
 }

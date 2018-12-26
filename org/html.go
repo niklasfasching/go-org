@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"log"
+	"regexp"
 	"strings"
 	"unicode"
 
@@ -42,6 +43,8 @@ var listItemStatuses = map[string]string{
 	"X": "checked",
 }
 
+var cleanHeadlineTitleForHTMLAnchorRegexp = regexp.MustCompile(`</?a[^>]*>`) // nested a tags are not valid HTML
+
 func NewHTMLWriter() *HTMLWriter {
 	return &HTMLWriter{
 		htmlEscape: true,
@@ -66,6 +69,7 @@ func (w *HTMLWriter) nodesAsString(nodes ...Node) string {
 func (w *HTMLWriter) before(d *Document) {
 	w.excludeTags = strings.Fields(d.Get("EXCLUDE_TAGS"))
 	w.log = d.Log
+	w.writeOutline(d)
 }
 
 func (w *HTMLWriter) after(d *Document) {
@@ -201,6 +205,31 @@ func (w *HTMLWriter) writeFootnotes(d *Document) {
 	w.WriteString("</div>\n</div>\n")
 }
 
+func (w *HTMLWriter) writeOutline(d *Document) {
+	if len(d.Outline.Children) != 0 {
+		w.WriteString("<nav>\n<ul>\n")
+		for _, section := range d.Outline.Children {
+			w.writeSection(section)
+		}
+		w.WriteString("</ul>\n</nav>\n")
+	}
+}
+
+func (w *HTMLWriter) writeSection(section *Section) {
+	w.WriteString("<li>\n")
+	h := section.Headline
+	title := cleanHeadlineTitleForHTMLAnchorRegexp.ReplaceAllString(w.nodesAsString(h.Title...), "")
+	w.WriteString(fmt.Sprintf("<a href=\"#%s\">%s</a>\n", h.ID(), title))
+	if len(section.Children) != 0 {
+		w.WriteString("<ul>\n")
+		for _, section := range section.Children {
+			w.writeSection(section)
+		}
+		w.WriteString("</ul>\n")
+	}
+	w.WriteString("</li>\n")
+}
+
 func (w *HTMLWriter) writeHeadline(h Headline) {
 	for _, excludeTag := range w.excludeTags {
 		for _, tag := range h.Tags {
@@ -210,12 +239,7 @@ func (w *HTMLWriter) writeHeadline(h Headline) {
 		}
 	}
 
-	if id, ok := h.Properties.Get("CUSTOM_ID"); ok {
-		w.WriteString(fmt.Sprintf(`<h%d id="%s">`, h.Lvl, id) + "\n")
-	} else {
-		w.WriteString(fmt.Sprintf("<h%d>\n", h.Lvl))
-	}
-
+	w.WriteString(fmt.Sprintf(`<h%d id="%s">`, h.Lvl, h.ID()) + "\n")
 	if h.Status != "" {
 		w.WriteString(fmt.Sprintf(`<span class="todo">%s</span>`, h.Status) + "\n")
 	}
