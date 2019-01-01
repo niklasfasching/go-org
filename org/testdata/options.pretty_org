@@ -1,12 +1,12 @@
-#+OPTIONS:
+#+OPTIONS: toc:nil f:nil e:nil
 
 * DONE [#A] =#+OPTIONS:= toggles supported by =go-org=            :tag1:tag2:
-=go-org= supports multiple export toggles as described in the [[https://orgmode.org/manual/Export-settings.html][export settings]] Org mode manual.
-By default those toggles are enabled. This files starts with =#+OPTIONS:= (empty options) and thus
-disables all settings.
+=go-org= supports multiple export toggles as described in the [[https://orgmode.org/manual/Export-settings.html][export settings]] section of the Org mode manual.
+By default (most of?) those toggles are enabled. This file starts with =#+OPTIONS: toc:nil f:nil e:nil= and thus
+disables the table of contents, footnotes & entities.
 That means, entities like =---= --- (mdash) will be left untouched, footnotes like =[fn:1]= [fn:1] will
 not be exported and there won't be a table of contents at the top.
-Also, the above headline will be exported without priority, todo status & tags.
+As buffer options are merged with the defaults, the above headline will be exported *with* priority, todo status & tags.
 
 
 | key  | description                                               |
