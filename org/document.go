@@ -32,7 +32,6 @@ type Writer interface {
 }
 
 type Node interface{}
-type FrontMatter = map[string]interface{}
 
 type lexFn = func(line string) (t token, ok bool)
 type parseFn = func(*Document, int, stopFn) (int, Node)
@@ -59,16 +58,6 @@ var lexFns = []lexFn{
 }
 
 var nilToken = token{"nil", -1, "", nil}
-
-func FrontMatterHandler(fm FrontMatter, k, v string) error {
-	switch k := strings.ToLower(k); k {
-	case "tags", "categories", "aliases":
-		fm[k] = strings.Fields(v)
-	default:
-		fm[k] = v
-	}
-	return nil
-}
 
 func NewDocument() *Document {
 	outlineSection := &Section{}
@@ -132,31 +121,6 @@ func (d *Document) SetPath(path string) *Document {
 func (d *Document) Silent() *Document {
 	d.Log = log.New(ioutil.Discard, "", 0)
 	return d
-}
-
-func GetFrontMatter(input io.Reader, f func(FrontMatter, string, string) error) (_ FrontMatter, err error) {
-	d := NewDocument()
-	defer func() {
-		if recovered := recover(); recovered != nil {
-			err = fmt.Errorf("could not parse input: %s", recovered)
-		}
-	}()
-	d.tokenize(input)
-	d.parseMany(0, func(d *Document, i int) bool {
-		if !(i < len(d.tokens)) {
-			return true
-		}
-		t := d.tokens[i]
-		return t.kind != "keyword" && !(t.kind == "text" && t.content == "")
-	})
-	frontMatter := make(FrontMatter, len(d.BufferSettings))
-	for k, v := range d.BufferSettings {
-		err := f(frontMatter, k, v)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return frontMatter, err
 }
 
 func (d *Document) tokenize(input io.Reader) {
