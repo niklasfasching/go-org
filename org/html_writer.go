@@ -62,21 +62,21 @@ func (w *HTMLWriter) emptyClone() *HTMLWriter {
 
 func (w *HTMLWriter) nodesAsString(nodes ...Node) string {
 	tmp := w.emptyClone()
-	tmp.writeNodes(nodes...)
+	tmp.WriteNodes(nodes...)
 	return tmp.String()
 }
 
-func (w *HTMLWriter) before(d *Document) {
+func (w *HTMLWriter) Before(d *Document) {
 	w.document = d
 	w.log = d.Log
 	w.writeOutline(d)
 }
 
-func (w *HTMLWriter) after(d *Document) {
+func (w *HTMLWriter) After(d *Document) {
 	w.writeFootnotes(d)
 }
 
-func (w *HTMLWriter) writeNodes(ns ...Node) {
+func (w *HTMLWriter) WriteNodes(ns ...Node) {
 	for _, n := range ns {
 		switch n := n.(type) {
 		case Keyword:
@@ -142,7 +142,7 @@ func (w *HTMLWriter) writeBlock(b Block) {
 	if isRawTextBlock(b.Name) {
 		exportWriter := w.emptyClone()
 		exportWriter.htmlEscape = false
-		exportWriter.writeNodes(b.Children...)
+		exportWriter.WriteNodes(b.Children...)
 		content = strings.TrimRightFunc(exportWriter.String(), unicode.IsSpace)
 	} else {
 		content = w.nodesAsString(b.Children...)
@@ -170,7 +170,7 @@ func (w *HTMLWriter) writeBlock(b Block) {
 }
 
 func (w *HTMLWriter) writeDrawer(d Drawer) {
-	w.writeNodes(d.Children...)
+	w.WriteNodes(d.Children...)
 }
 
 func (w *HTMLWriter) writeKeyword(k Keyword) {
@@ -180,7 +180,7 @@ func (w *HTMLWriter) writeKeyword(k Keyword) {
 }
 
 func (w *HTMLWriter) writeInclude(i Include) {
-	w.writeNodes(i.Resolve())
+	w.WriteNodes(i.Resolve())
 }
 
 func (w *HTMLWriter) writeFootnoteDefinition(f FootnoteDefinition) {
@@ -188,7 +188,7 @@ func (w *HTMLWriter) writeFootnoteDefinition(f FootnoteDefinition) {
 	w.WriteString(`<div class="footnote-definition">` + "\n")
 	w.WriteString(fmt.Sprintf(`<sup id="footnote-%s"><a href="#footnote-reference-%s">%s</a></sup>`, n, n, n) + "\n")
 	w.WriteString(`<div class="footnote-body">` + "\n")
-	w.writeNodes(f.Children...)
+	w.WriteNodes(f.Children...)
 	w.WriteString("</div>\n</div>\n")
 }
 
@@ -248,7 +248,7 @@ func (w *HTMLWriter) writeHeadline(h Headline) {
 		w.WriteString(fmt.Sprintf(`<span class="priority">[%s]</span>`, h.Priority) + "\n")
 	}
 
-	w.writeNodes(h.Title...)
+	w.WriteNodes(h.Title...)
 	if w.document.GetOption("tags") && len(h.Tags) != 0 {
 		tags := make([]string, len(h.Tags))
 		for i, tag := range h.Tags {
@@ -258,7 +258,7 @@ func (w *HTMLWriter) writeHeadline(h Headline) {
 		w.WriteString(fmt.Sprintf(`<span class="tags">%s</span>`, strings.Join(tags, "&#xa0;")))
 	}
 	w.WriteString(fmt.Sprintf("\n</h%d>\n", h.Lvl))
-	w.writeNodes(h.Children...)
+	w.WriteNodes(h.Children...)
 }
 
 func (w *HTMLWriter) writeText(t Text) {
@@ -277,7 +277,7 @@ func (w *HTMLWriter) writeEmphasis(e Emphasis) {
 		panic(fmt.Sprintf("bad emphasis %#v", e))
 	}
 	w.WriteString(tags[0])
-	w.writeNodes(e.Content...)
+	w.WriteNodes(e.Content...)
 	w.WriteString(tags[1])
 }
 
@@ -326,7 +326,7 @@ func (w *HTMLWriter) writeList(l List) {
 		panic(fmt.Sprintf("bad list kind %#v", l))
 	}
 	w.WriteString(tags[0] + "\n")
-	w.writeNodes(l.Items...)
+	w.WriteNodes(l.Items...)
 	w.WriteString(tags[1] + "\n")
 }
 
@@ -336,7 +336,7 @@ func (w *HTMLWriter) writeListItem(li ListItem) {
 	} else {
 		w.WriteString("<li>\n")
 	}
-	w.writeNodes(li.Children...)
+	w.WriteNodes(li.Children...)
 	w.WriteString("</li>\n")
 }
 
@@ -348,12 +348,12 @@ func (w *HTMLWriter) writeDescriptiveListItem(di DescriptiveListItem) {
 	}
 
 	if len(di.Term) != 0 {
-		w.writeNodes(di.Term...)
+		w.WriteNodes(di.Term...)
 	} else {
 		w.WriteString("?")
 	}
 	w.WriteString("<dd>\n")
-	w.writeNodes(di.Details...)
+	w.WriteNodes(di.Details...)
 	w.WriteString("<dd>\n")
 }
 
@@ -365,7 +365,7 @@ func (w *HTMLWriter) writeParagraph(p Paragraph) {
 	if _, ok := p.Children[0].(LineBreak); !ok {
 		w.WriteString("\n")
 	}
-	w.writeNodes(p.Children...)
+	w.WriteNodes(p.Children...)
 	w.WriteString("\n</p>\n")
 }
 
@@ -373,7 +373,7 @@ func (w *HTMLWriter) writeExample(e Example) {
 	w.WriteString(`<pre class="example">` + "\n")
 	if len(e.Children) != 0 {
 		for _, n := range e.Children {
-			w.writeNodes(n)
+			w.WriteNodes(n)
 			w.WriteString("\n")
 		}
 	}
@@ -438,7 +438,7 @@ func (w *HTMLWriter) writeTableColumns(columns []Column, tag string) {
 		} else {
 			w.WriteString(fmt.Sprintf(`<%s class="align-%s">`, tag, column.Align))
 		}
-		w.writeNodes(column.Children...)
+		w.WriteNodes(column.Children...)
 		w.WriteString(fmt.Sprintf("</%s>\n", tag))
 	}
 	w.WriteString("</tr>\n")

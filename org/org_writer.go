@@ -32,8 +32,8 @@ func NewOrgWriter() *OrgWriter {
 	}
 }
 
-func (w *OrgWriter) before(d *Document) {}
-func (w *OrgWriter) after(d *Document)  {}
+func (w *OrgWriter) Before(d *Document) {}
+func (w *OrgWriter) After(d *Document)  {}
 
 func (w *OrgWriter) emptyClone() *OrgWriter {
 	wcopy := *w
@@ -43,11 +43,11 @@ func (w *OrgWriter) emptyClone() *OrgWriter {
 
 func (w *OrgWriter) nodesAsString(nodes ...Node) string {
 	tmp := w.emptyClone()
-	tmp.writeNodes(nodes...)
+	tmp.WriteNodes(nodes...)
 	return tmp.String()
 }
 
-func (w *OrgWriter) writeNodes(ns ...Node) {
+func (w *OrgWriter) WriteNodes(ns ...Node) {
 	for _, n := range ns {
 		switch n := n.(type) {
 		case Comment:
@@ -118,7 +118,7 @@ func (w *OrgWriter) writeHeadline(h Headline) {
 		tmp.WriteString(" [#" + h.Priority + "]")
 	}
 	tmp.WriteString(" ")
-	tmp.writeNodes(h.Title...)
+	tmp.WriteNodes(h.Title...)
 	hString := tmp.String()
 	if len(h.Tags) != 0 {
 		tString := ":" + strings.Join(h.Tags, ":") + ":"
@@ -135,9 +135,9 @@ func (w *OrgWriter) writeHeadline(h Headline) {
 		w.WriteString(w.indent)
 	}
 	if h.Properties != nil {
-		w.writeNodes(*h.Properties)
+		w.WriteNodes(*h.Properties)
 	}
-	w.writeNodes(h.Children...)
+	w.WriteNodes(h.Children...)
 }
 
 func (w *OrgWriter) writeBlock(b Block) {
@@ -149,7 +149,7 @@ func (w *OrgWriter) writeBlock(b Block) {
 	if isRawTextBlock(b.Name) {
 		w.WriteString(w.indent)
 	}
-	w.writeNodes(b.Children...)
+	w.WriteNodes(b.Children...)
 	if !isRawTextBlock(b.Name) {
 		w.WriteString(w.indent)
 	}
@@ -158,7 +158,7 @@ func (w *OrgWriter) writeBlock(b Block) {
 
 func (w *OrgWriter) writeDrawer(d Drawer) {
 	w.WriteString(w.indent + ":" + d.Name + ":\n")
-	w.writeNodes(d.Children...)
+	w.WriteNodes(d.Children...)
 	w.WriteString(w.indent + ":END:\n")
 }
 
@@ -212,26 +212,26 @@ func (w *OrgWriter) writeKeyword(k Keyword) {
 func (w *OrgWriter) writeNodeWithMeta(n NodeWithMeta) {
 	for _, ns := range n.Meta.Caption {
 		w.WriteString("#+CAPTION: ")
-		w.writeNodes(ns...)
+		w.WriteNodes(ns...)
 		w.WriteString("\n")
 	}
 	for _, attributes := range n.Meta.HTMLAttributes {
 		w.WriteString("#+ATTR_HTML: ")
 		w.WriteString(strings.Join(attributes, " ") + "\n")
 	}
-	w.writeNodes(n.Node)
+	w.WriteNodes(n.Node)
 }
 
 func (w *OrgWriter) writeComment(c Comment) {
 	w.WriteString(w.indent + "#" + c.Content + "\n")
 }
 
-func (w *OrgWriter) writeList(l List) { w.writeNodes(l.Items...) }
+func (w *OrgWriter) writeList(l List) { w.WriteNodes(l.Items...) }
 
 func (w *OrgWriter) writeListItem(li ListItem) {
 	liWriter := w.emptyClone()
 	liWriter.indent = w.indent + strings.Repeat(" ", len(li.Bullet)+1)
-	liWriter.writeNodes(li.Children...)
+	liWriter.WriteNodes(li.Children...)
 	content := strings.TrimPrefix(liWriter.String(), liWriter.indent)
 	w.WriteString(w.indent + li.Bullet)
 	if li.Status != "" {
@@ -257,7 +257,7 @@ func (w *OrgWriter) writeDescriptiveListItem(di DescriptiveListItem) {
 	}
 	diWriter := w.emptyClone()
 	diWriter.indent = indent
-	diWriter.writeNodes(di.Details...)
+	diWriter.WriteNodes(di.Details...)
 	details := strings.TrimPrefix(diWriter.String(), diWriter.indent)
 	if len(details) > 0 && details[0] == '\n' {
 		w.WriteString(details)
@@ -320,7 +320,7 @@ func (w *OrgWriter) writeEmphasis(e Emphasis) {
 		panic(fmt.Sprintf("bad emphasis %#v", e))
 	}
 	w.WriteString(borders[0])
-	w.writeNodes(e.Content...)
+	w.WriteNodes(e.Content...)
 	w.WriteString(borders[1])
 }
 
@@ -340,7 +340,7 @@ func (w *OrgWriter) writeFootnoteLink(l FootnoteLink) {
 	w.WriteString("[fn:" + l.Name)
 	if l.Definition != nil {
 		w.WriteString(":")
-		w.writeNodes(l.Definition.Children[0].(Paragraph).Children...)
+		w.WriteNodes(l.Definition.Children[0].(Paragraph).Children...)
 	}
 	w.WriteString("]")
 }
@@ -352,7 +352,7 @@ func (w *OrgWriter) writeRegularLink(l RegularLink) {
 		w.WriteString(fmt.Sprintf("[[%s]]", l.URL))
 	} else {
 		descriptionWriter := w.emptyClone()
-		descriptionWriter.writeNodes(l.Description...)
+		descriptionWriter.WriteNodes(l.Description...)
 		description := descriptionWriter.String()
 		w.WriteString(fmt.Sprintf("[[%s][%s]]", l.URL, description))
 	}

@@ -25,9 +25,9 @@ type Document struct {
 }
 
 type Writer interface {
-	before(*Document)
-	after(*Document)
-	writeNodes(...Node)
+	Before(*Document)
+	After(*Document)
+	WriteNodes(...Node)
 	String() string
 }
 
@@ -101,9 +101,9 @@ func (d *Document) Write(w Writer) (out string, err error) {
 	} else if d.Nodes == nil {
 		return "", fmt.Errorf("could not write output: parse was not called")
 	}
-	w.before(d)
-	w.writeNodes(d.Nodes...)
-	w.after(d)
+	w.Before(d)
+	w.WriteNodes(d.Nodes...)
+	w.After(d)
 	return w.String(), err
 }
 
