@@ -86,7 +86,7 @@ func getColumnInfos(rows [][]string) []ColumnInfo {
 	for i := 0; i < columnCount; i++ {
 		countNumeric, countNonNumeric := 0, 0
 		for _, columns := range rows {
-			if !(i < len(columns)) {
+			if i >= len(columns) {
 				continue
 			}
 

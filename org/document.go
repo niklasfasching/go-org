@@ -16,7 +16,6 @@ type Document struct {
 	Nodes               []Node
 	Footnotes           Footnotes
 	Outline             Outline
-	StatusKeywords      []string
 	MaxEmphasisNewLines int
 	AutoLink            bool
 	BufferSettings      map[string]string
@@ -119,7 +118,7 @@ func (dIn *Document) Parse(input io.Reader) (d *Document) {
 		d.Error = fmt.Errorf("parse was called multiple times")
 	}
 	d.tokenize(input)
-	_, nodes := d.parseMany(0, func(d *Document, i int) bool { return !(i < len(d.tokens)) })
+	_, nodes := d.parseMany(0, func(d *Document, i int) bool { return i >= len(d.tokens) })
 	d.Nodes = nodes
 	return d
 }
