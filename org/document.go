@@ -1,3 +1,15 @@
+// Package org is an Org mode syntax processor.
+//
+// It parses plain text into an AST and can export it as HTML or pretty printed Org mode syntax.
+// Further export formats can be defined using the Writer interface.
+//
+// You probably want to start with something like this:
+//   input := strings.NewReader("Your Org mode input")
+//   html, err := org.New().Parse(input, "./").Write(org.NewHTMLWriter())
+//   if err != nil {
+//       log.Fatalf("Something went wrong: %s", err)
+//   }
+//   log.Print(html)
 package org
 
 import (
@@ -10,27 +22,34 @@ import (
 	"strings"
 )
 
+type Configuration struct {
+	MaxEmphasisNewLines int               // Maximum number of newlines inside an emphasis. See org-emphasis-regexp-components newline.
+	AutoLink            bool              // Try to convert text passages that look like hyperlinks into hyperlinks.
+	DefaultSettings     map[string]string // Default values for settings that are overriden by setting the same key in BufferSettings.
+	Log                 *log.Logger       // Log is used to print warnings during parsing.
+}
+
+// Document contains the parsing results and a pointer to the Configuration.
 type Document struct {
-	Path                string
-	tokens              []token
-	Nodes               []Node
-	Footnotes           Footnotes
-	Outline             Outline
-	MaxEmphasisNewLines int
-	AutoLink            bool
-	BufferSettings      map[string]string
-	DefaultSettings     map[string]string
-	Error               error
-	Log                 *log.Logger
+	*Configuration
+	Path           string // Path of the file containing the parse input - used to resolve relative paths during parsing (e.g. INCLUDE).
+	tokens         []token
+	Nodes          []Node
+	Footnotes      Footnotes
+	Outline        Outline           // Outline is a Table Of Contents for the document and contains all sections (headline + content).
+	BufferSettings map[string]string // Settings contains all settings that were parsed from keywords.
+	Error          error
 }
 
+// Writer is the interface that is used to export a parsed document into a new format. See Document.Write().
 type Writer interface {
-	Before(*Document)
-	After(*Document)
-	WriteNodes(...Node)
-	String() string
+	Before(*Document)   // Before is called before any nodes are passed to the writer.
+	After(*Document)    // After is called after all nodes have been passed to the writer.
+	WriteNodes(...Node) // WriteNodes is called with the nodes of the parsed document.
+	String() string     // String is called at the very end to retrieve the final output.
 }
 
+// Node represents a parsed node of the document. It's an empty interface and can be ignored.
 type Node interface{}
 
 type lexFn = func(line string) (t token, ok bool)
@@ -59,17 +78,11 @@ var lexFns = []lexFn{
 
 var nilToken = token{"nil", -1, "", nil}
 
-func NewDocument() *Document {
-	outlineSection := &Section{}
-	return &Document{
-		Footnotes: Footnotes{
-			Title:       "Footnotes",
-			Definitions: map[string]*FootnoteDefinition{},
-		},
+// New returns a new Configuration with (hopefully) sane defaults.
+func New() *Configuration {
+	return &Configuration{
 		AutoLink:            true,
 		MaxEmphasisNewLines: 1,
-		Outline:             Outline{outlineSection, outlineSection, 0},
-		BufferSettings:      map[string]string{},
 		DefaultSettings: map[string]string{
 			"TODO":         "TODO | DONE",
 			"EXCLUDE_TAGS": "noexport",
@@ -79,6 +92,7 @@ func NewDocument() *Document {
 	}
 }
 
+// Write is called after with an instance of the Writer interface to export a parsed Document into another format.
 func (d *Document) Write(w Writer) (out string, err error) {
 	defer func() {
 		if recovered := recover(); recovered != nil {
@@ -96,8 +110,20 @@ func (d *Document) Write(w Writer) (out string, err error) {
 	return w.String(), err
 }
 
-func (dIn *Document) Parse(input io.Reader) (d *Document) {
-	d = dIn
+// Parse parses the input into an AST (and some other helpful fields like Outline).
+// To allow method chaining, errors are stored in document.Error rather than being returned.
+func (c *Configuration) Parse(input io.Reader, path string) (d *Document) {
+	outlineSection := &Section{}
+	d = &Document{
+		Configuration: c,
+		Footnotes: Footnotes{
+			Title:       "Footnotes",
+			Definitions: map[string]*FootnoteDefinition{},
+		},
+		Outline:        Outline{outlineSection, outlineSection, 0},
+		BufferSettings: map[string]string{},
+		Path:           path,
+	}
 	defer func() {
 		if recovered := recover(); recovered != nil {
 			d.Error = fmt.Errorf("could not parse input: %v", recovered)
@@ -112,15 +138,10 @@ func (dIn *Document) Parse(input io.Reader) (d *Document) {
 	return d
 }
 
-func (d *Document) SetPath(path string) *Document {
-	d.Path = path
-	d.Log.SetPrefix(fmt.Sprintf("%s(%s): ", d.Log.Prefix(), path))
-	return d
-}
-
-func (d *Document) Silent() *Document {
-	d.Log = log.New(ioutil.Discard, "", 0)
-	return d
+// Silent disables all logging of warnings during parsing.
+func (c *Configuration) Silent() *Configuration {
+	c.Log = log.New(ioutil.Discard, "", 0)
+	return c
 }
 
 func (d *Document) tokenize(input io.Reader) {
@@ -134,6 +155,7 @@ func (d *Document) tokenize(input io.Reader) {
 	}
 }
 
+// Get returns the value for key in BufferSettings or DefaultSettings if key does not exist in the former
 func (d *Document) Get(key string) string {
 	if v, ok := d.BufferSettings[key]; ok {
 		return v
@@ -144,7 +166,15 @@ func (d *Document) Get(key string) string {
 	return ""
 }
 
-// see https://orgmode.org/manual/Export-settings.html
+// GetOption returns the value associated to the export option key
+// Currently supported options:
+// - e (export org entities)
+// - f (export footnotes)
+// - toc (export table of content)
+// - todo (export headline todo status)
+// - pri (export headline priority)
+// - tags (export headline tags)
+// see https://orgmode.org/manual/Export-settings.html for more information
 func (d *Document) GetOption(key string) bool {
 	get := func(settings map[string]string) string {
 		for _, field := range strings.Fields(settings["OPTIONS"]) {

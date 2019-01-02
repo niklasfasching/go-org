@@ -17,7 +17,7 @@ func main() {
 
 	js.Global().Set("run", js.NewCallback(func([]js.Value) {
 		in := strings.NewReader(in.Get("value").String())
-		html, err := org.NewDocument().Parse(in).Write(org.NewHTMLWriter())
+		html, err := org.New().Parse(in, "").Write(org.NewHTMLWriter())
 		if err != nil {
 			out.Set("innerHTML", fmt.Sprintf("<pre>%s</pre>", err))
 		} else {

@@ -148,7 +148,7 @@ func (d *Document) loadSetupFile(k Keyword) (int, Node) {
 		d.Log.Printf("Bad setup file: %#v: %s", k, err)
 		return 1, k
 	}
-	setupDocument := NewDocument().Parse(bytes.NewReader(bs))
+	setupDocument := d.Configuration.Parse(bytes.NewReader(bs), path)
 	if err := setupDocument.Error; err != nil {
 		d.Log.Printf("Bad setup file: %#v: %s", k, err)
 		return 1, k

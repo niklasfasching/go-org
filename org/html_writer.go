@@ -12,6 +12,7 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
+// HTMLWriter exports an org document into a html document.
 type HTMLWriter struct {
 	stringBuilder
 	document           *Document

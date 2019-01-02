@@ -27,7 +27,7 @@ func main() {
 		log.Fatal(err)
 	}
 	out, err := "", nil
-	d := org.NewDocument().SetPath(path).Parse(bytes.NewReader(bs))
+	d := org.New().Parse(bytes.NewReader(bs), path)
 	switch strings.ToLower(os.Args[2]) {
 	case "org":
 		out, err = d.Write(org.NewOrgWriter())

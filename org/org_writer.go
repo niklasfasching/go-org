@@ -9,8 +9,9 @@ import (
 
 type stringBuilder = strings.Builder
 
+// OrgWriter export an org document into pretty printed org document.
 type OrgWriter struct {
-	TagsColumn int // see org-tags-column
+	TagsColumn int
 	stringBuilder
 	indent string
 }
