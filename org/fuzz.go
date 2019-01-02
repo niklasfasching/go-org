@@ -19,7 +19,7 @@ func Fuzz(input []byte) int {
 	if err != nil {
 		panic(err)
 	}
-	htmlOutputB, err := conf.Parse(strings.NewReader(orgOutput)).Write(NewHTMLWriter())
+	htmlOutputB, err := conf.Parse(strings.NewReader(orgOutput), "").Write(NewHTMLWriter())
 	if htmlOutputA != htmlOutputB {
 		panic("rendered org results in different html than original input")
 	}
