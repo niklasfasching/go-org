@@ -44,72 +44,11 @@ func (w *OrgWriter) emptyClone() *OrgWriter {
 
 func (w *OrgWriter) nodesAsString(nodes ...Node) string {
 	tmp := w.emptyClone()
-	tmp.WriteNodes(nodes...)
+	WriteNodes(tmp, nodes...)
 	return tmp.String()
 }
 
-func (w *OrgWriter) WriteNodes(ns ...Node) {
-	for _, n := range ns {
-		switch n := n.(type) {
-		case Comment:
-			w.writeComment(n)
-		case Keyword:
-			w.writeKeyword(n)
-		case Include:
-			w.writeKeyword(n.Keyword)
-		case NodeWithMeta:
-			w.writeNodeWithMeta(n)
-		case Headline:
-			w.writeHeadline(n)
-		case Block:
-			w.writeBlock(n)
-		case Drawer:
-			w.writeDrawer(n)
-		case PropertyDrawer:
-			w.writePropertyDrawer(n)
-
-		case FootnoteDefinition:
-			w.writeFootnoteDefinition(n)
-
-		case List:
-			w.writeList(n)
-		case ListItem:
-			w.writeListItem(n)
-		case DescriptiveListItem:
-			w.writeDescriptiveListItem(n)
-
-		case Table:
-			w.writeTable(n)
-
-		case Paragraph:
-			w.writeParagraph(n)
-		case Example:
-			w.writeExample(n)
-		case HorizontalRule:
-			w.writeHorizontalRule(n)
-		case Text:
-			w.writeText(n)
-		case Emphasis:
-			w.writeEmphasis(n)
-		case StatisticToken:
-			w.writeStatisticToken(n)
-		case LineBreak:
-			w.writeLineBreak(n)
-		case ExplicitLineBreak:
-			w.writeExplicitLineBreak(n)
-		case RegularLink:
-			w.writeRegularLink(n)
-		case FootnoteLink:
-			w.writeFootnoteLink(n)
-		default:
-			if n != nil {
-				panic(fmt.Sprintf("bad node %#v", n))
-			}
-		}
-	}
-}
-
-func (w *OrgWriter) writeHeadline(h Headline) {
+func (w *OrgWriter) WriteHeadline(h Headline) {
 	tmp := w.emptyClone()
 	tmp.WriteString(strings.Repeat("*", h.Lvl))
 	if h.Status != "" {
@@ -119,7 +58,7 @@ func (w *OrgWriter) writeHeadline(h Headline) {
 		tmp.WriteString(" [#" + h.Priority + "]")
 	}
 	tmp.WriteString(" ")
-	tmp.WriteNodes(h.Title...)
+	WriteNodes(tmp, h.Title...)
 	hString := tmp.String()
 	if len(h.Tags) != 0 {
 		tString := ":" + strings.Join(h.Tags, ":") + ":"
@@ -136,12 +75,12 @@ func (w *OrgWriter) writeHeadline(h Headline) {
 		w.WriteString(w.indent)
 	}
 	if h.Properties != nil {
-		w.WriteNodes(*h.Properties)
+		WriteNodes(w, *h.Properties)
 	}
-	w.WriteNodes(h.Children...)
+	WriteNodes(w, h.Children...)
 }
 
-func (w *OrgWriter) writeBlock(b Block) {
+func (w *OrgWriter) WriteBlock(b Block) {
 	w.WriteString(w.indent + "#+BEGIN_" + b.Name)
 	if len(b.Parameters) != 0 {
 		w.WriteString(" " + strings.Join(b.Parameters, " "))
@@ -150,20 +89,20 @@ func (w *OrgWriter) writeBlock(b Block) {
 	if isRawTextBlock(b.Name) {
 		w.WriteString(w.indent)
 	}
-	w.WriteNodes(b.Children...)
+	WriteNodes(w, b.Children...)
 	if !isRawTextBlock(b.Name) {
 		w.WriteString(w.indent)
 	}
 	w.WriteString("#+END_" + b.Name + "\n")
 }
 
-func (w *OrgWriter) writeDrawer(d Drawer) {
+func (w *OrgWriter) WriteDrawer(d Drawer) {
 	w.WriteString(w.indent + ":" + d.Name + ":\n")
-	w.WriteNodes(d.Children...)
+	WriteNodes(w, d.Children...)
 	w.WriteString(w.indent + ":END:\n")
 }
 
-func (w *OrgWriter) writePropertyDrawer(d PropertyDrawer) {
+func (w *OrgWriter) WritePropertyDrawer(d PropertyDrawer) {
 	w.WriteString(":PROPERTIES:\n")
 	for _, kvPair := range d.Properties {
 		k, v := kvPair[0], kvPair[1]
@@ -175,7 +114,7 @@ func (w *OrgWriter) writePropertyDrawer(d PropertyDrawer) {
 	w.WriteString(":END:\n")
 }
 
-func (w *OrgWriter) writeFootnoteDefinition(f FootnoteDefinition) {
+func (w *OrgWriter) WriteFootnoteDefinition(f FootnoteDefinition) {
 	w.WriteString(fmt.Sprintf("[fn:%s]", f.Name))
 	content := w.nodesAsString(f.Children...)
 	if content != "" && !unicode.IsSpace(rune(content[0])) {
@@ -184,7 +123,7 @@ func (w *OrgWriter) writeFootnoteDefinition(f FootnoteDefinition) {
 	w.WriteString(content)
 }
 
-func (w *OrgWriter) writeParagraph(p Paragraph) {
+func (w *OrgWriter) WriteParagraph(p Paragraph) {
 	content := w.nodesAsString(p.Children...)
 	if len(content) > 0 && content[0] != '\n' {
 		w.WriteString(w.indent)
@@ -192,7 +131,7 @@ func (w *OrgWriter) writeParagraph(p Paragraph) {
 	w.WriteString(content + "\n")
 }
 
-func (w *OrgWriter) writeExample(e Example) {
+func (w *OrgWriter) WriteExample(e Example) {
 	for _, n := range e.Children {
 		w.WriteString(w.indent + ":")
 		if content := w.nodesAsString(n); content != "" {
@@ -202,7 +141,7 @@ func (w *OrgWriter) writeExample(e Example) {
 	}
 }
 
-func (w *OrgWriter) writeKeyword(k Keyword) {
+func (w *OrgWriter) WriteKeyword(k Keyword) {
 	w.WriteString(w.indent + "#+" + k.Key + ":")
 	if k.Value != "" {
 		w.WriteString(" " + k.Value)
@@ -210,29 +149,33 @@ func (w *OrgWriter) writeKeyword(k Keyword) {
 	w.WriteString("\n")
 }
 
-func (w *OrgWriter) writeNodeWithMeta(n NodeWithMeta) {
+func (w *OrgWriter) WriteInclude(i Include) {
+	w.WriteKeyword(i.Keyword)
+}
+
+func (w *OrgWriter) WriteNodeWithMeta(n NodeWithMeta) {
 	for _, ns := range n.Meta.Caption {
 		w.WriteString("#+CAPTION: ")
-		w.WriteNodes(ns...)
+		WriteNodes(w, ns...)
 		w.WriteString("\n")
 	}
 	for _, attributes := range n.Meta.HTMLAttributes {
 		w.WriteString("#+ATTR_HTML: ")
 		w.WriteString(strings.Join(attributes, " ") + "\n")
 	}
-	w.WriteNodes(n.Node)
+	WriteNodes(w, n.Node)
 }
 
-func (w *OrgWriter) writeComment(c Comment) {
+func (w *OrgWriter) WriteComment(c Comment) {
 	w.WriteString(w.indent + "#" + c.Content + "\n")
 }
 
-func (w *OrgWriter) writeList(l List) { w.WriteNodes(l.Items...) }
+func (w *OrgWriter) WriteList(l List) { WriteNodes(w, l.Items...) }
 
-func (w *OrgWriter) writeListItem(li ListItem) {
+func (w *OrgWriter) WriteListItem(li ListItem) {
 	liWriter := w.emptyClone()
 	liWriter.indent = w.indent + strings.Repeat(" ", len(li.Bullet)+1)
-	liWriter.WriteNodes(li.Children...)
+	WriteNodes(liWriter, li.Children...)
 	content := strings.TrimPrefix(liWriter.String(), liWriter.indent)
 	w.WriteString(w.indent + li.Bullet)
 	if li.Status != "" {
@@ -245,7 +188,7 @@ func (w *OrgWriter) writeListItem(li ListItem) {
 	}
 }
 
-func (w *OrgWriter) writeDescriptiveListItem(di DescriptiveListItem) {
+func (w *OrgWriter) WriteDescriptiveListItem(di DescriptiveListItem) {
 	w.WriteString(w.indent + di.Bullet)
 	if di.Status != "" {
 		w.WriteString(fmt.Sprintf(" [%s]", di.Status))
@@ -258,7 +201,7 @@ func (w *OrgWriter) writeDescriptiveListItem(di DescriptiveListItem) {
 	}
 	diWriter := w.emptyClone()
 	diWriter.indent = indent
-	diWriter.WriteNodes(di.Details...)
+	WriteNodes(diWriter, di.Details...)
 	details := strings.TrimPrefix(diWriter.String(), diWriter.indent)
 	if len(details) > 0 && details[0] == '\n' {
 		w.WriteString(details)
@@ -267,7 +210,7 @@ func (w *OrgWriter) writeDescriptiveListItem(di DescriptiveListItem) {
 	}
 }
 
-func (w *OrgWriter) writeTable(t Table) {
+func (w *OrgWriter) WriteTable(t Table) {
 	for _, row := range t.Rows {
 		w.WriteString(w.indent)
 		if len(row.Columns) == 0 {
@@ -309,51 +252,51 @@ func (w *OrgWriter) writeTable(t Table) {
 	}
 }
 
-func (w *OrgWriter) writeHorizontalRule(hr HorizontalRule) {
+func (w *OrgWriter) WriteHorizontalRule(hr HorizontalRule) {
 	w.WriteString(w.indent + "-----\n")
 }
 
-func (w *OrgWriter) writeText(t Text) { w.WriteString(t.Content) }
+func (w *OrgWriter) WriteText(t Text) { w.WriteString(t.Content) }
 
-func (w *OrgWriter) writeEmphasis(e Emphasis) {
+func (w *OrgWriter) WriteEmphasis(e Emphasis) {
 	borders, ok := emphasisOrgBorders[e.Kind]
 	if !ok {
 		panic(fmt.Sprintf("bad emphasis %#v", e))
 	}
 	w.WriteString(borders[0])
-	w.WriteNodes(e.Content...)
+	WriteNodes(w, e.Content...)
 	w.WriteString(borders[1])
 }
 
-func (w *OrgWriter) writeStatisticToken(s StatisticToken) {
+func (w *OrgWriter) WriteStatisticToken(s StatisticToken) {
 	w.WriteString(fmt.Sprintf("[%s]", s.Content))
 }
 
-func (w *OrgWriter) writeLineBreak(l LineBreak) {
+func (w *OrgWriter) WriteLineBreak(l LineBreak) {
 	w.WriteString(strings.Repeat("\n"+w.indent, l.Count))
 }
 
-func (w *OrgWriter) writeExplicitLineBreak(l ExplicitLineBreak) {
+func (w *OrgWriter) WriteExplicitLineBreak(l ExplicitLineBreak) {
 	w.WriteString(`\\` + "\n" + w.indent)
 }
 
-func (w *OrgWriter) writeFootnoteLink(l FootnoteLink) {
+func (w *OrgWriter) WriteFootnoteLink(l FootnoteLink) {
 	w.WriteString("[fn:" + l.Name)
 	if l.Definition != nil {
 		w.WriteString(":")
-		w.WriteNodes(l.Definition.Children[0].(Paragraph).Children...)
+		WriteNodes(w, l.Definition.Children[0].(Paragraph).Children...)
 	}
 	w.WriteString("]")
 }
 
-func (w *OrgWriter) writeRegularLink(l RegularLink) {
+func (w *OrgWriter) WriteRegularLink(l RegularLink) {
 	if l.AutoLink {
 		w.WriteString(l.URL)
 	} else if l.Description == nil {
 		w.WriteString(fmt.Sprintf("[[%s]]", l.URL))
 	} else {
 		descriptionWriter := w.emptyClone()
-		descriptionWriter.WriteNodes(l.Description...)
+		WriteNodes(descriptionWriter, l.Description...)
 		description := descriptionWriter.String()
 		w.WriteString(fmt.Sprintf("[[%s][%s]]", l.URL, description))
 	}

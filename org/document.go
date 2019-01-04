@@ -41,14 +41,6 @@ type Document struct {
 	Error          error
 }
 
-// Writer is the interface that is used to export a parsed document into a new format. See Document.Write().
-type Writer interface {
-	Before(*Document)   // Before is called before any nodes are passed to the writer.
-	After(*Document)    // After is called after all nodes have been passed to the writer.
-	WriteNodes(...Node) // WriteNodes is called with the nodes of the parsed document.
-	String() string     // String is called at the very end to retrieve the final output.
-}
-
 // Node represents a parsed node of the document. It's an empty interface and can be ignored.
 type Node interface{}
 
@@ -105,7 +97,7 @@ func (d *Document) Write(w Writer) (out string, err error) {
 		return "", fmt.Errorf("could not write output: parse was not called")
 	}
 	w.Before(d)
-	w.WriteNodes(d.Nodes...)
+	WriteNodes(w, d.Nodes...)
 	w.After(d)
 	return w.String(), err
 }

@@ -63,87 +63,29 @@ func (w *HTMLWriter) emptyClone() *HTMLWriter {
 
 func (w *HTMLWriter) nodesAsString(nodes ...Node) string {
 	tmp := w.emptyClone()
-	tmp.WriteNodes(nodes...)
+	WriteNodes(tmp, nodes...)
 	return tmp.String()
 }
 
 func (w *HTMLWriter) Before(d *Document) {
 	w.document = d
 	w.log = d.Log
-	w.writeOutline(d)
+	w.WriteOutline(d)
 }
 
 func (w *HTMLWriter) After(d *Document) {
-	w.writeFootnotes(d)
+	w.WriteFootnotes(d)
 }
 
-func (w *HTMLWriter) WriteNodes(ns ...Node) {
-	for _, n := range ns {
-		switch n := n.(type) {
-		case Keyword:
-			w.writeKeyword(n)
-		case Include:
-			w.writeInclude(n)
-		case Comment:
-			continue
-		case NodeWithMeta:
-			w.writeNodeWithMeta(n)
-		case Headline:
-			w.writeHeadline(n)
-		case Block:
-			w.writeBlock(n)
-		case Drawer:
-			w.writeDrawer(n)
-		case PropertyDrawer:
-			continue
+func (w *HTMLWriter) WriteComment(Comment)               {}
+func (w *HTMLWriter) WritePropertyDrawer(PropertyDrawer) {}
 
-		case FootnoteDefinition:
-			continue
-
-		case List:
-			w.writeList(n)
-		case ListItem:
-			w.writeListItem(n)
-		case DescriptiveListItem:
-			w.writeDescriptiveListItem(n)
-
-		case Table:
-			w.writeTable(n)
-
-		case Paragraph:
-			w.writeParagraph(n)
-		case Example:
-			w.writeExample(n)
-		case HorizontalRule:
-			w.writeHorizontalRule(n)
-		case Text:
-			w.writeText(n)
-		case Emphasis:
-			w.writeEmphasis(n)
-		case StatisticToken:
-			w.writeStatisticToken(n)
-		case ExplicitLineBreak:
-			w.writeExplicitLineBreak(n)
-		case LineBreak:
-			w.writeLineBreak(n)
-		case RegularLink:
-			w.writeRegularLink(n)
-		case FootnoteLink:
-			w.writeFootnoteLink(n)
-		default:
-			if n != nil {
-				panic(fmt.Sprintf("bad node %#v", n))
-			}
-		}
-	}
-}
-
-func (w *HTMLWriter) writeBlock(b Block) {
+func (w *HTMLWriter) WriteBlock(b Block) {
 	content := ""
 	if isRawTextBlock(b.Name) {
 		exportWriter := w.emptyClone()
 		exportWriter.htmlEscape = false
-		exportWriter.WriteNodes(b.Children...)
+		WriteNodes(exportWriter, b.Children...)
 		content = strings.TrimRightFunc(exportWriter.String(), unicode.IsSpace)
 	} else {
 		content = w.nodesAsString(b.Children...)
@@ -170,30 +112,32 @@ func (w *HTMLWriter) writeBlock(b Block) {
 	}
 }
 
-func (w *HTMLWriter) writeDrawer(d Drawer) {
-	w.WriteNodes(d.Children...)
+func (w *HTMLWriter) WriteDrawer(d Drawer) {
+	WriteNodes(w, d.Children...)
 }
 
-func (w *HTMLWriter) writeKeyword(k Keyword) {
+func (w *HTMLWriter) WriteKeyword(k Keyword) {
 	if k.Key == "HTML" {
 		w.WriteString(k.Value + "\n")
 	}
 }
 
-func (w *HTMLWriter) writeInclude(i Include) {
-	w.WriteNodes(i.Resolve())
+func (w *HTMLWriter) WriteInclude(i Include) {
+	WriteNodes(w, i.Resolve())
 }
+
+func (w *HTMLWriter) WriteFootnoteDefinition(FootnoteDefinition) {}
 
 func (w *HTMLWriter) writeFootnoteDefinition(f FootnoteDefinition) {
 	n := f.Name
 	w.WriteString(`<div class="footnote-definition">` + "\n")
 	w.WriteString(fmt.Sprintf(`<sup id="footnote-%s"><a href="#footnote-reference-%s">%s</a></sup>`, n, n, n) + "\n")
 	w.WriteString(`<div class="footnote-body">` + "\n")
-	w.WriteNodes(f.Children...)
+	WriteNodes(w, f.Children...)
 	w.WriteString("</div>\n</div>\n")
 }
 
-func (w *HTMLWriter) writeFootnotes(d *Document) {
+func (w *HTMLWriter) WriteFootnotes(d *Document) {
 	if !w.document.GetOption("f") || len(d.Footnotes.Definitions) == 0 {
 		return
 	}
@@ -206,7 +150,7 @@ func (w *HTMLWriter) writeFootnotes(d *Document) {
 	w.WriteString("</div>\n</div>\n")
 }
 
-func (w *HTMLWriter) writeOutline(d *Document) {
+func (w *HTMLWriter) WriteOutline(d *Document) {
 	if w.document.GetOption("toc") && len(d.Outline.Children) != 0 {
 		w.WriteString("<nav>\n<ul>\n")
 		for _, section := range d.Outline.Children {
@@ -232,7 +176,7 @@ func (w *HTMLWriter) writeSection(section *Section) {
 	w.WriteString("</li>\n")
 }
 
-func (w *HTMLWriter) writeHeadline(h Headline) {
+func (w *HTMLWriter) WriteHeadline(h Headline) {
 	for _, excludeTag := range strings.Fields(w.document.Get("EXCLUDE_TAGS")) {
 		for _, tag := range h.Tags {
 			if excludeTag == tag {
@@ -249,7 +193,7 @@ func (w *HTMLWriter) writeHeadline(h Headline) {
 		w.WriteString(fmt.Sprintf(`<span class="priority">[%s]</span>`, h.Priority) + "\n")
 	}
 
-	w.WriteNodes(h.Title...)
+	WriteNodes(w, h.Title...)
 	if w.document.GetOption("tags") && len(h.Tags) != 0 {
 		tags := make([]string, len(h.Tags))
 		for i, tag := range h.Tags {
@@ -259,10 +203,10 @@ func (w *HTMLWriter) writeHeadline(h Headline) {
 		w.WriteString(fmt.Sprintf(`<span class="tags">%s</span>`, strings.Join(tags, "&#xa0;")))
 	}
 	w.WriteString(fmt.Sprintf("\n</h%d>\n", h.Lvl))
-	w.WriteNodes(h.Children...)
+	WriteNodes(w, h.Children...)
 }
 
-func (w *HTMLWriter) writeText(t Text) {
+func (w *HTMLWriter) WriteText(t Text) {
 	if !w.htmlEscape {
 		w.WriteString(t.Content)
 	} else if !w.document.GetOption("e") || t.IsRaw {
@@ -272,29 +216,29 @@ func (w *HTMLWriter) writeText(t Text) {
 	}
 }
 
-func (w *HTMLWriter) writeEmphasis(e Emphasis) {
+func (w *HTMLWriter) WriteEmphasis(e Emphasis) {
 	tags, ok := emphasisTags[e.Kind]
 	if !ok {
 		panic(fmt.Sprintf("bad emphasis %#v", e))
 	}
 	w.WriteString(tags[0])
-	w.WriteNodes(e.Content...)
+	WriteNodes(w, e.Content...)
 	w.WriteString(tags[1])
 }
 
-func (w *HTMLWriter) writeStatisticToken(s StatisticToken) {
+func (w *HTMLWriter) WriteStatisticToken(s StatisticToken) {
 	w.WriteString(fmt.Sprintf(`<code class="statistic">[%s]</code>`, s.Content))
 }
 
-func (w *HTMLWriter) writeLineBreak(l LineBreak) {
+func (w *HTMLWriter) WriteLineBreak(l LineBreak) {
 	w.WriteString(strings.Repeat("\n", l.Count))
 }
 
-func (w *HTMLWriter) writeExplicitLineBreak(l ExplicitLineBreak) {
+func (w *HTMLWriter) WriteExplicitLineBreak(l ExplicitLineBreak) {
 	w.WriteString("<br>\n")
 }
 
-func (w *HTMLWriter) writeFootnoteLink(l FootnoteLink) {
+func (w *HTMLWriter) WriteFootnoteLink(l FootnoteLink) {
 	if !w.document.GetOption("f") {
 		return
 	}
@@ -302,7 +246,7 @@ func (w *HTMLWriter) writeFootnoteLink(l FootnoteLink) {
 	w.WriteString(fmt.Sprintf(`<sup class="footnote-reference"><a id="footnote-reference-%s" href="#footnote-%s">%s</a></sup>`, n, n, n))
 }
 
-func (w *HTMLWriter) writeRegularLink(l RegularLink) {
+func (w *HTMLWriter) WriteRegularLink(l RegularLink) {
 	url := html.EscapeString(l.URL)
 	if l.Protocol == "file" {
 		url = url[len("file:"):]
@@ -321,27 +265,27 @@ func (w *HTMLWriter) writeRegularLink(l RegularLink) {
 	}
 }
 
-func (w *HTMLWriter) writeList(l List) {
+func (w *HTMLWriter) WriteList(l List) {
 	tags, ok := listTags[l.Kind]
 	if !ok {
 		panic(fmt.Sprintf("bad list kind %#v", l))
 	}
 	w.WriteString(tags[0] + "\n")
-	w.WriteNodes(l.Items...)
+	WriteNodes(w, l.Items...)
 	w.WriteString(tags[1] + "\n")
 }
 
-func (w *HTMLWriter) writeListItem(li ListItem) {
+func (w *HTMLWriter) WriteListItem(li ListItem) {
 	if li.Status != "" {
 		w.WriteString(fmt.Sprintf("<li class=\"%s\">\n", listItemStatuses[li.Status]))
 	} else {
 		w.WriteString("<li>\n")
 	}
-	w.WriteNodes(li.Children...)
+	WriteNodes(w, li.Children...)
 	w.WriteString("</li>\n")
 }
 
-func (w *HTMLWriter) writeDescriptiveListItem(di DescriptiveListItem) {
+func (w *HTMLWriter) WriteDescriptiveListItem(di DescriptiveListItem) {
 	if di.Status != "" {
 		w.WriteString(fmt.Sprintf("<dt class=\"%s\">\n", listItemStatuses[di.Status]))
 	} else {
@@ -349,16 +293,16 @@ func (w *HTMLWriter) writeDescriptiveListItem(di DescriptiveListItem) {
 	}
 
 	if len(di.Term) != 0 {
-		w.WriteNodes(di.Term...)
+		WriteNodes(w, di.Term...)
 	} else {
 		w.WriteString("?")
 	}
 	w.WriteString("<dd>\n")
-	w.WriteNodes(di.Details...)
+	WriteNodes(w, di.Details...)
 	w.WriteString("<dd>\n")
 }
 
-func (w *HTMLWriter) writeParagraph(p Paragraph) {
+func (w *HTMLWriter) WriteParagraph(p Paragraph) {
 	if len(p.Children) == 0 {
 		return
 	}
@@ -366,26 +310,26 @@ func (w *HTMLWriter) writeParagraph(p Paragraph) {
 	if _, ok := p.Children[0].(LineBreak); !ok {
 		w.WriteString("\n")
 	}
-	w.WriteNodes(p.Children...)
+	WriteNodes(w, p.Children...)
 	w.WriteString("\n</p>\n")
 }
 
-func (w *HTMLWriter) writeExample(e Example) {
+func (w *HTMLWriter) WriteExample(e Example) {
 	w.WriteString(`<pre class="example">` + "\n")
 	if len(e.Children) != 0 {
 		for _, n := range e.Children {
-			w.WriteNodes(n)
+			WriteNodes(w, n)
 			w.WriteString("\n")
 		}
 	}
 	w.WriteString("</pre>\n")
 }
 
-func (w *HTMLWriter) writeHorizontalRule(h HorizontalRule) {
+func (w *HTMLWriter) WriteHorizontalRule(h HorizontalRule) {
 	w.WriteString("<hr>\n")
 }
 
-func (w *HTMLWriter) writeNodeWithMeta(n NodeWithMeta) {
+func (w *HTMLWriter) WriteNodeWithMeta(n NodeWithMeta) {
 	out := w.nodesAsString(n.Node)
 	if p, ok := n.Node.(Paragraph); ok {
 		if len(p.Children) == 1 && isImageOrVideoLink(p.Children[0]) {
@@ -408,7 +352,7 @@ func (w *HTMLWriter) writeNodeWithMeta(n NodeWithMeta) {
 	w.WriteString(out)
 }
 
-func (w *HTMLWriter) writeTable(t Table) {
+func (w *HTMLWriter) WriteTable(t Table) {
 	w.WriteString("<table>\n")
 	beforeFirstContentRow := true
 	for i, row := range t.Rows {
@@ -439,7 +383,7 @@ func (w *HTMLWriter) writeTableColumns(columns []Column, tag string) {
 		} else {
 			w.WriteString(fmt.Sprintf(`<%s class="align-%s">`, tag, column.Align))
 		}
-		w.WriteNodes(column.Children...)
+		WriteNodes(w, column.Children...)
 		w.WriteString(fmt.Sprintf("</%s>\n", tag))
 	}
 	w.WriteString("</tr>\n")
