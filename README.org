@@ -2,26 +2,19 @@
 A basic Org mode parser in go.
 Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org -> html demo (requires wasm support).
 [[https://raw.githubusercontent.com/niklasfasching/go-org/master/etc/example.png]]
-* todos
-** more links?
-https://orgmode.org/manual/External-links.html
-https://orgmode.org/manual/Internal-links.html
-radio target <<<MyTarget>>>
-link target: <<go-org>>
-link: [[go-org]]
-link to headline
-MyTarget <- this will automatically become a link - not sure i want this...
-* differences to goorgeous
-To get a feeling take a look at goorgeous vs go-org html rendering of the examples [[https://niklasfasching.github.io/go-org/go-org-vs-goorgeous][comparison]].
-Please note that a visual comparison is not fair to goorgeous as the stylesheet is not adapted to it.
-Nonetheless, the html output can be compared by taking a look in the developer console where relevant.
-- different html output - existing css will have to be adapted
-- not changing links to .org files into links to .html files
-  - do not plan to implement this, too many edge cases (e.g. [[https://github.com/chaseadamsio/goorgeous/issues/56][mangling links to e.g. example.org]].)
-- org comments not rendered as html comments (same as ox-html.el)
-- goorgeous treats all `file:` links as images - go-org checks for an image file extension (same as ox-html.el)
-- no support for [@10] in ordered lists https://github.com/chaseadamsio/goorgeous/issues/18
-  - do not plan to implement this
+* not yet implemented
+** deadlines and scheduling
+see https://orgmode.org/manual/Deadlines-and-scheduling.html
+** latex fragments
+see https://orgmode.org/manual/LaTeX-fragments.html
++ mathjax for html_writer ?
+** more types of links
+see https://orgmode.org/manual/External-links.html & https://orgmode.org/manual/Internal-links.html
+- radio target <<<MyTarget>>>
+- link target: <<go-org>>
+- link: [[go-org]]
+- link to headline
+- MyTarget <- this will automatically become a link - not sure i want this...
 * resources
 - test files
   - [[https://raw.githubusercontent.com/kaushalmodi/ox-hugo/master/test/site/content-org/all-posts.org][ox-hugo all-posts.org]]
