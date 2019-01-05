@@ -7,12 +7,10 @@ import (
 	"unicode/utf8"
 )
 
-type stringBuilder = strings.Builder
-
 // OrgWriter export an org document into pretty printed org document.
 type OrgWriter struct {
 	TagsColumn int
-	stringBuilder
+	strings.Builder
 	indent string
 }
 
@@ -38,7 +36,7 @@ func (w *OrgWriter) After(d *Document)  {}
 
 func (w *OrgWriter) emptyClone() *OrgWriter {
 	wcopy := *w
-	wcopy.stringBuilder = strings.Builder{}
+	wcopy.Builder = strings.Builder{}
 	return &wcopy
 }
 

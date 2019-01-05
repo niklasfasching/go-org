@@ -14,7 +14,7 @@ import (
 
 // HTMLWriter exports an org document into a html document.
 type HTMLWriter struct {
-	stringBuilder
+	strings.Builder
 	document           *Document
 	HighlightCodeBlock func(source, lang string) string
 	htmlEscape         bool
@@ -57,7 +57,7 @@ func NewHTMLWriter() *HTMLWriter {
 
 func (w *HTMLWriter) emptyClone() *HTMLWriter {
 	wcopy := *w
-	wcopy.stringBuilder = stringBuilder{}
+	wcopy.Builder = strings.Builder{}
 	return &wcopy
 }
 
