@@ -14,6 +14,7 @@ see https://orgmode.org/manual/External-links.html & https://orgmode.org/manual/
 - link target: <<go-org>>
 - link: [[go-org]]
 - link to headline
+- links with image as description
 - MyTarget <- this will automatically become a link - not sure i want this...
 * resources
 - test files

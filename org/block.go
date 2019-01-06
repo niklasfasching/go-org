@@ -12,6 +12,11 @@ type Block struct {
 	Children   []Node
 }
 
+type Example struct {
+	Children []Node
+}
+
+var exampleLineRegexp = regexp.MustCompile(`^(\s*):(\s(.*)|\s*$)`)
 var beginBlockRegexp = regexp.MustCompile(`(?i)^(\s*)#\+BEGIN_(\w+)(.*)`)
 var endBlockRegexp = regexp.MustCompile(`(?i)^(\s*)#\+END_(\w+)`)
 
@@ -20,6 +25,13 @@ func lexBlock(line string) (token, bool) {
 		return token{"beginBlock", len(m[1]), strings.ToUpper(m[2]), m}, true
 	} else if m := endBlockRegexp.FindStringSubmatch(line); m != nil {
 		return token{"endBlock", len(m[1]), strings.ToUpper(m[2]), m}, true
+	}
+	return nilToken, false
+}
+
+func lexExample(line string) (token, bool) {
+	if m := exampleLineRegexp.FindStringSubmatch(line); m != nil {
+		return token{"example", len(m[1]), m[3], m}, true
 	}
 	return nilToken, false
 }
@@ -49,6 +61,14 @@ func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
 		return i + 1 - start, block
 	}
 	return 0, nil
+}
+
+func (d *Document) parseExample(i int, parentStop stopFn) (int, Node) {
+	example, start := Example{}, i
+	for ; !parentStop(d, i) && d.tokens[i].kind == "example"; i++ {
+		example.Children = append(example.Children, Text{d.tokens[i].content, true})
+	}
+	return i - start, example
 }
 
 func trimIndentUpTo(max int) func(string) string {
