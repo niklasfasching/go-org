@@ -54,3 +54,5 @@ func (fs *Footnotes) Ordered() []FootnoteDefinition {
 	}
 	return append(definitions, inlineDefinitions...)
 }
+
+func (n FootnoteDefinition) String() string { return orgWriter.nodesAsString(n) }

@@ -97,3 +97,5 @@ func (parent *Section) add(current *Section) {
 		parent.Parent.add(current)
 	}
 }
+
+func (n Headline) String() string { return orgWriter.nodesAsString(n) }

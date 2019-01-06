@@ -41,8 +41,10 @@ type Document struct {
 	Error          error
 }
 
-// Node represents a parsed node of the document. It's an empty interface and can be ignored.
-type Node interface{}
+// Node represents a parsed node of the document.
+type Node interface {
+	String() string // String returns the pretty printed Org mode string for the node (see OrgWriter).
+}
 
 type lexFn = func(line string) (t token, ok bool)
 type parseFn = func(*Document, int, stopFn) (int, Node)
@@ -69,6 +71,7 @@ var lexFns = []lexFn{
 }
 
 var nilToken = token{"nil", -1, "", nil}
+var orgWriter = NewOrgWriter()
 
 // New returns a new Configuration with (hopefully) sane defaults.
 func New() *Configuration {
@@ -83,6 +86,9 @@ func New() *Configuration {
 		Log: log.New(os.Stderr, "go-org: ", 0),
 	}
 }
+
+// String returns the pretty printed Org mode string for the given nodes (see OrgWriter).
+func String(nodes []Node) string { return orgWriter.nodesAsString(nodes...) }
 
 // Write is called after with an instance of the Writer interface to export a parsed Document into another format.
 func (d *Document) Write(w Writer) (out string, err error) {

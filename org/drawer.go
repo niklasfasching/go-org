@@ -89,3 +89,6 @@ func (d *PropertyDrawer) Get(key string) (string, bool) {
 	}
 	return "", false
 }
+
+func (n Drawer) String() string         { return orgWriter.nodesAsString(n) }
+func (n PropertyDrawer) String() string { return orgWriter.nodesAsString(n) }
