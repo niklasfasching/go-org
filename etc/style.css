@@ -118,3 +118,8 @@ dl > dd { margin: -1em 0 1em 1em; }
   font-size: 0.8em;
   color: lightgrey;
 }
+
+.timestamp {
+  background-color: #eee;
+  padding: 0.05em 0.2em;
+  border: 1px solid #ccc; }

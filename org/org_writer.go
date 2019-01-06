@@ -278,6 +278,19 @@ func (w *OrgWriter) WriteExplicitLineBreak(l ExplicitLineBreak) {
 	w.WriteString(`\\` + "\n" + w.indent)
 }
 
+func (w *OrgWriter) WriteTimestamp(t Timestamp) {
+	w.WriteString("<")
+	if t.IsDate {
+		w.WriteString(t.Time.Format(datestampFormat))
+	} else {
+		w.WriteString(t.Time.Format(timestampFormat))
+	}
+	if t.Interval != "" {
+		w.WriteString(" " + t.Interval)
+	}
+	w.WriteString(">")
+}
+
 func (w *OrgWriter) WriteFootnoteLink(l FootnoteLink) {
 	w.WriteString("[fn:" + l.Name)
 	if l.Definition != nil {

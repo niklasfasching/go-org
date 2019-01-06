@@ -81,7 +81,7 @@ func New() *Configuration {
 		DefaultSettings: map[string]string{
 			"TODO":         "TODO | DONE",
 			"EXCLUDE_TAGS": "noexport",
-			"OPTIONS":      "toc:t e:t f:t pri:t todo:t tags:t",
+			"OPTIONS":      "toc:t <:t e:t f:t pri:t todo:t tags:t",
 		},
 		Log: log.New(os.Stderr, "go-org: ", 0),
 	}
@@ -166,6 +166,7 @@ func (d *Document) Get(key string) string {
 
 // GetOption returns the value associated to the export option key
 // Currently supported options:
+// - < (export timestamps)
 // - e (export org entities)
 // - f (export footnotes)
 // - toc (export table of content)

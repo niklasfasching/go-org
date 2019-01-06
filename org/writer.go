@@ -29,6 +29,7 @@ type Writer interface {
 	WriteExplicitLineBreak(ExplicitLineBreak)
 	WriteLineBreak(LineBreak)
 	WriteRegularLink(RegularLink)
+	WriteTimestamp(Timestamp)
 	WriteFootnoteLink(FootnoteLink)
 	WriteFootnoteDefinition(FootnoteDefinition)
 }
@@ -78,6 +79,8 @@ func WriteNodes(w Writer, nodes ...Node) {
 			w.WriteLineBreak(n)
 		case RegularLink:
 			w.WriteRegularLink(n)
+		case Timestamp:
+			w.WriteTimestamp(n)
 		case FootnoteLink:
 			w.WriteFootnoteLink(n)
 		case FootnoteDefinition:

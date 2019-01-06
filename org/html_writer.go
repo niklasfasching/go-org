@@ -246,6 +246,22 @@ func (w *HTMLWriter) WriteFootnoteLink(l FootnoteLink) {
 	w.WriteString(fmt.Sprintf(`<sup class="footnote-reference"><a id="footnote-reference-%s" href="#footnote-%s">%s</a></sup>`, n, n, n))
 }
 
+func (w *HTMLWriter) WriteTimestamp(t Timestamp) {
+	if !w.document.GetOption("<") {
+		return
+	}
+	w.WriteString(`<span class="timestamp">&lt;`)
+	if t.IsDate {
+		w.WriteString(t.Time.Format(datestampFormat))
+	} else {
+		w.WriteString(t.Time.Format(timestampFormat))
+	}
+	if t.Interval != "" {
+		w.WriteString(" " + t.Interval)
+	}
+	w.WriteString(`&gt;</span>`)
+}
+
 func (w *HTMLWriter) WriteRegularLink(l RegularLink) {
 	url := html.EscapeString(l.URL)
 	if l.Protocol == "file" {

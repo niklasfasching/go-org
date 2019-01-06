@@ -1,9 +1,11 @@
 package org
 
 import (
+	"fmt"
 	"path"
 	"regexp"
 	"strings"
+	"time"
 	"unicode"
 )
 
@@ -16,6 +18,12 @@ type LineBreak struct{ Count int }
 type ExplicitLineBreak struct{}
 
 type StatisticToken struct{ Content string }
+
+type Timestamp struct {
+	Time     time.Time
+	IsDate   bool
+	Interval string
+}
 
 type Emphasis struct {
 	Kind    string
@@ -40,8 +48,12 @@ var imageExtensionRegexp = regexp.MustCompile(`^[.](png|gif|jpe?g|svg|tiff?)$`)
 var videoExtensionRegexp = regexp.MustCompile(`^[.](webm|mp4)$`)
 
 var subScriptSuperScriptRegexp = regexp.MustCompile(`^([_^]){([^{}]+?)}`)
+var timestampRegexp = regexp.MustCompile(`^<(\d{4}-\d{2}-\d{2})( [A-Za-z]+)?( \d{2}:\d{2})?( \+\d+[dwmy])?>`)
 var footnoteRegexp = regexp.MustCompile(`^\[fn:([\w-]+?)(:(.*?))?\]`)
 var statisticsTokenRegexp = regexp.MustCompile(`^\[(\d+/\d+|\d+%)\]`)
+
+var timestampFormat = "2006-01-02 Mon 15:04"
+var datestampFormat = "2006-01-02 Mon"
 
 func (d *Document) parseInline(input string) (nodes []Node) {
 	previous, current := 0, 0
@@ -58,6 +70,8 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 			consumed, node = d.parseEmphasis(input, current, true)
 		case '[':
 			consumed, node = d.parseOpeningBracket(input, current)
+		case '<':
+			consumed, node = d.parseTimestamp(input, current)
 		case '\\':
 			consumed, node = d.parseExplicitLineBreak(input, current)
 		case '\n':
@@ -222,6 +236,22 @@ func (d *Document) parseRegularLink(input string, start int) (int, Node) {
 	return consumed, RegularLink{protocol, description, link, false}
 }
 
+func (d *Document) parseTimestamp(input string, start int) (int, Node) {
+	if m := timestampRegexp.FindStringSubmatch(input[start:]); m != nil {
+		ddmmyy, hhmm, interval, isDate := m[1], m[3], strings.TrimSpace(m[4]), false
+		if hhmm == "" {
+			hhmm, isDate = "00:00", true
+		}
+		t, err := time.Parse(timestampFormat, fmt.Sprintf("%s Mon %s", ddmmyy, hhmm))
+		if err != nil {
+			return 0, nil
+		}
+		timestamp := Timestamp{t, isDate, interval}
+		return len(m[0]), timestamp
+	}
+	return 0, nil
+}
+
 func (d *Document) parseEmphasis(input string, start int, isRaw bool) (int, Node) {
 	marker, i := input[start], start
 	if !hasValidPreAndBorderChars(input, i) {
@@ -282,3 +312,4 @@ func (n StatisticToken) String() string    { return orgWriter.nodesAsString(n) }
 func (n Emphasis) String() string          { return orgWriter.nodesAsString(n) }
 func (n FootnoteLink) String() string      { return orgWriter.nodesAsString(n) }
 func (n RegularLink) String() string       { return orgWriter.nodesAsString(n) }
+func (n Timestamp) String() string         { return orgWriter.nodesAsString(n) }

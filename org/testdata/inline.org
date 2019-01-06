@@ -27,3 +27,10 @@
   6. regular link to https (image) [[https://placekitten.com/200/200#.png]]
   7. regular link enclosed in [] [[[https://www.example.com]]] [[[https://www.example.com][example.com]]]
   8. auto link, i.e. not inside =\[[square brackets]\]= https://www.example.com
+- timestamps
+  - <2019-01-06>
+  - <2019-01-06 Sun>
+  - <2019-01-06 Sun 18:00>
+  - <2019-01-06 Sun 18:00 +1w>
+  - <2019-01-06 18:00>
+  - <2019-01-06 18:00 +1w>
