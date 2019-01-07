@@ -47,7 +47,10 @@ var listItemStatuses = map[string]string{
 var cleanHeadlineTitleForHTMLAnchorRegexp = regexp.MustCompile(`</?a[^>]*>`) // nested a tags are not valid HTML
 
 func NewHTMLWriter() *HTMLWriter {
+	defaultConfig := New()
 	return &HTMLWriter{
+		document:   &Document{Configuration: defaultConfig},
+		log:        defaultConfig.Log,
 		htmlEscape: true,
 		HighlightCodeBlock: func(source, lang string) string {
 			return fmt.Sprintf("%s\n<pre>\n%s\n</pre>\n</div>", `<div class="highlight">`, html.EscapeString(source))
