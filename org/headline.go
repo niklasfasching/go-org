@@ -35,14 +35,14 @@ var tagRegexp = regexp.MustCompile(`(.*?)\s+(:[A-Za-z0-9_@#%:]+:\s*$)`)
 
 func lexHeadline(line string) (token, bool) {
 	if m := headlineRegexp.FindStringSubmatch(line); m != nil {
-		return token{"headline", 0, m[2], m}, true
+		return token{"headline", len(m[1]), m[2], m}, true
 	}
 	return nilToken, false
 }
 
 func (d *Document) parseHeadline(i int, parentStop stopFn) (int, Node) {
 	t, headline := d.tokens[i], Headline{}
-	headline.Lvl = len(t.matches[1])
+	headline.Lvl = t.lvl
 
 	headline.Index = d.addHeadline(&headline)
 
