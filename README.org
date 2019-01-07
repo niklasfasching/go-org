@@ -1,5 +1,5 @@
 * go-org [[https://travis-ci.org/niklasfasching/go-org.svg?branch=master]]
-A basic Org mode parser in go.
+An Org mode parser in go.
 Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org -> html demo (requires wasm support).
 [[https://raw.githubusercontent.com/niklasfasching/go-org/master/etc/example.png]]
 * not yet implemented

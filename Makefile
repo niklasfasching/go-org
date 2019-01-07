@@ -17,11 +17,6 @@ test: install
 setup:
 	git config core.hooksPath etc/githooks
 
-case=example
-.PHONY: render
-render:
-	go run main.go org/testdata/$(case).org html | html2text
-
 .PHONY: generate
 generate: generate-gh-pages generate-fixtures
 
