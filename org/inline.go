@@ -129,7 +129,7 @@ func (d *Document) parseLineBreak(input string, start int) (int, Node) {
 }
 
 func (d *Document) parseExplicitLineBreak(input string, start int) (int, Node) {
-	if start == 0 || input[start-1] == '\n' || start+1 >= len(input) || input[start+1] != '\\' {
+	if start == 0 || input[start-1] == '\n' || start+2 >= len(input) || input[start+1] != '\\' {
 		return 0, nil
 	}
 	for i := start + 2; unicode.IsSpace(rune(input[i])); i++ {

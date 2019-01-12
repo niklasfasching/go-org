@@ -1,5 +1,6 @@
 - /emphasis/ and a hard line break \\
-  see?
+  see? \\
+  also hard line breaks not followed by a newline get ignored, see \\
 - /.emphasis with dot border chars./
 - /emphasis with a slash/inside/
 - /emphasis/ followed by raw text with slash /
