@@ -10,12 +10,9 @@ import (
 
 func main() {
 	js.Global().Call("initialized")
-
-	document := js.Global().Get("document")
-	in := document.Call("getElementById", "input")
-	out := document.Call("getElementById", "output")
-
-	js.Global().Set("run", js.NewCallback(func([]js.Value) {
+	doc := js.Global().Get("document")
+	in, out := doc.Call("getElementById", "input"), doc.Call("getElementById", "output")
+	js.Global().Set("run", js.FuncOf(func(js.Value, []js.Value) interface{} {
 		in := strings.NewReader(in.Get("value").String())
 		html, err := org.New().Parse(in, "").Write(org.NewHTMLWriter())
 		if err != nil {
@@ -23,7 +20,8 @@ func main() {
 		} else {
 			out.Set("innerHTML", html)
 		}
+		return nil
 	}))
 
-	<-make(chan struct{}) // stay alive
+	select {} // stay alive
 }
