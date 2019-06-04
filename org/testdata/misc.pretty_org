@@ -109,7 +109,16 @@ also, consecutive dashes inside
 
 *** DONE [[https://github.com/chaseadamsio/goorgeous/issues/87][#87]]: Markup in footnotes is rendered literally
 footnotes can contain *markup* - and other elements and stuff [fn:2:that also goes for *inline* footnote /definitions/]
-
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/92][#92]]: src blocks only render in caps
+The behaviour of Org mode =<s TAB= changed and it now inserts lowercased src blocks (go-org already handled this one)
+- lowercased:
+  #+BEGIN_SRC bash
+  uname -a
+  #+END_SRC
+- uppercased
+  #+BEGIN_SRC bash
+  uname -a
+  #+END_SRC
 ** issues (wrongly) filed with hugo
 *** [[https://github.com/gohugoio/hugo/issues/3874][#3874]] exporting images in org mode
 Hello, I'm writing hugo blogs using org-mode.

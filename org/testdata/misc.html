@@ -48,17 +48,19 @@
 </li>
 <li><a href="#headline-22">#87: Markup in footnotes is rendered literally</a>
 </li>
+<li><a href="#headline-23">#92: src blocks only render in caps</a>
+</li>
 </ul>
 </li>
-<li><a href="#headline-23">issues (wrongly) filed with hugo</a>
+<li><a href="#headline-24">issues (wrongly) filed with hugo</a>
 <ul>
-<li><a href="#headline-24">#3874 exporting images in org mode</a>
+<li><a href="#headline-25">#3874 exporting images in org mode</a>
 </li>
-<li><a href="#headline-25">#4006 source code blocks in org not rendered correctly</a>
+<li><a href="#headline-26">#4006 source code blocks in org not rendered correctly</a>
 </li>
 </ul>
 </li>
-<li><a href="#headline-26">Footnotes</a>
+<li><a href="#headline-27">Footnotes</a>
 </li>
 </ul>
 </nav>
@@ -409,10 +411,39 @@ src/example/export blocks should not be converted!
 <p>
 footnotes can contain <strong>markup</strong> - and other elements and stuff <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup>
 </p>
-<h2 id="headline-23">
+<h3 id="headline-23">
+<span class="todo">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/92">#92</a>: src blocks only render in caps
+</h3>
+<p>
+The behaviour of Org mode <code class="verbatim">&lt;s TAB</code> changed and it now inserts lowercased src blocks (go-org already handled this one)
+</p>
+<ul>
+<li>
+<p>
+lowercased:
+</p>
+<div class="highlight">
+<pre>
+uname -a
+</pre>
+</div>
+</li>
+<li>
+<p>
+uppercased
+</p>
+<div class="highlight">
+<pre>
+uname -a
+</pre>
+</div>
+</li>
+</ul>
+<h2 id="headline-24">
 issues (wrongly) filed with hugo
 </h2>
-<h3 id="headline-24">
+<h3 id="headline-25">
 <a href="https://github.com/gohugoio/hugo/issues/3874">#3874</a> exporting images in org mode
 </h3>
 <p>
@@ -421,7 +452,7 @@ Hello, I&#39;m writing hugo blogs using org-mode.
 <p>
 When inserting an image link like <img src="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" alt="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" title="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" />, hugo doesn&#39;t export the image.
 </p>
-<h3 id="headline-25">
+<h3 id="headline-26">
 <a href="https://github.com/gohugoio/hugo/issues/4006">#4006</a> source code blocks in org not rendered correctly
 </h3>
 <div class="highlight">
@@ -434,7 +465,7 @@ When inserting an image link like <img src="/home/amos/Pictures/Screenshots/img-
   (ansi-term))
 </pre>
 </div>
-<h1 id="headline-26">
+<h1 id="headline-27">
 Footnotes
 </h1>
 <div class="footnotes">
