@@ -2,6 +2,7 @@
 - normal footnote reference [fn:1] [fn:6]
 - further references to the same footnote should not [fn:1] render duplicates in the footnote list
 - inline footnotes are also supported via [fn:2:the inline footnote definition].
+- anonymous inline footnotes are also supported via [fn::the anonymous inline footnote definition].
 - Footnote definitions are not printed where they appear.
   Rather, they are gathered and exported at the end of the document in the footnote section. [fn:4]
 

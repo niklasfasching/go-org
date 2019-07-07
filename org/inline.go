@@ -49,7 +49,7 @@ var videoExtensionRegexp = regexp.MustCompile(`^[.](webm|mp4)$`)
 
 var subScriptSuperScriptRegexp = regexp.MustCompile(`^([_^]){([^{}]+?)}`)
 var timestampRegexp = regexp.MustCompile(`^<(\d{4}-\d{2}-\d{2})( [A-Za-z]+)?( \d{2}:\d{2})?( \+\d+[dwmy])?>`)
-var footnoteRegexp = regexp.MustCompile(`^\[fn:([\w-]+?)(:(.*?))?\]`)
+var footnoteRegexp = regexp.MustCompile(`^\[fn:([\w-]*?)(:(.*?))?\]`)
 var statisticsTokenRegexp = regexp.MustCompile(`^\[(\d+/\d+|\d+%)\]`)
 
 var timestampFormat = "2006-01-02 Mon 15:04"
@@ -168,6 +168,9 @@ func (d *Document) parseOpeningBracket(input string, start int) (int, Node) {
 func (d *Document) parseFootnoteReference(input string, start int) (int, Node) {
 	if m := footnoteRegexp.FindStringSubmatch(input[start:]); m != nil {
 		name, definition := m[1], m[3]
+		if name == "" && definition == "" {
+			return 0, nil
+		}
 		link := FootnoteLink{name, nil}
 		if definition != "" {
 			link.Definition = &FootnoteDefinition{name, []Node{Paragraph{d.parseInline(definition)}}, true}
