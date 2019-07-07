@@ -114,6 +114,7 @@ for now files can be included as:
 <p>
 src block
 </p>
+<pre class="src src-org">
 <div class="highlight">
 <pre>
 #+SETUPFILE: setup_file_org
@@ -146,6 +147,7 @@ this headline and it&#39;s content are not exported as it is marked with an =EXC
 By default =EXCLUDE_TAGS= is just =:noexport:=.
 </pre>
 </div>
+</pre>
 </li>
 <li>
 <p>
@@ -390,11 +392,13 @@ inline code <code class="verbatim">--</code> <code class="verbatim">---</code> a
 <p>
 src/example/export blocks should not be converted!
 </p>
+<pre class="src src-sh">
 <div class="highlight">
 <pre>
 --, ---
 </pre>
 </div>
+</pre>
 <pre class="example">
 --, ---
 </pre>
@@ -423,21 +427,25 @@ The behaviour of Org mode <code class="verbatim">&lt;s TAB</code> changed and it
 <p>
 lowercased:
 </p>
+<pre class="src src-bash">
 <div class="highlight">
 <pre>
 uname -a
 </pre>
 </div>
+</pre>
 </li>
 <li>
 <p>
 uppercased
 </p>
+<pre class="src src-bash">
 <div class="highlight">
 <pre>
 uname -a
 </pre>
 </div>
+</pre>
 </li>
 </ul>
 <h2 id="headline-24">
@@ -455,6 +463,7 @@ When inserting an image link like <img src="/home/amos/Pictures/Screenshots/img-
 <h3 id="headline-26">
 <a href="https://github.com/gohugoio/hugo/issues/4006">#4006</a> source code blocks in org not rendered correctly
 </h3>
+<pre class="src src-emacs-lisp">
 <div class="highlight">
 <pre>
 (defun small-shell ()
@@ -465,6 +474,7 @@ When inserting an image link like <img src="/home/amos/Pictures/Screenshots/img-
   (ansi-term))
 </pre>
 </div>
+</pre>
 <h1 id="headline-27">
 Footnotes
 </h1>

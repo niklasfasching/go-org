@@ -108,7 +108,8 @@ func (w *HTMLWriter) WriteBlock(b Block) {
 		if len(b.Parameters) >= 1 {
 			lang = strings.ToLower(b.Parameters[0])
 		}
-		w.WriteString(w.HighlightCodeBlock(content, lang) + "\n")
+		content = w.HighlightCodeBlock(content, lang)
+		w.WriteString(fmt.Sprintf("<pre class=\"src src-%s\">\n%s\n</pre>\n", lang, content))
 	case name == "EXAMPLE":
 		w.WriteString(`<pre class="example">` + "\n" + content + "\n</pre>\n")
 	case name == "EXPORT" && len(b.Parameters) >= 1 && strings.ToLower(b.Parameters[0]) == "html":
