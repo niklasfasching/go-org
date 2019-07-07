@@ -1,5 +1,5 @@
 * Using some footnotes
-- normal footnote reference [fn:1] [fn:6]
+- normal footnote reference [fn:1] [fn:6] [fn:foo-bar] (footnote names can be anything in the format =[\w-]=)
 - further references to the same footnote should not [fn:1] render duplicates in the footnote list
 - inline footnotes are also supported via [fn:2:the inline footnote definition].
 - anonymous inline footnotes are also supported via [fn::the anonymous inline footnote definition].
@@ -13,6 +13,8 @@ Rather, it will be somewhere down below in the footnotes section.
 of the same name later on in the document. That will log a warning but carry on nonetheless.
 * Footnotes
 Please note that the footnotes section is not automatically excluded from the export like in emacs. [fn:7]
+
+[fn:foo-bar] yolo
 
 [fn:1] https://www.example.com
 - footnotes can contain *markup*

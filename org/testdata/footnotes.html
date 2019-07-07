@@ -12,7 +12,7 @@ Using some footnotes
 <ul>
 <li>
 <p>
-normal footnote reference <sup class="footnote-reference"><a id="footnote-reference-0" href="#footnote-0">0</a></sup> <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>
+normal footnote reference <sup class="footnote-reference"><a id="footnote-reference-0" href="#footnote-0">0</a></sup> <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup> (footnote names can be anything in the format <code class="verbatim">[\w-]</code>)
 </p>
 </li>
 <li>
@@ -22,18 +22,18 @@ further references to the same footnote should not <sup class="footnote-referenc
 </li>
 <li>
 <p>
-inline footnotes are also supported via <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup>.
+inline footnotes are also supported via <sup class="footnote-reference"><a id="footnote-reference-3" href="#footnote-3">3</a></sup>.
 </p>
 </li>
 <li>
 <p>
-anonymous inline footnotes are also supported via <sup class="footnote-reference"><a id="footnote-reference-3" href="#footnote-3">3</a></sup>.
+anonymous inline footnotes are also supported via <sup class="footnote-reference"><a id="footnote-reference-4" href="#footnote-4">4</a></sup>.
 </p>
 </li>
 <li>
 <p>
 Footnote definitions are not printed where they appear.
-Rather, they are gathered and exported at the end of the document in the footnote section. <sup class="footnote-reference"><a id="footnote-reference-4" href="#footnote-4">4</a></sup>
+Rather, they are gathered and exported at the end of the document in the footnote section. <sup class="footnote-reference"><a id="footnote-reference-5" href="#footnote-5">5</a></sup>
 </p>
 </li>
 </ul>
@@ -41,10 +41,10 @@ Rather, they are gathered and exported at the end of the document in the footnot
 Footnotes
 </h1>
 <p>
-Please note that the footnotes section is not automatically excluded from the export like in emacs. <sup class="footnote-reference"><a id="footnote-reference-5" href="#footnote-5">5</a></sup>
+Please note that the footnotes section is not automatically excluded from the export like in emacs. <sup class="footnote-reference"><a id="footnote-reference-6" href="#footnote-6">6</a></sup>
 </p>
 <p>
-this is not part of <sup class="footnote-reference"><a id="footnote-reference-5" href="#footnote-5">5</a></sup> anymore as there are 2 blank lines in between!
+this is not part of <sup class="footnote-reference"><a id="footnote-reference-6" href="#footnote-6">6</a></sup> anymore as there are 2 blank lines in between!
 </p>
 <div class="footnotes">
 <hr class="footnotes-separatator">
@@ -115,7 +115,7 @@ This shouldn&#39;t happen when the definition line and the line after that are e
 <sup id="footnote-2"><a href="#footnote-reference-2">2</a></sup>
 <div class="footnote-body">
 <p>
-the inline footnote definition
+yolo
 </p>
 </div>
 </div>
@@ -123,12 +123,20 @@ the inline footnote definition
 <sup id="footnote-3"><a href="#footnote-reference-3">3</a></sup>
 <div class="footnote-body">
 <p>
-the anonymous inline footnote definition
+the inline footnote definition
 </p>
 </div>
 </div>
 <div class="footnote-definition">
 <sup id="footnote-4"><a href="#footnote-reference-4">4</a></sup>
+<div class="footnote-body">
+<p>
+the anonymous inline footnote definition
+</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-5"><a href="#footnote-reference-5">5</a></sup>
 <div class="footnote-body">
 <p>
 so this definition will not be at the end of this section in the exported document.
@@ -137,7 +145,7 @@ Rather, it will be somewhere down below in the footnotes section.
 </div>
 </div>
 <div class="footnote-definition">
-<sup id="footnote-5"><a href="#footnote-reference-5">5</a></sup>
+<sup id="footnote-6"><a href="#footnote-reference-6">6</a></sup>
 <div class="footnote-body">
 <p>
 There&#39;s multiple reasons for that. Among others, doing so requires i18n (to recognize the section) and silently
