@@ -19,6 +19,12 @@ type HTMLWriter struct {
 	HighlightCodeBlock func(source, lang string) string
 	htmlEscape         bool
 	log                *log.Logger
+	footnotes          footnotes
+}
+
+type footnotes struct {
+	mapping map[string]int
+	list    []*FootnoteDefinition
 }
 
 var emphasisTags = map[string][]string{
@@ -54,6 +60,9 @@ func NewHTMLWriter() *HTMLWriter {
 		htmlEscape: true,
 		HighlightCodeBlock: func(source, lang string) string {
 			return fmt.Sprintf("%s\n<pre>\n%s\n</pre>\n</div>", `<div class="highlight">`, html.EscapeString(source))
+		},
+		footnotes: footnotes{
+			mapping: map[string]int{},
 		},
 	}
 }
@@ -129,26 +138,23 @@ func (w *HTMLWriter) WriteInclude(i Include) {
 	WriteNodes(w, i.Resolve())
 }
 
-func (w *HTMLWriter) WriteFootnoteDefinition(FootnoteDefinition) {}
-
-func (w *HTMLWriter) writeFootnoteDefinition(f FootnoteDefinition) {
-	n := f.Name
-	w.WriteString(`<div class="footnote-definition">` + "\n")
-	w.WriteString(fmt.Sprintf(`<sup id="footnote-%s"><a href="#footnote-reference-%s">%s</a></sup>`, n, n, n) + "\n")
-	w.WriteString(`<div class="footnote-body">` + "\n")
-	WriteNodes(w, f.Children...)
-	w.WriteString("</div>\n</div>\n")
+func (w *HTMLWriter) WriteFootnoteDefinition(f FootnoteDefinition) {
+	w.footnotes.updateDefinition(f)
 }
 
 func (w *HTMLWriter) WriteFootnotes(d *Document) {
-	if !w.document.GetOption("f") || len(d.Footnotes.Definitions) == 0 {
+	if !w.document.GetOption("f") || len(w.footnotes.list) == 0 {
 		return
 	}
 	w.WriteString(`<div class="footnotes">` + "\n")
 	w.WriteString(`<hr class="footnotes-separatator">` + "\n")
 	w.WriteString(`<div class="footnote-definitions">` + "\n")
-	for _, definition := range d.Footnotes.Ordered() {
-		w.writeFootnoteDefinition(definition)
+	for i, definition := range w.footnotes.list {
+		w.WriteString(`<div class="footnote-definition">` + "\n")
+		w.WriteString(fmt.Sprintf(`<sup id="footnote-%d"><a href="#footnote-reference-%d">%d</a></sup>`, i, i, i) + "\n")
+		w.WriteString(`<div class="footnote-body">` + "\n")
+		WriteNodes(w, definition.Children...)
+		w.WriteString("</div>\n</div>\n")
 	}
 	w.WriteString("</div>\n</div>\n")
 }
@@ -245,8 +251,8 @@ func (w *HTMLWriter) WriteFootnoteLink(l FootnoteLink) {
 	if !w.document.GetOption("f") {
 		return
 	}
-	n := html.EscapeString(l.Name)
-	w.WriteString(fmt.Sprintf(`<sup class="footnote-reference"><a id="footnote-reference-%s" href="#footnote-%s">%s</a></sup>`, n, n, n))
+	id := w.footnotes.add(l)
+	w.WriteString(fmt.Sprintf(`<sup class="footnote-reference"><a id="footnote-reference-%d" href="#footnote-%d">%d</a></sup>`, id, id, id))
 }
 
 func (w *HTMLWriter) WriteTimestamp(t Timestamp) {
@@ -444,4 +450,22 @@ func setHTMLAttribute(attributes []h.Attribute, k, v string) []h.Attribute {
 		}
 	}
 	return append(attributes, h.Attribute{Namespace: "", Key: k, Val: v})
+}
+
+func (fs *footnotes) add(f FootnoteLink) int {
+	if i, ok := fs.mapping[f.Name]; ok && f.Name != "" {
+		return i
+	}
+	fs.list = append(fs.list, f.Definition)
+	i := len(fs.list) - 1
+	if f.Name != "" {
+		fs.mapping[f.Name] = i
+	}
+	return i
+}
+
+func (fs *footnotes) updateDefinition(f FootnoteDefinition) {
+	if i, ok := fs.mapping[f.Name]; ok {
+		fs.list[i] = &f
+	}
 }

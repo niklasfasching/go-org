@@ -35,7 +35,6 @@ type Document struct {
 	Path           string // Path of the file containing the parse input - used to resolve relative paths during parsing (e.g. INCLUDE).
 	tokens         []token
 	Nodes          []Node
-	Footnotes      Footnotes
 	Outline        Outline           // Outline is a Table Of Contents for the document and contains all sections (headline + content).
 	BufferSettings map[string]string // Settings contains all settings that were parsed from keywords.
 	Error          error
@@ -113,11 +112,7 @@ func (d *Document) Write(w Writer) (out string, err error) {
 func (c *Configuration) Parse(input io.Reader, path string) (d *Document) {
 	outlineSection := &Section{}
 	d = &Document{
-		Configuration: c,
-		Footnotes: Footnotes{
-			Title:       "Footnotes",
-			Definitions: map[string]*FootnoteDefinition{},
-		},
+		Configuration:  c,
 		Outline:        Outline{outlineSection, outlineSection, 0},
 		BufferSettings: map[string]string{},
 		Path:           path,
@@ -241,16 +236,6 @@ func (d *Document) parseMany(i int, stop stopFn) (int, []Node) {
 		nodes = append(nodes, node)
 	}
 	return i - start, nodes
-}
-
-func (d *Document) addFootnote(name string, definition *FootnoteDefinition) {
-	if definition != nil {
-		if _, exists := d.Footnotes.Definitions[name]; exists {
-			d.Log.Printf("Footnote [fn:%s] redefined! %#v", name, definition)
-		}
-		d.Footnotes.Definitions[name] = definition
-	}
-	d.Footnotes.addOrder = append(d.Footnotes.addOrder, name)
 }
 
 func (d *Document) addHeadline(headline *Headline) int {

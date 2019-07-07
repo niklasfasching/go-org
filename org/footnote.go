@@ -4,12 +4,6 @@ import (
 	"regexp"
 )
 
-type Footnotes struct {
-	Title       string
-	Definitions map[string]*FootnoteDefinition
-	addOrder    []string
-}
-
 type FootnoteDefinition struct {
 	Name     string
 	Children []Node
@@ -35,24 +29,7 @@ func (d *Document) parseFootnoteDefinition(i int, parentStop stopFn) (int, Node)
 	}
 	consumed, nodes := d.parseMany(i, stop)
 	definition := FootnoteDefinition{name, nodes, false}
-	d.addFootnote(name, &definition)
 	return consumed, definition
-}
-
-func (fs *Footnotes) Ordered() []FootnoteDefinition {
-	m := map[string]bool{}
-	definitions, inlineDefinitions := []FootnoteDefinition{}, []FootnoteDefinition{}
-	for _, name := range fs.addOrder {
-		if isDuplicate := m[name]; !isDuplicate {
-			m[name] = true
-			if definition := *fs.Definitions[name]; definition.Inline {
-				inlineDefinitions = append(inlineDefinitions, definition)
-			} else {
-				definitions = append(definitions, definition)
-			}
-		}
-	}
-	return append(definitions, inlineDefinitions...)
 }
 
 func (n FootnoteDefinition) String() string { return orgWriter.nodesAsString(n) }
