@@ -12,33 +12,33 @@ Using some footnotes
 <ul>
 <li>
 <p>
-normal footnote reference <sup class="footnote-reference"><a id="footnote-reference-0" href="#footnote-0">0</a></sup> <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup> (footnote names can be anything in the format <code class="verbatim">[\w-]</code>)
+normal footnote reference <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup> <sup class="footnote-reference"><a id="footnote-reference-3" href="#footnote-3">3</a></sup> (footnote names can be anything in the format <code class="verbatim">[\w-]</code>)
 </p>
 </li>
 <li>
 <p>
-further references to the same footnote should not <sup class="footnote-reference"><a id="footnote-reference-0" href="#footnote-0">0</a></sup> render duplicates in the footnote list
+further references to the same footnote should not <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> render duplicates in the footnote list
 </p>
 </li>
 <li>
 <p>
-inline footnotes are also supported via <sup class="footnote-reference"><a id="footnote-reference-3" href="#footnote-3">3</a></sup>.
+inline footnotes are also supported via <sup class="footnote-reference"><a id="footnote-reference-4" href="#footnote-4">4</a></sup>.
 </p>
 </li>
 <li>
 <p>
-anonymous inline footnotes are also supported via <sup class="footnote-reference"><a id="footnote-reference-4" href="#footnote-4">4</a></sup>.
+anonymous inline footnotes are also supported via <sup class="footnote-reference"><a id="footnote-reference-5" href="#footnote-5">5</a></sup>.
 </p>
 </li>
 <li>
 <p>
 Footnote definitions are not printed where they appear.
-Rather, they are gathered and exported at the end of the document in the footnote section. <sup class="footnote-reference"><a id="footnote-reference-5" href="#footnote-5">5</a></sup>
+Rather, they are gathered and exported at the end of the document in the footnote section. <sup class="footnote-reference"><a id="footnote-reference-6" href="#footnote-6">6</a></sup>
 </p>
 </li>
 <li>
 <p>
-footnotes that reference a non-existant definition are rendered but log a warning <sup class="footnote-reference"><a id="footnote-reference-6" href="#footnote-6">6</a></sup>
+footnotes that reference a non-existant definition are rendered but log a warning <sup class="footnote-reference"><a id="footnote-reference-7" href="#footnote-7">7</a></sup>
 </p>
 </li>
 </ul>
@@ -46,16 +46,16 @@ footnotes that reference a non-existant definition are rendered but log a warnin
 Footnotes
 </h1>
 <p>
-Please note that the footnotes section is not automatically excluded from the export like in emacs. <sup class="footnote-reference"><a id="footnote-reference-7" href="#footnote-7">7</a></sup>
+Please note that the footnotes section is not automatically excluded from the export like in emacs. <sup class="footnote-reference"><a id="footnote-reference-8" href="#footnote-8">8</a></sup>
 </p>
 <p>
-this is not part of <sup class="footnote-reference"><a id="footnote-reference-7" href="#footnote-7">7</a></sup> anymore as there are 2 blank lines in between!
+this is not part of <sup class="footnote-reference"><a id="footnote-reference-8" href="#footnote-8">8</a></sup> anymore as there are 2 blank lines in between!
 </p>
 <div class="footnotes">
 <hr class="footnotes-separatator">
 <div class="footnote-definitions">
 <div class="footnote-definition">
-<sup id="footnote-0"><a href="#footnote-reference-0">0</a></sup>
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
 <div class="footnote-body">
 <p>
 <a href="https://www.example.com">https://www.example.com</a>
@@ -110,7 +110,7 @@ and tables
 </div>
 </div>
 <div class="footnote-definition">
-<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<sup id="footnote-2"><a href="#footnote-reference-2">2</a></sup>
 <div class="footnote-body">
 <p>
 Footnotes break after two consecutive empty lines - just like paragraphs - see <a href="https://orgmode.org/worg/dev/org-syntax.html.">https://orgmode.org/worg/dev/org-syntax.html.</a>
@@ -119,7 +119,7 @@ This shouldn&#39;t happen when the definition line and the line after that are e
 </div>
 </div>
 <div class="footnote-definition">
-<sup id="footnote-2"><a href="#footnote-reference-2">2</a></sup>
+<sup id="footnote-3"><a href="#footnote-reference-3">3</a></sup>
 <div class="footnote-body">
 <p>
 yolo
@@ -127,7 +127,7 @@ yolo
 </div>
 </div>
 <div class="footnote-definition">
-<sup id="footnote-3"><a href="#footnote-reference-3">3</a></sup>
+<sup id="footnote-4"><a href="#footnote-reference-4">4</a></sup>
 <div class="footnote-body">
 <p>
 the inline footnote definition
@@ -135,7 +135,7 @@ the inline footnote definition
 </div>
 </div>
 <div class="footnote-definition">
-<sup id="footnote-4"><a href="#footnote-reference-4">4</a></sup>
+<sup id="footnote-5"><a href="#footnote-reference-5">5</a></sup>
 <div class="footnote-body">
 <p>
 the anonymous inline footnote definition
@@ -143,7 +143,7 @@ the anonymous inline footnote definition
 </div>
 </div>
 <div class="footnote-definition">
-<sup id="footnote-5"><a href="#footnote-reference-5">5</a></sup>
+<sup id="footnote-6"><a href="#footnote-reference-6">6</a></sup>
 <div class="footnote-body">
 <p>
 so this definition will not be at the end of this section in the exported document.
@@ -152,7 +152,7 @@ Rather, it will be somewhere down below in the footnotes section.
 </div>
 </div>
 <div class="footnote-definition">
-<sup id="footnote-7"><a href="#footnote-reference-7">7</a></sup>
+<sup id="footnote-8"><a href="#footnote-reference-8">8</a></sup>
 <div class="footnote-body">
 <p>
 There&#39;s multiple reasons for that. Among others, doing so requires i18n (to recognize the section) and silently

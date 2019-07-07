@@ -151,6 +151,7 @@ func (w *HTMLWriter) WriteFootnotes(d *Document) {
 	w.WriteString(`<hr class="footnotes-separatator">` + "\n")
 	w.WriteString(`<div class="footnote-definitions">` + "\n")
 	for i, definition := range w.footnotes.list {
+		id := i + 1
 		if definition == nil {
 			name := ""
 			for k, v := range w.footnotes.mapping {
@@ -158,11 +159,11 @@ func (w *HTMLWriter) WriteFootnotes(d *Document) {
 					name = k
 				}
 			}
-			w.log.Printf("Missing footnote definition for [fn:%s] (#%d)", name, i)
+			w.log.Printf("Missing footnote definition for [fn:%s] (#%d)", name, id)
 			continue
 		}
 		w.WriteString(`<div class="footnote-definition">` + "\n")
-		w.WriteString(fmt.Sprintf(`<sup id="footnote-%d"><a href="#footnote-reference-%d">%d</a></sup>`, i, i, i) + "\n")
+		w.WriteString(fmt.Sprintf(`<sup id="footnote-%d"><a href="#footnote-reference-%d">%d</a></sup>`, id, id, id) + "\n")
 		w.WriteString(`<div class="footnote-body">` + "\n")
 		WriteNodes(w, definition.Children...)
 		w.WriteString("</div>\n</div>\n")
@@ -262,7 +263,8 @@ func (w *HTMLWriter) WriteFootnoteLink(l FootnoteLink) {
 	if !w.document.GetOption("f") {
 		return
 	}
-	id := w.footnotes.add(l)
+	i := w.footnotes.add(l)
+	id := i + 1
 	w.WriteString(fmt.Sprintf(`<sup class="footnote-reference"><a id="footnote-reference-%d" href="#footnote-%d">%d</a></sup>`, id, id, id))
 }
 
