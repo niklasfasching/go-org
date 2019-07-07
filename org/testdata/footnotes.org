@@ -5,6 +5,7 @@
 - anonymous inline footnotes are also supported via [fn::the anonymous inline footnote definition].
 - Footnote definitions are not printed where they appear.
   Rather, they are gathered and exported at the end of the document in the footnote section. [fn:4]
+- footnotes that reference a non-existant definition are rendered but log a warning [fn:does-not-exist]
 
 [fn:4] so this definition will not be at the end of this section in the exported document.
 Rather, it will be somewhere down below in the footnotes section.

@@ -151,6 +151,16 @@ func (w *HTMLWriter) WriteFootnotes(d *Document) {
 	w.WriteString(`<hr class="footnotes-separatator">` + "\n")
 	w.WriteString(`<div class="footnote-definitions">` + "\n")
 	for i, definition := range w.footnotes.list {
+		if definition == nil {
+			name := ""
+			for k, v := range w.footnotes.mapping {
+				if v == i {
+					name = k
+				}
+			}
+			w.log.Printf("Missing footnote definition for [fn:%s] (#%d)", name, i)
+			continue
+		}
 		w.WriteString(`<div class="footnote-definition">` + "\n")
 		w.WriteString(fmt.Sprintf(`<sup id="footnote-%d"><a href="#footnote-reference-%d">%d</a></sup>`, i, i, i) + "\n")
 		w.WriteString(`<div class="footnote-body">` + "\n")
