@@ -59,7 +59,7 @@ func NewHTMLWriter() *HTMLWriter {
 		log:        defaultConfig.Log,
 		htmlEscape: true,
 		HighlightCodeBlock: func(source, lang string) string {
-			return fmt.Sprintf("%s\n<pre>\n%s\n</pre>\n</div>", `<div class="highlight">`, html.EscapeString(source))
+			return fmt.Sprintf("<div class=\"highlight\">\n<pre>\n%s\n</pre>\n</div>", html.EscapeString(source))
 		},
 		footnotes: footnotes{
 			mapping: map[string]int{},
@@ -109,7 +109,7 @@ func (w *HTMLWriter) WriteBlock(b Block) {
 			lang = strings.ToLower(b.Parameters[0])
 		}
 		content = w.HighlightCodeBlock(content, lang)
-		w.WriteString(fmt.Sprintf("<pre class=\"src src-%s\">\n%s\n</pre>\n", lang, content))
+		w.WriteString(fmt.Sprintf("<div class=\"src src-%s\">\n%s\n</div>\n", lang, content))
 	case name == "EXAMPLE":
 		w.WriteString(`<pre class="example">` + "\n" + content + "\n</pre>\n")
 	case name == "EXPORT" && len(b.Parameters) >= 1 && strings.ToLower(b.Parameters[0]) == "html":
