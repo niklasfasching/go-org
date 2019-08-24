@@ -1,0 +1,10 @@
+* Title [fn:1]
+
+[fn:1] this test file just exists to reproduce a bug with footnotes in headlines - that only happens in very specific circumstances.
+The TLDR is:
+- HTMLWriter.footnotes should be a pointer field. I didn't notice my error as go translated my pointer-method calls on
+  non-pointer values rather than complaining - i.e. =footnotes.add()= transparently gets translated to =(&footnotes).add()= ([[https://golang.org/ref/spec#Calls][docs]]).
+- Headlines have to be htmlified twice - once for the outline and once for the headline itself. To do so we have to copy the writer
+- Copying the writer copies footnotes - which contains a map and a slice. Changes to the map will always be reflected in the original map.
+  Changes to the slice will only be reflected if the slice doesn't grow.
+- We can thus end up with a footnote being in the mapping but not the slice - and get an index out of range error.

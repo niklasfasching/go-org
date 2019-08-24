@@ -1,0 +1,47 @@
+<nav>
+<ul>
+<li><a href="#headline-1">Title <sup class="footnote-reference">1</sup></a>
+</li>
+</ul>
+</nav>
+<h1 id="headline-1">
+Title <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>
+</h1>
+<div class="footnotes">
+<hr class="footnotes-separatator">
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>
+this test file just exists to reproduce a bug with footnotes in headlines - that only happens in very specific circumstances.
+The TLDR is:
+</p>
+<ul>
+<li>
+<p>
+HTMLWriter.footnotes should be a pointer field. I didn&#39;t notice my error as go translated my pointer-method calls on
+non-pointer values rather than complaining - i.e. <code class="verbatim">footnotes.add()</code> transparently gets translated to <code class="verbatim">(&amp;footnotes).add()</code> (<a href="https://golang.org/ref/spec#Calls">docs</a>).
+</p>
+</li>
+<li>
+<p>
+Headlines have to be htmlified twice - once for the outline and once for the headline itself. To do so we have to copy the writer
+</p>
+</li>
+<li>
+<p>
+Copying the writer copies footnotes - which contains a map and a slice. Changes to the map will always be reflected in the original map.
+Changes to the slice will only be reflected if the slice doesn&#39;t grow.
+</p>
+</li>
+<li>
+<p>
+We can thus end up with a footnote being in the mapping but not the slice - and get an index out of range error.
+</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>

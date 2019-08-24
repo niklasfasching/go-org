@@ -19,7 +19,7 @@ type HTMLWriter struct {
 	HighlightCodeBlock func(source, lang string) string
 	htmlEscape         bool
 	log                *log.Logger
-	footnotes          footnotes
+	footnotes          *footnotes
 }
 
 type footnotes struct {
@@ -61,7 +61,7 @@ func NewHTMLWriter() *HTMLWriter {
 		HighlightCodeBlock: func(source, lang string) string {
 			return fmt.Sprintf("<div class=\"highlight\">\n<pre>\n%s\n</pre>\n</div>", html.EscapeString(source))
 		},
-		footnotes: footnotes{
+		footnotes: &footnotes{
 			mapping: map[string]int{},
 		},
 	}
