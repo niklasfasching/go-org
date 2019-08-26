@@ -335,9 +335,10 @@ func (w *HTMLWriter) WriteDescriptiveListItem(di DescriptiveListItem) {
 	} else {
 		w.WriteString("?")
 	}
+	w.WriteString("</dt>\n")
 	w.WriteString("<dd>\n")
 	WriteNodes(w, di.Details...)
-	w.WriteString("<dd>\n")
+	w.WriteString("</dd>\n")
 }
 
 func (w *HTMLWriter) WriteParagraph(p Paragraph) {
