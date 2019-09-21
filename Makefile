@@ -17,6 +17,10 @@ test: install
 setup:
 	git config core.hooksPath etc/githooks
 
+.PHONY: preview
+preview: generate
+	xdg-open gh-pages/index.html
+
 .PHONY: generate
 generate: generate-gh-pages generate-fixtures
 

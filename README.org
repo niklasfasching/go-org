@@ -3,6 +3,12 @@ An Org mode parser in go.
 Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org -> html demo (wasm based).
 [[https://raw.githubusercontent.com/niklasfasching/go-org/master/etc/example.png]]
 Please note that the goal for the html export is to produce sensible html output, not to exactly reproduce output the output of  =org-html-export=.
+* development
+1. =make setup install=
+2. change things
+3. =make preview= (regenerates fixtures & shows output in a browser)
+
+in general, have a look at the Makefile - it's short enough.
 * not yet implemented
 ** deadlines and scheduling
 see https://orgmode.org/manual/Deadlines-and-scheduling.html
