@@ -149,7 +149,7 @@ func (w *HTMLWriter) WriteFootnotes(d *Document) {
 	}
 	w.WriteString(`<div class="footnotes">` + "\n")
 	w.WriteString(`<hr class="footnotes-separatator">` + "\n")
-	w.WriteString(`<div class="footnote-definitions">` + "\n")
+	w.WriteString(`<ol class="footnote-definitions">` + "\n")
 	for i, definition := range w.footnotes.list {
 		id := i + 1
 		if definition == nil {
@@ -162,13 +162,14 @@ func (w *HTMLWriter) WriteFootnotes(d *Document) {
 			w.log.Printf("Missing footnote definition for [fn:%s] (#%d)", name, id)
 			continue
 		}
-		w.WriteString(`<div class="footnote-definition">` + "\n")
-		w.WriteString(fmt.Sprintf(`<sup id="footnote-%d"><a href="#footnote-reference-%d">%d</a></sup>`, id, id, id) + "\n")
+		w.WriteString(fmt.Sprintf(`<li id="footnote-%d" class="footnote-definition">`, id) + "\n")
 		w.WriteString(`<div class="footnote-body">` + "\n")
 		WriteNodes(w, definition.Children...)
-		w.WriteString("</div>\n</div>\n")
+		w.WriteString("</div>\n")
+		w.WriteString(fmt.Sprintf(`<sup><a class="footnote-return" href="#footnote-reference-%d">%d</a></sup>`, id, id) + "\n")
+		w.WriteString("</li>\n")
 	}
-	w.WriteString("</div>\n</div>\n")
+	w.WriteString("</ol>\n</div>\n")
 }
 
 func (w *HTMLWriter) WriteOutline(d *Document) {

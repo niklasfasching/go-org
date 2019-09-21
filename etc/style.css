@@ -94,10 +94,7 @@ figcaption {
   text-align: center;
   color: grey; }
 
-.footnote-definition sup {
-  float: left; }
-
-.footnote-definition .footnote-body {
+.footnote-definition {
   margin: 1em 0;
   padding: 0 1em;
   border: 1px solid rgba(250, 100, 50, 0.3);
