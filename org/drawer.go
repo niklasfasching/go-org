@@ -67,6 +67,9 @@ func (d *Document) parsePropertyDrawer(i int, parentStop stopFn) (int, Node) {
 	}
 	for ; !stop(d, i); i++ {
 		m := propertyRegexp.FindStringSubmatch(d.tokens[i].matches[0])
+		if m == nil {
+			return 0, nil
+		}
 		k, v := strings.ToUpper(m[2]), strings.TrimSpace(m[4])
 		drawer.Properties = append(drawer.Properties, []string{k, v})
 	}
