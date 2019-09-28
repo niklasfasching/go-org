@@ -1,4 +1,4 @@
-without latex delimiters the =_{i=1}= and =_n= in =\sum_{i=1}^n a_n= are interpreted as subscripts.
+without latex delimiters the =_{i=1}= in =\sum_{i=1}^n a_n= is interpreted as subscript.
 we support =\(...\)=, =\[...\]=, =$$...$$= and =\begin{$env}...\end{$env}= as latex fragment delimiters.
 
 - \sum_{i=1}^n a_n (without latex delimiter)
@@ -8,8 +8,4 @@ we support =\(...\)=, =\[...\]=, =$$...$$= and =\begin{$env}...\end{$env}= as la
 - \begin{xyz}\sum_{i=1}^n a_n\end{xyz}
 - \begin{xyz}
   \sum_{i=1}^n a_n
-  \end{xyz}
-
-- \begin{xyz}
-  foobar
   \end{xyz}
