@@ -12,9 +12,6 @@ in general, have a look at the Makefile - it's short enough.
 * not yet implemented
 ** deadlines and scheduling
 see https://orgmode.org/manual/Deadlines-and-scheduling.html
-** latex fragments
-see https://orgmode.org/manual/LaTeX-fragments.html
-+ mathjax for html_writer ?
 ** more types of links
 see https://orgmode.org/manual/External-links.html & https://orgmode.org/manual/Internal-links.html
 - radio target <<<MyTarget>>>

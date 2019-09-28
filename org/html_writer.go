@@ -247,6 +247,12 @@ func (w *HTMLWriter) WriteEmphasis(e Emphasis) {
 	w.WriteString(tags[1])
 }
 
+func (w *HTMLWriter) WriteLatexFragment(l LatexFragment) {
+	w.WriteString(l.OpeningPair)
+	WriteNodes(w, l.Content...)
+	w.WriteString(l.ClosingPair)
+}
+
 func (w *HTMLWriter) WriteStatisticToken(s StatisticToken) {
 	w.WriteString(fmt.Sprintf(`<code class="statistic">[%s]</code>`, s.Content))
 }

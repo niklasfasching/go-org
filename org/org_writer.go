@@ -266,6 +266,12 @@ func (w *OrgWriter) WriteEmphasis(e Emphasis) {
 	w.WriteString(borders[1])
 }
 
+func (w *OrgWriter) WriteLatexFragment(l LatexFragment) {
+	w.WriteString(l.OpeningPair)
+	WriteNodes(w, l.Content...)
+	w.WriteString(l.ClosingPair)
+}
+
 func (w *OrgWriter) WriteStatisticToken(s StatisticToken) {
 	w.WriteString(fmt.Sprintf("[%s]", s.Content))
 }

@@ -30,6 +30,12 @@ type Emphasis struct {
 	Content []Node
 }
 
+type LatexFragment struct {
+	OpeningPair string
+	ClosingPair string
+	Content     []Node
+}
+
 type FootnoteLink struct {
 	Name       string
 	Definition *FootnoteDefinition
@@ -51,9 +57,16 @@ var subScriptSuperScriptRegexp = regexp.MustCompile(`^([_^]){([^{}]+?)}`)
 var timestampRegexp = regexp.MustCompile(`^<(\d{4}-\d{2}-\d{2})( [A-Za-z]+)?( \d{2}:\d{2})?( \+\d+[dwmy])?>`)
 var footnoteRegexp = regexp.MustCompile(`^\[fn:([\w-]*?)(:(.*?))?\]`)
 var statisticsTokenRegexp = regexp.MustCompile(`^\[(\d+/\d+|\d+%)\]`)
+var latexFragmentRegexp = regexp.MustCompile(`(?s)^\\begin{(\w+)}(.*)\\end{(\w+)}`)
 
 var timestampFormat = "2006-01-02 Mon 15:04"
 var datestampFormat = "2006-01-02 Mon"
+
+var latexFragmentPairs = map[string]string{
+	`\(`: `\)`,
+	`\[`: `\]`,
+	`$$`: `$$`,
+}
 
 func (d *Document) parseInline(input string) (nodes []Node) {
 	previous, current := 0, 0
@@ -73,7 +86,9 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 		case '<':
 			consumed, node = d.parseTimestamp(input, current)
 		case '\\':
-			consumed, node = d.parseExplicitLineBreak(input, current)
+			consumed, node = d.parseExplicitLineBreakOrLatexFragment(input, current)
+		case '$':
+			consumed, node = d.parseLatexFragment(input, current)
 		case '\n':
 			consumed, node = d.parseLineBreak(input, current)
 		case ':':
@@ -128,14 +143,38 @@ func (d *Document) parseLineBreak(input string, start int) (int, Node) {
 	return i - start, LineBreak{i - start}
 }
 
-func (d *Document) parseExplicitLineBreak(input string, start int) (int, Node) {
-	if start == 0 || input[start-1] == '\n' || start+2 >= len(input) || input[start+1] != '\\' {
+func (d *Document) parseExplicitLineBreakOrLatexFragment(input string, start int) (int, Node) {
+	switch {
+	case start+2 >= len(input):
+	case input[start+1] == '\\' && start != 0 && input[start-1] != '\n':
+		for i := start + 2; unicode.IsSpace(rune(input[i])); i++ {
+			if i >= len(input) || input[i] == '\n' {
+				return i + 1 - start, ExplicitLineBreak{}
+			}
+		}
+	case input[start+1] == '(' || input[start+1] == '[':
+		return d.parseLatexFragment(input, start)
+	case strings.Index(input[start:], `\begin{`) == 0:
+		if m := latexFragmentRegexp.FindStringSubmatch(input[start:]); m != nil {
+			if open, content, close := m[1], m[2], m[3]; open == close {
+				openingPair, closingPair := `\begin{`+open+`}`, `\end{`+close+`}`
+				i := strings.Index(input[start:], closingPair)
+				return i + len(closingPair), LatexFragment{openingPair, closingPair, d.parseRawInline(content)}
+			}
+		}
+	}
+	return 0, nil
+}
+
+func (d *Document) parseLatexFragment(input string, start int) (int, Node) {
+	if start+2 >= len(input) {
 		return 0, nil
 	}
-	for i := start + 2; unicode.IsSpace(rune(input[i])); i++ {
-		if i >= len(input) || input[i] == '\n' {
-			return i + 1 - start, ExplicitLineBreak{}
-		}
+	openingPair := input[start : start+2]
+	closingPair := latexFragmentPairs[openingPair]
+	if i := strings.Index(input[start+2:], closingPair); i != -1 {
+		content := d.parseRawInline(input[start+2 : start+2+i])
+		return i + 2 + 2, LatexFragment{openingPair, closingPair, content}
 	}
 	return 0, nil
 }
@@ -312,6 +351,7 @@ func (n LineBreak) String() string         { return orgWriter.nodesAsString(n) }
 func (n ExplicitLineBreak) String() string { return orgWriter.nodesAsString(n) }
 func (n StatisticToken) String() string    { return orgWriter.nodesAsString(n) }
 func (n Emphasis) String() string          { return orgWriter.nodesAsString(n) }
+func (n LatexFragment) String() string     { return orgWriter.nodesAsString(n) }
 func (n FootnoteLink) String() string      { return orgWriter.nodesAsString(n) }
 func (n RegularLink) String() string       { return orgWriter.nodesAsString(n) }
 func (n Timestamp) String() string         { return orgWriter.nodesAsString(n) }

@@ -25,6 +25,7 @@ type Writer interface {
 	WriteParagraph(Paragraph)
 	WriteText(Text)
 	WriteEmphasis(Emphasis)
+	WriteLatexFragment(LatexFragment)
 	WriteStatisticToken(StatisticToken)
 	WriteExplicitLineBreak(ExplicitLineBreak)
 	WriteLineBreak(LineBreak)
@@ -71,6 +72,8 @@ func WriteNodes(w Writer, nodes ...Node) {
 			w.WriteText(n)
 		case Emphasis:
 			w.WriteEmphasis(n)
+		case LatexFragment:
+			w.WriteLatexFragment(n)
 		case StatisticToken:
 			w.WriteStatisticToken(n)
 		case ExplicitLineBreak:

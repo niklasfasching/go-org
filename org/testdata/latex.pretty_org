@@ -1,0 +1,15 @@
+without latex delimiters the =_{i=1}= and =_n= in =\sum_{i=1}^n a_n= are interpreted as subscripts.
+we support =\(...\)=, =\[...\]=, =$$...$$= and =\begin{$env}...\end{$env}= as latex fragment delimiters.
+
+- \sum_{i=1}^n a_n (without latex delimiter)
+- \(\sum_{i=1}^n a_n\)
+- \[\sum_{i=1}^n a_n\]
+- $$\sum_{i=1}^n a_n$$
+- \begin{xyz}\sum_{i=1}^n a_n\end{xyz}
+- \begin{xyz}
+  \sum_{i=1}^n a_n
+  \end{xyz}
+
+- \begin{xyz}
+  foobar
+  \end{xyz}
