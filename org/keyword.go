@@ -127,7 +127,7 @@ func (d *Document) newInclude(k Keyword) (int, Node) {
 			path = filepath.Join(filepath.Dir(d.Path), path)
 		}
 		resolve = func() Node {
-			bs, err := ioutil.ReadFile(path)
+			bs, err := d.ReadFile(path)
 			if err != nil {
 				d.Log.Printf("Bad include %#v: %s", k, err)
 				return k

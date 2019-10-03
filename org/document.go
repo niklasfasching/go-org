@@ -23,10 +23,11 @@ import (
 )
 
 type Configuration struct {
-	MaxEmphasisNewLines int               // Maximum number of newlines inside an emphasis. See org-emphasis-regexp-components newline.
-	AutoLink            bool              // Try to convert text passages that look like hyperlinks into hyperlinks.
-	DefaultSettings     map[string]string // Default values for settings that are overriden by setting the same key in BufferSettings.
-	Log                 *log.Logger       // Log is used to print warnings during parsing.
+	MaxEmphasisNewLines int                                   // Maximum number of newlines inside an emphasis. See org-emphasis-regexp-components newline.
+	AutoLink            bool                                  // Try to convert text passages that look like hyperlinks into hyperlinks.
+	DefaultSettings     map[string]string                     // Default values for settings that are overriden by setting the same key in BufferSettings.
+	Log                 *log.Logger                           // Log is used to print warnings during parsing.
+	ReadFile            func(filename string) ([]byte, error) // ReadFile is used to read e.g. #+INCLUDE files.
 }
 
 // Document contains the parsing results and a pointer to the Configuration.
@@ -82,7 +83,8 @@ func New() *Configuration {
 			"EXCLUDE_TAGS": "noexport",
 			"OPTIONS":      "toc:t <:t e:t f:t pri:t todo:t tags:t",
 		},
-		Log: log.New(os.Stderr, "go-org: ", 0),
+		Log:      log.New(os.Stderr, "go-org: ", 0),
+		ReadFile: ioutil.ReadFile,
 	}
 }
 
