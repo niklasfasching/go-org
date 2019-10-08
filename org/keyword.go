@@ -2,7 +2,6 @@ package org
 
 import (
 	"bytes"
-	"io/ioutil"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -143,7 +142,7 @@ func (d *Document) loadSetupFile(k Keyword) (int, Node) {
 	if !filepath.IsAbs(path) {
 		path = filepath.Join(filepath.Dir(d.Path), path)
 	}
-	bs, err := ioutil.ReadFile(path)
+	bs, err := d.ReadFile(path)
 	if err != nil {
 		d.Log.Printf("Bad setup file: %#v: %s", k, err)
 		return 1, k
