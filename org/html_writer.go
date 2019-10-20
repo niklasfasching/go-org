@@ -69,16 +69,13 @@ func NewHTMLWriter() *HTMLWriter {
 	}
 }
 
-func (w *HTMLWriter) emptyClone() *HTMLWriter {
-	wcopy := *w
-	wcopy.Builder = strings.Builder{}
-	return &wcopy
-}
-
 func (w *HTMLWriter) nodesAsString(nodes ...Node) string {
-	tmp := w.emptyClone()
-	WriteNodes(tmp, nodes...)
-	return tmp.String()
+	original := w.Builder
+	w.Builder = strings.Builder{}
+	WriteNodes(w, nodes...)
+	out := w.String()
+	w.Builder = original
+	return out
 }
 
 func (w *HTMLWriter) WriterWithExtensions() Writer {
@@ -104,10 +101,12 @@ func (w *HTMLWriter) WritePropertyDrawer(PropertyDrawer) {}
 func (w *HTMLWriter) WriteBlock(b Block) {
 	content := ""
 	if isRawTextBlock(b.Name) {
-		exportWriter := w.emptyClone()
-		exportWriter.htmlEscape = false
-		WriteNodes(exportWriter, b.Children...)
-		content = strings.TrimRightFunc(exportWriter.String(), unicode.IsSpace)
+		builder, htmlEscape := w.Builder, w.htmlEscape
+		w.Builder, w.htmlEscape = strings.Builder{}, false
+		WriteNodes(w, b.Children...)
+		out := w.String()
+		w.Builder, w.htmlEscape = builder, htmlEscape
+		content = strings.TrimRightFunc(out, unicode.IsSpace)
 	} else {
 		content = w.nodesAsString(b.Children...)
 	}
