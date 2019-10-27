@@ -9,7 +9,9 @@ import (
 
 // OrgWriter export an org document into pretty printed org document.
 type OrgWriter struct {
-	TagsColumn int
+	ExtendingWriter Writer
+	TagsColumn      int
+
 	strings.Builder
 	indent string
 }
@@ -29,6 +31,13 @@ func NewOrgWriter() *OrgWriter {
 	return &OrgWriter{
 		TagsColumn: 77,
 	}
+}
+
+func (w *OrgWriter) WriterWithExtensions() Writer {
+	if w.ExtendingWriter != nil {
+		return w.ExtendingWriter
+	}
+	return w
 }
 
 func (w *OrgWriter) Before(d *Document) {}

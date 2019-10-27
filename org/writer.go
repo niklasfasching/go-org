@@ -8,6 +8,8 @@ type Writer interface {
 	After(*Document)  // After is called after all nodes have been passed to the writer.
 	String() string   // String is called at the very end to retrieve the final output.
 
+	WriterWithExtensions() Writer
+
 	WriteKeyword(Keyword)
 	WriteInclude(Include)
 	WriteComment(Comment)
@@ -37,6 +39,7 @@ type Writer interface {
 }
 
 func WriteNodes(w Writer, nodes ...Node) {
+	w = w.WriterWithExtensions()
 	for _, n := range nodes {
 		switch n := n.(type) {
 		case Keyword:

@@ -10,6 +10,16 @@ import (
 	"github.com/pmezard/go-difflib/difflib"
 )
 
+type ExtendedOrgWriter struct {
+	*OrgWriter
+	callCount int
+}
+
+func (w *ExtendedOrgWriter) WriteText(t Text) {
+	w.callCount++
+	w.OrgWriter.WriteText(t)
+}
+
 func TestOrgWriter(t *testing.T) {
 	for _, path := range orgTestFiles() {
 		expected := fileString(path[:len(path)-len(".org")] + ".pretty_org")
@@ -24,6 +34,17 @@ func TestOrgWriter(t *testing.T) {
 		} else {
 			t.Logf("%s: passed!", path)
 		}
+	}
+}
+
+func TestExtendedOrgWriter(t *testing.T) {
+	p := Paragraph{Children: []Node{Text{Content: "text"}, Text{Content: "more text"}}}
+	orgWriter := NewOrgWriter()
+	extendedWriter := &ExtendedOrgWriter{orgWriter, 0}
+	orgWriter.ExtendingWriter = extendedWriter
+	WriteNodes(extendedWriter, p)
+	if extendedWriter.callCount != 2 {
+		t.Errorf("WriteText method of extending writer was not called: CallCount %d", extendedWriter.callCount)
 	}
 }
 
