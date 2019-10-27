@@ -397,6 +397,10 @@ func (w *HTMLWriter) WriteNodeWithMeta(n NodeWithMeta) {
 	w.WriteString(out)
 }
 
+func (w *HTMLWriter) WriteNodeWithName(n NodeWithName) {
+	WriteNodes(w, n.Node)
+}
+
 func (w *HTMLWriter) WriteTable(t Table) {
 	w.WriteString("<table>\n")
 	beforeFirstContentRow := true

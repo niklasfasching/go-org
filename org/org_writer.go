@@ -164,6 +164,11 @@ func (w *OrgWriter) WriteNodeWithMeta(n NodeWithMeta) {
 	WriteNodes(w, n.Node)
 }
 
+func (w *OrgWriter) WriteNodeWithName(n NodeWithName) {
+	w.WriteString(fmt.Sprintf("#+NAME: %s\n", n.Name))
+	WriteNodes(w, n.Node)
+}
+
 func (w *OrgWriter) WriteComment(c Comment) {
 	w.WriteString(w.indent + "#" + c.Content + "\n")
 }

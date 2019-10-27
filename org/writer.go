@@ -12,6 +12,7 @@ type Writer interface {
 	WriteInclude(Include)
 	WriteComment(Comment)
 	WriteNodeWithMeta(NodeWithMeta)
+	WriteNodeWithName(NodeWithName)
 	WriteHeadline(Headline)
 	WriteBlock(Block)
 	WriteExample(Example)
@@ -46,6 +47,8 @@ func WriteNodes(w Writer, nodes ...Node) {
 			w.WriteComment(n)
 		case NodeWithMeta:
 			w.WriteNodeWithMeta(n)
+		case NodeWithName:
+			w.WriteNodeWithName(n)
 		case Headline:
 			w.WriteHeadline(n)
 		case Block:
@@ -90,7 +93,7 @@ func WriteNodes(w Writer, nodes ...Node) {
 			w.WriteFootnoteDefinition(n)
 		default:
 			if n != nil {
-				panic(fmt.Sprintf("bad node %#v", n))
+				panic(fmt.Sprintf("bad node %T %#v", n, n))
 			}
 		}
 	}
