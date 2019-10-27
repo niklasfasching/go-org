@@ -133,6 +133,9 @@ When inserting an image link like [[/home/amos/Pictures/Screenshots/img-2017-09-
   (shrink-window (- (window-height) 12))
   (ansi-term))
 #+END_SRC
+** misc fuzz / regression / edge case
+*** index out of range in headline priority parsing
+**** [#B
 * Footnotes
 
 [fn:1] a footnote /with/ *markup*
