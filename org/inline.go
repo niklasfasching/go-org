@@ -147,8 +147,8 @@ func (d *Document) parseExplicitLineBreakOrLatexFragment(input string, start int
 	switch {
 	case start+2 >= len(input):
 	case input[start+1] == '\\' && start != 0 && input[start-1] != '\n':
-		for i := start + 2; unicode.IsSpace(rune(input[i])); i++ {
-			if i >= len(input) || input[i] == '\n' {
+		for i := start + 2; i <= len(input)-1 && unicode.IsSpace(rune(input[i])); i++ {
+			if input[i] == '\n' {
 				return i + 1 - start, ExplicitLineBreak{}
 			}
 		}

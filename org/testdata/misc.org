@@ -136,6 +136,9 @@ When inserting an image link like [[/home/amos/Pictures/Screenshots/img-2017-09-
 ** misc fuzz / regression / edge case
 *** index out of range in headline priority parsing
 **** [#B
+*** index out of range in explicit line break parsing
+0\\ 
+
 * Footnotes
 
 [fn:1] a footnote /with/ *markup*
