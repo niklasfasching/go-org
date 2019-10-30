@@ -43,7 +43,7 @@ func (w *OrgWriter) WriterWithExtensions() Writer {
 func (w *OrgWriter) Before(d *Document) {}
 func (w *OrgWriter) After(d *Document)  {}
 
-func (w *OrgWriter) nodesAsString(nodes ...Node) string {
+func (w *OrgWriter) WriteNodesAsString(nodes ...Node) string {
 	builder := w.Builder
 	w.Builder = strings.Builder{}
 	WriteNodes(w, nodes...)
@@ -117,7 +117,7 @@ func (w *OrgWriter) WritePropertyDrawer(d PropertyDrawer) {
 
 func (w *OrgWriter) WriteFootnoteDefinition(f FootnoteDefinition) {
 	w.WriteString(fmt.Sprintf("[fn:%s]", f.Name))
-	content := w.nodesAsString(f.Children...)
+	content := w.WriteNodesAsString(f.Children...)
 	if content != "" && !unicode.IsSpace(rune(content[0])) {
 		w.WriteString(" ")
 	}
@@ -125,7 +125,7 @@ func (w *OrgWriter) WriteFootnoteDefinition(f FootnoteDefinition) {
 }
 
 func (w *OrgWriter) WriteParagraph(p Paragraph) {
-	content := w.nodesAsString(p.Children...)
+	content := w.WriteNodesAsString(p.Children...)
 	if len(content) > 0 && content[0] != '\n' {
 		w.WriteString(w.indent)
 	}
@@ -135,7 +135,7 @@ func (w *OrgWriter) WriteParagraph(p Paragraph) {
 func (w *OrgWriter) WriteExample(e Example) {
 	for _, n := range e.Children {
 		w.WriteString(w.indent + ":")
-		if content := w.nodesAsString(n); content != "" {
+		if content := w.WriteNodesAsString(n); content != "" {
 			w.WriteString(" " + content)
 		}
 		w.WriteString("\n")
@@ -202,7 +202,7 @@ func (w *OrgWriter) WriteDescriptiveListItem(di DescriptiveListItem) {
 	}
 	indent := w.indent + strings.Repeat(" ", len(di.Bullet)+1)
 	if len(di.Term) != 0 {
-		term := w.nodesAsString(di.Term...)
+		term := w.WriteNodesAsString(di.Term...)
 		w.WriteString(" " + term + " ::")
 		indent = indent + strings.Repeat(" ", len(term)+4)
 	}
@@ -235,7 +235,7 @@ func (w *OrgWriter) WriteTable(t Table) {
 			w.WriteString(`|`)
 			for _, column := range row.Columns {
 				w.WriteString(` `)
-				content := w.nodesAsString(column.Children...)
+				content := w.WriteNodesAsString(column.Children...)
 				if content == "" {
 					content = " "
 				}
@@ -322,6 +322,6 @@ func (w *OrgWriter) WriteRegularLink(l RegularLink) {
 	} else if l.Description == nil {
 		w.WriteString(fmt.Sprintf("[[%s]]", l.URL))
 	} else {
-		w.WriteString(fmt.Sprintf("[[%s][%s]]", l.URL, w.nodesAsString(l.Description...)))
+		w.WriteString(fmt.Sprintf("[[%s][%s]]", l.URL, w.WriteNodesAsString(l.Description...)))
 	}
 }
