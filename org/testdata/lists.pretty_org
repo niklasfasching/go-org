@@ -32,10 +32,10 @@
 
 descriptive lists
 - [ ] term :: details
-          continued details
+              continued details
 - [ ] details without a term
 - [X] term ::
-          details on a new line
+              details on a new line
 - term ::
 
           details on a new line (with an empty line in between)

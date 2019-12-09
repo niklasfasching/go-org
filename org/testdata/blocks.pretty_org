@@ -45,9 +45,8 @@ blocks like the quote block parse their content and can contain
 - paragraphs
 - ...
 
-
-also whitespace is not significant
-and superfluous whitespace (at the beginning of the line) is removed
+      whitespace is honored and not removed (but is not displayed because that's how html works by default)
+        it can be made visible using css (e.g. =white-space: pre=).
 #+END_QUOTE
 
 #+BEGIN_EXPORT html
@@ -76,3 +75,38 @@ this unindented line is outside of the list item
   #+BEGIN_EXAMPLE
   #+END_QUOTE
   #+END_EXAMPLE
+  #+END_QUOTE
+
+- verse blocks
+  - emacs / ox-hugo rendering
+    #+BEGIN_EXPORT html
+    <p class="verse">
+    Great clouds overhead<br />
+    Tiny black birds rise and fall<br />
+    Snow covers Emacs<br />
+    <br />
+    &nbsp;&nbsp;&nbsp;---AlexSchroeder<br />
+    </p>
+    #+END_EXPORT
+  - go-org rendering
+    #+BEGIN_SRC html
+    <style>
+    .verse-block p { white-space: pre; }
+    .verse-block p + p { margin: 0; }
+    </style>
+    #+END_SRC
+
+    #+BEGIN_EXPORT html
+    <style>
+    .verse-block p { white-space: pre; }
+    .verse-block p + p { margin: 0; }
+    </style>
+    #+END_EXPORT
+
+    #+BEGIN_VERSE
+    Great clouds overhead
+    Tiny black birds rise and fall
+    Snow covers Emacs
+
+        ---AlexSchroeder
+    #+END_VERSE

@@ -87,12 +87,12 @@ paragraphs
 <p>
 …
 </p>
+<p>
+    whitespace is honored and not removed (but is not displayed because that&#39;s how html works by default)
+      it can be made visible using css (e.g. <code class="verbatim">white-space: pre</code>).
+</p>
 </li>
 </ul>
-<p>
-also whitespace is not significant
-and superfluous whitespace (at the beginning of the line) is removed
-</p>
 </blockquote>
 <script>
 console.log("Hello World!")
@@ -134,11 +134,58 @@ list item 2
 <p>
 #+END_EXAMPLE
 </p>
-<p>
-#+BEGIN_QUOTE
-</p>
+<blockquote>
 <pre class="example">
 #+END_QUOTE
 </pre>
+</blockquote>
+</li>
+<li>
+<p>
+verse blocks
+</p>
+<ul>
+<li>
+<p>
+emacs / ox-hugo rendering
+</p>
+<p class="verse">
+Great clouds overhead<br />
+Tiny black birds rise and fall<br />
+Snow covers Emacs<br />
+<br />
+&nbsp;&nbsp;&nbsp;---AlexSchroeder<br />
+</p>
+</li>
+<li>
+<p>
+go-org rendering
+</p>
+<div class="src src-html">
+<div class="highlight">
+<pre>
+&lt;style&gt;
+.verse-block p { white-space: pre; }
+.verse-block p + p { margin: 0; }
+&lt;/style&gt;
+</pre>
+</div>
+</div>
+<style>
+.verse-block p { white-space: pre; }
+.verse-block p + p { margin: 0; }
+</style>
+<div class="verse-block">
+<p>
+Great clouds overhead
+Tiny black birds rise and fall
+Snow covers Emacs
+</p>
+<p>
+    —AlexSchroeder
+</p>
+</div>
+</li>
+</ul>
 </li>
 </ul>
