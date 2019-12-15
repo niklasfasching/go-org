@@ -5,6 +5,7 @@ import (
 	"html"
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode"
 
@@ -214,7 +215,18 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 		}
 	}
 
-	w.WriteString(fmt.Sprintf(`<h%d id="%s">`, h.Lvl, h.ID()) + "\n")
+	level := h.Lvl
+	lvlOffsetVal := w.document.Get("EXPORT_LEVEL_OFFSET")
+	if lvlOffsetVal != "" {
+		lvlOffset, err := strconv.Atoi(lvlOffsetVal)
+		if err != nil {
+			lvlOffset = 0
+		}
+		if level+lvlOffset > 0 {
+			level += lvlOffset
+		}
+	}
+	w.WriteString(fmt.Sprintf(`<h%d id="%s">`, level, h.ID()) + "\n")
 	if w.document.GetOption("todo") && h.Status != "" {
 		w.WriteString(fmt.Sprintf(`<span class="todo">%s</span>`, h.Status) + "\n")
 	}
