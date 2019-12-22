@@ -1,3 +1,4 @@
+#+TITLE: Misc
 ** issues from goorgeous (free test cases, yay!)
 *** DONE [[https://github.com/chaseadamsio/goorgeous/issues/19][#19]]: Support #+HTML
 #+HTML: <p style="border: 1px dotted grey">neato!</p>
