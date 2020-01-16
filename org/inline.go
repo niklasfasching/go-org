@@ -66,6 +66,7 @@ var latexFragmentPairs = map[string]string{
 	`\(`: `\)`,
 	`\[`: `\]`,
 	`$$`: `$$`,
+	`$`:  `$`,
 }
 
 func (d *Document) parseInline(input string) (nodes []Node) {
@@ -88,7 +89,7 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 		case '\\':
 			consumed, node = d.parseExplicitLineBreakOrLatexFragment(input, current)
 		case '$':
-			consumed, node = d.parseLatexFragment(input, current)
+			consumed, node = d.parseLatexFragment(input, current, 1)
 		case '\n':
 			consumed, node = d.parseLineBreak(input, current)
 		case ':':
@@ -153,7 +154,7 @@ func (d *Document) parseExplicitLineBreakOrLatexFragment(input string, start int
 			}
 		}
 	case input[start+1] == '(' || input[start+1] == '[':
-		return d.parseLatexFragment(input, start)
+		return d.parseLatexFragment(input, start, 2)
 	case strings.Index(input[start:], `\begin{`) == 0:
 		if m := latexFragmentRegexp.FindStringSubmatch(input[start:]); m != nil {
 			if open, content, close := m[1], m[2], m[3]; open == close {
@@ -166,15 +167,18 @@ func (d *Document) parseExplicitLineBreakOrLatexFragment(input string, start int
 	return 0, nil
 }
 
-func (d *Document) parseLatexFragment(input string, start int) (int, Node) {
+func (d *Document) parseLatexFragment(input string, start int, pairLength int) (int, Node) {
 	if start+2 >= len(input) {
 		return 0, nil
 	}
-	openingPair := input[start : start+2]
+	if pairLength == 1 && input[start:start+2] == "$$" {
+		pairLength = 2
+	}
+	openingPair := input[start : start+pairLength]
 	closingPair := latexFragmentPairs[openingPair]
-	if i := strings.Index(input[start+2:], closingPair); i != -1 {
-		content := d.parseRawInline(input[start+2 : start+2+i])
-		return i + 2 + 2, LatexFragment{openingPair, closingPair, content}
+	if i := strings.Index(input[start+pairLength:], closingPair); i != -1 {
+		content := d.parseRawInline(input[start+pairLength : start+pairLength+i])
+		return i + pairLength + pairLength, LatexFragment{openingPair, closingPair, content}
 	}
 	return 0, nil
 }

@@ -9,3 +9,4 @@ we support =\(...\)=, =\[...\]=, =$$...$$= and =\begin{$env}...\end{$env}= as la
 - \begin{xyz}
   \sum_{i=1}^n a_n
   \end{xyz}
+- $2 + 2$, $3 - 3$
