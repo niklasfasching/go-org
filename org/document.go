@@ -174,7 +174,7 @@ func (d *Document) Get(key string) string {
 // - pri (export headline priority)
 // - tags (export headline tags)
 // see https://orgmode.org/manual/Export-settings.html for more information
-func (d *Document) GetOption(key string) bool {
+func (d *Document) GetOption(key string) string {
 	get := func(settings map[string]string) string {
 		for _, field := range strings.Fields(settings["OPTIONS"]) {
 			if strings.HasPrefix(field, key+":") {
@@ -187,15 +187,11 @@ func (d *Document) GetOption(key string) bool {
 	if value == "" {
 		value = get(d.DefaultSettings)
 	}
-	switch value {
-	case "t":
-		return true
-	case "nil":
-		return false
-	default:
-		d.Log.Printf("Bad value for export option %s (%s)", key, value)
-		return false
+	if value == "" {
+		value = "nil"
+		d.Log.Printf("Missing value for export option %s", key)
 	}
+	return value
 }
 
 func (d *Document) parseOne(i int, stop stopFn) (consumed int, node Node) {

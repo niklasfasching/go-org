@@ -155,7 +155,7 @@ func (w *HTMLWriter) WriteFootnoteDefinition(f FootnoteDefinition) {
 }
 
 func (w *HTMLWriter) WriteFootnotes(d *Document) {
-	if !w.document.GetOption("f") || len(w.footnotes.list) == 0 {
+	if w.document.GetOption("f") == "nil" || len(w.footnotes.list) == 0 {
 		return
 	}
 	w.WriteString(`<div class="footnotes">` + "\n")
@@ -183,7 +183,7 @@ func (w *HTMLWriter) WriteFootnotes(d *Document) {
 }
 
 func (w *HTMLWriter) WriteOutline(d *Document) {
-	if w.document.GetOption("toc") && len(d.Outline.Children) != 0 {
+	if w.document.GetOption("toc") != "nil" && len(d.Outline.Children) != 0 {
 		w.WriteString("<nav>\n<ul>\n")
 		for _, section := range d.Outline.Children {
 			w.writeSection(section)
@@ -218,15 +218,15 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 	}
 
 	w.WriteString(fmt.Sprintf(`<h%d id="%s">`, h.Lvl+1, h.ID()) + "\n")
-	if w.document.GetOption("todo") && h.Status != "" {
+	if w.document.GetOption("todo") != "nil" && h.Status != "" {
 		w.WriteString(fmt.Sprintf(`<span class="todo">%s</span>`, h.Status) + "\n")
 	}
-	if w.document.GetOption("pri") && h.Priority != "" {
+	if w.document.GetOption("pri") != "nil" && h.Priority != "" {
 		w.WriteString(fmt.Sprintf(`<span class="priority">[%s]</span>`, h.Priority) + "\n")
 	}
 
 	WriteNodes(w, h.Title...)
-	if w.document.GetOption("tags") && len(h.Tags) != 0 {
+	if w.document.GetOption("tags") != "nil" && len(h.Tags) != 0 {
 		tags := make([]string, len(h.Tags))
 		for i, tag := range h.Tags {
 			tags[i] = fmt.Sprintf(`<span>%s</span>`, tag)
@@ -241,7 +241,7 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 func (w *HTMLWriter) WriteText(t Text) {
 	if !w.htmlEscape {
 		w.WriteString(t.Content)
-	} else if !w.document.GetOption("e") || t.IsRaw {
+	} else if w.document.GetOption("e") == "nil" || t.IsRaw {
 		w.WriteString(html.EscapeString(t.Content))
 	} else {
 		w.WriteString(html.EscapeString(htmlEntityReplacer.Replace(t.Content)))
@@ -277,7 +277,7 @@ func (w *HTMLWriter) WriteExplicitLineBreak(l ExplicitLineBreak) {
 }
 
 func (w *HTMLWriter) WriteFootnoteLink(l FootnoteLink) {
-	if !w.document.GetOption("f") {
+	if w.document.GetOption("f") == "nil" {
 		return
 	}
 	i := w.footnotes.add(l)
@@ -286,7 +286,7 @@ func (w *HTMLWriter) WriteFootnoteLink(l FootnoteLink) {
 }
 
 func (w *HTMLWriter) WriteTimestamp(t Timestamp) {
-	if !w.document.GetOption("<") {
+	if w.document.GetOption("<") == "nil" {
 		return
 	}
 	w.WriteString(`<span class="timestamp">&lt;`)
