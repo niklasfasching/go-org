@@ -169,7 +169,7 @@ func (d *Document) Get(key string) string {
 // - < (export timestamps)
 // - e (export org entities)
 // - f (export footnotes)
-// - toc (export table of content)
+// - toc (export table of content. an int limits the included org headline lvl)
 // - todo (export headline todo status)
 // - pri (export headline priority)
 // - tags (export headline tags)

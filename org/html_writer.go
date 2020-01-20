@@ -5,6 +5,7 @@ import (
 	"html"
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode"
 
@@ -184,24 +185,32 @@ func (w *HTMLWriter) WriteFootnotes(d *Document) {
 
 func (w *HTMLWriter) WriteOutline(d *Document) {
 	if w.document.GetOption("toc") != "nil" && len(d.Outline.Children) != 0 {
+		maxLvl, _ := strconv.Atoi(w.document.GetOption("toc"))
 		w.WriteString("<nav>\n<ul>\n")
 		for _, section := range d.Outline.Children {
-			w.writeSection(section)
+			w.writeSection(section, maxLvl)
 		}
 		w.WriteString("</ul>\n</nav>\n")
 	}
 }
 
-func (w *HTMLWriter) writeSection(section *Section) {
+func (w *HTMLWriter) writeSection(section *Section, maxLvl int) {
+	if maxLvl != 0 && section.Headline.Lvl > maxLvl {
+		return
+	}
 	// NOTE: To satisfy hugo ExtractTOC() check we cannot use `<li>\n` here. Doesn't really matter, just a note.
 	w.WriteString("<li>")
 	h := section.Headline
 	title := cleanHeadlineTitleForHTMLAnchorRegexp.ReplaceAllString(w.WriteNodesAsString(h.Title...), "")
 	w.WriteString(fmt.Sprintf("<a href=\"#%s\">%s</a>\n", h.ID(), title))
-	if len(section.Children) != 0 {
+	hasChildren := false
+	for _, section := range section.Children {
+		hasChildren = hasChildren || maxLvl == 0 || section.Headline.Lvl <= maxLvl
+	}
+	if hasChildren {
 		w.WriteString("<ul>\n")
 		for _, section := range section.Children {
-			w.writeSection(section)
+			w.writeSection(section, maxLvl)
 		}
 		w.WriteString("</ul>\n")
 	}

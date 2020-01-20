@@ -1,4 +1,5 @@
 #+SETUPFILE: setup_file_org
+#+OPTIONS: toc:1
 * Simple Headline [1/2]
 - [X] checked
 - [ ] unchecked
@@ -31,3 +32,10 @@ By default =EXCLUDE_TAGS= is just =:noexport:=.
 :PROPERTIES:
 not a property
 :END:
+* level limit for headlines to be included in the table of contents
+The toc option allows setting a [[https://orgmode.org/manual/Export-settings.html][level limit]]. For this file we set it to 1 - which means that the following headlines
+won't be included in the table of contents.
+** headline 2 not in toc
+*** headline 3 not in toc
+** anoter headline 2 not in toc
+you get the gist...
