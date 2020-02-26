@@ -9,6 +9,12 @@ function hello {
 hello
 #+END_SRC
 
+# Escaping in literal examples, see
+# https://orgmode.org/manual/Literal-Examples.html#Literal-Examples
+#+BEGIN_EXAMPLE
+  ,* I am no real headline
+#+END_EXAMPLE
+
 #+BEGIN_SRC
 a source block without a language
 #+END_SRC
