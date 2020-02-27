@@ -54,6 +54,7 @@ var listItemStatuses = map[string]string{
 }
 
 var cleanHeadlineTitleForHTMLAnchorRegexp = regexp.MustCompile(`</?a[^>]*>`) // nested a tags are not valid HTML
+var literalExampleRegexp = regexp.MustCompile(`^(\s*)(,)(#\+|\*)`)
 
 func NewHTMLWriter() *HTMLWriter {
 	defaultConfig := New()
@@ -247,9 +248,13 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 	WriteNodes(w, h.Children...)
 }
 
+func trimEscapingInLiteralExamples (line string) string {
+	return literalExampleRegexp.ReplaceAllString(line, "$1$3")
+}
+
 func (w *HTMLWriter) WriteText(t Text) {
 	if !w.htmlEscape {
-		w.WriteString(t.Content)
+		w.WriteString(trimEscapingInLiteralExamples(t.Content))
 	} else if w.document.GetOption("e") == "nil" || t.IsRaw {
 		w.WriteString(html.EscapeString(t.Content))
 	} else {
