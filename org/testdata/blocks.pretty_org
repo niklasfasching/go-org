@@ -15,6 +15,14 @@ hello
   ,* I am no real headline
 #+END_EXAMPLE
 
+# Nested code blocks, see
+# https://github.com/niklasfasching/go-org/issues/28
+#+BEGIN_SRC org
+  ,#+BEGIN_SRC shell :exports results
+  hledger balancesheet -f sample.journal -O csv --empty --value
+  ,#+END_SRC
+#+END_SRC
+
 #+BEGIN_SRC
 a source block without a language
 #+END_SRC
