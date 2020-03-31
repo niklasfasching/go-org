@@ -25,6 +25,8 @@ it also has multiple parameters
 src, example & export blocks treat their content as raw text
 /inline/ *markup* is ignored
       and whitespace is honored and not removed
+
+content of example blocks is still html escaped - see <script>alert("escaped")</script>
 #+END_EXAMPLE
 
 : examples like this

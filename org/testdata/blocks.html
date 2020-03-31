@@ -32,9 +32,11 @@ empty lines!
 
 it also has multiple parameters
 
-src, example & export blocks treat their content as raw text
+src, example &amp; export blocks treat their content as raw text
 /inline/ *markup* is ignored
       and whitespace is honored and not removed
+
+content of example blocks is still html escaped - see &lt;script&gt;alert(&#34;escaped&#34;)&lt;/script&gt;
 </pre>
 <pre class="example">
 examples like this
