@@ -57,6 +57,11 @@ console.log("Hello World!")
 </script>
 #+END_EXPORT
 
+#+BEGIN_EXPORT something-other-than-html
+I won't be rendered as html
+#+END_EXPORT
+
+
 - list item 1
   blocks can contain unindented lines that would normally end a list item
   #+BEGIN_EXAMPLE

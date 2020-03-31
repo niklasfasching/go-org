@@ -124,8 +124,10 @@ func (w *HTMLWriter) WriteBlock(b Block) {
 		w.WriteString(fmt.Sprintf("<div class=\"src src-%s\">\n%s\n</div>\n", lang, content))
 	case name == "EXAMPLE":
 		w.WriteString(`<pre class="example">` + "\n" + html.EscapeString(content) + "\n</pre>\n")
-	case name == "EXPORT" && len(b.Parameters) >= 1 && strings.ToLower(b.Parameters[0]) == "html":
-		w.WriteString(content + "\n")
+	case name == "EXPORT":
+		if len(b.Parameters) >= 1 && strings.ToLower(b.Parameters[0]) == "html" {
+			w.WriteString(content + "\n")
+		}
 	case name == "QUOTE":
 		w.WriteString("<blockquote>\n" + content + "</blockquote>\n")
 	case name == "CENTER":
