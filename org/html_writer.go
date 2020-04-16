@@ -93,6 +93,10 @@ func (w *HTMLWriter) Before(d *Document) {
 	w.document = d
 	w.log = d.Log
 	if title := d.Get("TITLE"); title != "" {
+		titleDocument := d.Parse(strings.NewReader(title), d.Path)
+		if titleDocument.Error == nil {
+			title = w.WriteNodesAsString(titleDocument.Nodes...)
+		}
 		w.WriteString(fmt.Sprintf(`<h1 class="title">%s</h1>`+"\n", title))
 	}
 	w.WriteOutline(d)
@@ -140,7 +144,7 @@ func (w *HTMLWriter) WriteInlineBlock(b InlineBlock) {
 		w.WriteString(fmt.Sprintf("<div class=\"src src-inline src-%s\">\n%s\n</div>", lang, content))
 	case "export":
 		if strings.ToLower(b.Parameters[0]) == "html" {
-			w.WriteString(content + "\n")
+			w.WriteString(content)
 		}
 	}
 }
