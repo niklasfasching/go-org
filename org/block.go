@@ -19,6 +19,7 @@ type Example struct {
 var exampleLineRegexp = regexp.MustCompile(`^(\s*):(\s(.*)|\s*$)`)
 var beginBlockRegexp = regexp.MustCompile(`(?i)^(\s*)#\+BEGIN_(\w+)(.*)`)
 var endBlockRegexp = regexp.MustCompile(`(?i)^(\s*)#\+END_(\w+)`)
+var exampleBlockEscapeRegexp = regexp.MustCompile(`(^|\n)([ \t]*),([ \t]*)(\*|,\*|#\+|,#\+)`)
 
 func lexBlock(line string) (token, bool) {
 	if m := beginBlockRegexp.FindStringSubmatch(line); m != nil {
@@ -50,6 +51,9 @@ func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
 		rawText := ""
 		for ; !stop(d, i); i++ {
 			rawText += trim(d.tokens[i].matches[0]) + "\n"
+		}
+		if name == "EXAMPLE" || (name == "SRC" && len(parameters) >= 1 && parameters[0] == "org") {
+			rawText = exampleBlockEscapeRegexp.ReplaceAllString(rawText, "$1$2$3$4")
 		}
 		block.Children = d.parseRawInline(rawText)
 	} else {

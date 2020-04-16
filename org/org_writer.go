@@ -2,6 +2,7 @@ package org
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -15,6 +16,8 @@ type OrgWriter struct {
 	strings.Builder
 	indent string
 }
+
+var exampleBlockUnescapeRegexp = regexp.MustCompile(`(^|\n)([ \t]*)(\*|,\*|#\+|,#\+)`)
 
 var emphasisOrgBorders = map[string][]string{
 	"_":   []string{"_", "_"},
@@ -90,7 +93,11 @@ func (w *OrgWriter) WriteBlock(b Block) {
 	if isRawTextBlock(b.Name) {
 		w.WriteString(w.indent)
 	}
-	WriteNodes(w, b.Children...)
+	content := w.WriteNodesAsString(b.Children...)
+	if b.Name == "EXAMPLE" || (b.Name == "SRC" && len(b.Parameters) >= 1 && b.Parameters[0] == "org") {
+		content = exampleBlockUnescapeRegexp.ReplaceAllString(content, "$1$2,$3")
+	}
+	w.WriteString(content)
 	if !isRawTextBlock(b.Name) {
 		w.WriteString(w.indent)
 	}

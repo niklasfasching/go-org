@@ -51,6 +51,23 @@ blocks like the quote block parse their content and can contain
         it can be made visible using css (e.g. =white-space: pre=).
 #+END_QUOTE
 
+#+BEGIN_SRC org
+  ,#+BEGIN_SRC bash
+  echo src (with language org) and example blocks support escaping using commata
+  ,#+END_SRC
+
+,,* I am not a real headline - commata escape characters aren't renderered
+
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+  ,#+BEGIN_SRC bash
+  echo src (with language org) and example blocks support escaping using commata
+  ,#+END_SRC
+
+,,* I am not a real headline - commata escape characters aren't renderered
+#+END_EXAMPLE
+
 #+BEGIN_EXPORT html
 <script>
 console.log("Hello World!")
@@ -80,7 +97,7 @@ this unindented line is outside of the list item
 
   #+BEGIN_QUOTE
   #+BEGIN_EXAMPLE
-  #+END_QUOTE
+  ,#+END_QUOTE
   #+END_EXAMPLE
   #+END_QUOTE
 
