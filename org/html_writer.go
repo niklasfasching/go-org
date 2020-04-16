@@ -141,6 +141,7 @@ func (w *HTMLWriter) WriteInlineBlock(b InlineBlock) {
 	switch b.Name {
 	case "src":
 		lang := strings.ToLower(b.Parameters[0])
+		content = w.HighlightCodeBlock(content, lang, true)
 		w.WriteString(fmt.Sprintf("<div class=\"src src-inline src-%s\">\n%s\n</div>", lang, content))
 	case "export":
 		if strings.ToLower(b.Parameters[0]) == "html" {
