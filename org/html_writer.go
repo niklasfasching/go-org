@@ -16,7 +16,7 @@ import (
 // HTMLWriter exports an org document into a html document.
 type HTMLWriter struct {
 	ExtendingWriter    Writer
-	HighlightCodeBlock func(source, lang string) string
+	HighlightCodeBlock func(source, lang string, inline bool) string
 
 	strings.Builder
 	document   *Document
@@ -61,7 +61,10 @@ func NewHTMLWriter() *HTMLWriter {
 		document:   &Document{Configuration: defaultConfig},
 		log:        defaultConfig.Log,
 		htmlEscape: true,
-		HighlightCodeBlock: func(source, lang string) string {
+		HighlightCodeBlock: func(source, lang string, inline bool) string {
+			if inline {
+				return fmt.Sprintf("<div class=\"highlight-inline\">\n<pre>\n%s\n</pre>\n</div>", html.EscapeString(source))
+			}
 			return fmt.Sprintf("<div class=\"highlight\">\n<pre>\n%s\n</pre>\n</div>", html.EscapeString(source))
 		},
 		footnotes: &footnotes{
@@ -103,24 +106,14 @@ func (w *HTMLWriter) WriteComment(Comment)               {}
 func (w *HTMLWriter) WritePropertyDrawer(PropertyDrawer) {}
 
 func (w *HTMLWriter) WriteBlock(b Block) {
-	content := ""
-	if isRawTextBlock(b.Name) {
-		builder, htmlEscape := w.Builder, w.htmlEscape
-		w.Builder, w.htmlEscape = strings.Builder{}, false
-		WriteNodes(w, b.Children...)
-		out := w.String()
-		w.Builder, w.htmlEscape = builder, htmlEscape
-		content = strings.TrimRightFunc(out, unicode.IsSpace)
-	} else {
-		content = w.WriteNodesAsString(b.Children...)
-	}
+	content := w.blockContent(b.Name, b.Children)
 	switch name := b.Name; {
 	case name == "SRC":
 		lang := "text"
 		if len(b.Parameters) >= 1 {
 			lang = strings.ToLower(b.Parameters[0])
 		}
-		content = w.HighlightCodeBlock(content, lang)
+		content = w.HighlightCodeBlock(content, lang, false)
 		w.WriteString(fmt.Sprintf("<div class=\"src src-%s\">\n%s\n</div>\n", lang, content))
 	case name == "EXAMPLE":
 		w.WriteString(`<pre class="example">` + "\n" + html.EscapeString(content) + "\n</pre>\n")
@@ -137,6 +130,12 @@ func (w *HTMLWriter) WriteBlock(b Block) {
 		w.WriteString(fmt.Sprintf(`<div class="%s-block">`, strings.ToLower(b.Name)) + "\n")
 		w.WriteString(content + "</div>\n")
 	}
+}
+
+func (w *HTMLWriter) WriteInlineBlock(b InlineBlock) {
+	content := w.blockContent(b.Name, b.Children)
+	lang := strings.ToLower(b.Parameters[0])
+	w.WriteString(fmt.Sprintf("<div class=\"src src-inline src-%s\">\n%s\n</div>", lang, content))
 }
 
 func (w *HTMLWriter) WriteDrawer(d Drawer) {
@@ -481,6 +480,19 @@ func (w *HTMLWriter) withHTMLAttributes(input string, kvs ...string) string {
 		return input
 	}
 	return out.String()
+}
+
+func (w *HTMLWriter) blockContent(name string, children []Node) string {
+	if isRawTextBlock(name) {
+		builder, htmlEscape := w.Builder, w.htmlEscape
+		w.Builder, w.htmlEscape = strings.Builder{}, false
+		WriteNodes(w, children...)
+		out := w.String()
+		w.Builder, w.htmlEscape = builder, htmlEscape
+		return strings.TrimRightFunc(out, unicode.IsSpace)
+	} else {
+		return w.WriteNodesAsString(children...)
+	}
 }
 
 func setHTMLAttribute(attributes []h.Attribute, k, v string) []h.Attribute {

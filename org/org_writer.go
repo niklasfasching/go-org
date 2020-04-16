@@ -97,6 +97,16 @@ func (w *OrgWriter) WriteBlock(b Block) {
 	w.WriteString("#+END_" + b.Name + "\n")
 }
 
+func (w *OrgWriter) WriteInlineBlock(b InlineBlock) {
+	w.WriteString(b.Name + "_" + b.Parameters[0])
+	if len(b.Parameters) > 1 {
+		w.WriteString("[" + strings.Join(b.Parameters[1:], " ") + "]")
+	}
+	w.WriteString("{")
+	WriteNodes(w, b.Children...)
+	w.WriteString("}")
+}
+
 func (w *OrgWriter) WriteDrawer(d Drawer) {
 	w.WriteString(w.indent + ":" + d.Name + ":\n")
 	WriteNodes(w, d.Children...)

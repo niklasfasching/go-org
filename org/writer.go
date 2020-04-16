@@ -18,6 +18,7 @@ type Writer interface {
 	WriteNodeWithName(NodeWithName)
 	WriteHeadline(Headline)
 	WriteBlock(Block)
+	WriteInlineBlock(InlineBlock)
 	WriteExample(Example)
 	WriteDrawer(Drawer)
 	WritePropertyDrawer(PropertyDrawer)
@@ -57,6 +58,8 @@ func WriteNodes(w Writer, nodes ...Node) {
 			w.WriteHeadline(n)
 		case Block:
 			w.WriteBlock(n)
+		case InlineBlock:
+			w.WriteInlineBlock(n)
 		case Example:
 			w.WriteExample(n)
 		case Drawer:

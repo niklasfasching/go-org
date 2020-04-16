@@ -46,7 +46,7 @@ func main() {
 	fmt.Fprint(os.Stdout, out)
 }
 
-func highlightCodeBlock(source, lang string) string {
+func highlightCodeBlock(source, lang string, inline bool) string {
 	var w strings.Builder
 	l := lexers.Get(lang)
 	if l == nil {
@@ -55,5 +55,8 @@ func highlightCodeBlock(source, lang string) string {
 	l = chroma.Coalesce(l)
 	it, _ := l.Tokenise(nil, source)
 	_ = html.New().Format(&w, styles.Get("friendly"), it)
+	if inline {
+		return `<div class="highlight-inline">` + "\n" + w.String() + "\n" + `</div>`
+	}
 	return `<div class="highlight">` + "\n" + w.String() + "\n" + `</div>`
 }
