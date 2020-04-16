@@ -63,6 +63,7 @@ var lexFns = []lexFn{
 	lexHeadline,
 	lexDrawer,
 	lexBlock,
+	lexResult,
 	lexList,
 	lexTable,
 	lexHorizontalRule,
@@ -202,6 +203,8 @@ func (d *Document) parseOne(i int, stop stopFn) (consumed int, node Node) {
 		consumed, node = d.parseTable(i, stop)
 	case "beginBlock":
 		consumed, node = d.parseBlock(i, stop)
+	case "result":
+		consumed, node = d.parseResult(i, stop)
 	case "beginDrawer":
 		consumed, node = d.parseDrawer(i, stop)
 	case "text":

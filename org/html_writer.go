@@ -136,6 +136,8 @@ func (w *HTMLWriter) WriteBlock(b Block) {
 	}
 }
 
+func (w *HTMLWriter) WriteResult(r Result) { WriteNodes(w, r.Node) }
+
 func (w *HTMLWriter) WriteInlineBlock(b InlineBlock) {
 	content := w.blockContent(strings.ToUpper(b.Name), b.Children)
 	switch b.Name {

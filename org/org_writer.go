@@ -104,6 +104,11 @@ func (w *OrgWriter) WriteBlock(b Block) {
 	w.WriteString("#+END_" + b.Name + "\n")
 }
 
+func (w *OrgWriter) WriteResult(r Result) {
+	w.WriteString("#+RESULTS:\n")
+	WriteNodes(w, r.Node)
+}
+
 func (w *OrgWriter) WriteInlineBlock(b InlineBlock) {
 	switch b.Name {
 	case "src":

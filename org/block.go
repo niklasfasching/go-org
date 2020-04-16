@@ -12,6 +12,10 @@ type Block struct {
 	Children   []Node
 }
 
+type Result struct {
+	Node Node
+}
+
 type Example struct {
 	Children []Node
 }
@@ -19,6 +23,7 @@ type Example struct {
 var exampleLineRegexp = regexp.MustCompile(`^(\s*):(\s(.*)|\s*$)`)
 var beginBlockRegexp = regexp.MustCompile(`(?i)^(\s*)#\+BEGIN_(\w+)(.*)`)
 var endBlockRegexp = regexp.MustCompile(`(?i)^(\s*)#\+END_(\w+)`)
+var resultRegexp = regexp.MustCompile(`(?i)^(\s*)#\+RESULTS:`)
 var exampleBlockEscapeRegexp = regexp.MustCompile(`(^|\n)([ \t]*),([ \t]*)(\*|,\*|#\+|,#\+)`)
 
 func lexBlock(line string) (token, bool) {
@@ -26,6 +31,13 @@ func lexBlock(line string) (token, bool) {
 		return token{"beginBlock", len(m[1]), strings.ToUpper(m[2]), m}, true
 	} else if m := endBlockRegexp.FindStringSubmatch(line); m != nil {
 		return token{"endBlock", len(m[1]), strings.ToUpper(m[2]), m}, true
+	}
+	return nilToken, false
+}
+
+func lexResult(line string) (token, bool) {
+	if m := resultRegexp.FindStringSubmatch(line); m != nil {
+		return token{"result", len(m[1]), "", m}, true
 	}
 	return nilToken, false
 }
@@ -75,6 +87,11 @@ func (d *Document) parseExample(i int, parentStop stopFn) (int, Node) {
 	return i - start, example
 }
 
+func (d *Document) parseResult(i int, parentStop stopFn) (int, Node) {
+	consumed, node := d.parseOne(i+1, parentStop)
+	return consumed + 1, Result{node}
+}
+
 func trimIndentUpTo(max int) func(string) string {
 	return func(line string) string {
 		i := 0
@@ -86,3 +103,4 @@ func trimIndentUpTo(max int) func(string) string {
 
 func (n Example) String() string { return orgWriter.WriteNodesAsString(n) }
 func (n Block) String() string   { return orgWriter.WriteNodesAsString(n) }
+func (n Result) String() string  { return orgWriter.WriteNodesAsString(n) }

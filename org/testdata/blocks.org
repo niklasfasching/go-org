@@ -1,3 +1,6 @@
+#+RESULTS:
+: some results without a block
+
 #+CAPTION: block caption
 #+BEGIN_SRC bash :results raw
 echo "a bash source block"
@@ -12,6 +15,14 @@ hello
 #+BEGIN_SRC
 a source block without a language
 #+END_SRC
+
+
+#+BEGIN_SRC bash
+echo a source block with results
+#+END_SRC
+
+#+RESULTS:
+: a source block with results
 
 #+BEGIN_EXAMPLE foo bar baz
 an example block with
