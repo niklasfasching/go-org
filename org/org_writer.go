@@ -98,13 +98,20 @@ func (w *OrgWriter) WriteBlock(b Block) {
 }
 
 func (w *OrgWriter) WriteInlineBlock(b InlineBlock) {
-	w.WriteString(b.Name + "_" + b.Parameters[0])
-	if len(b.Parameters) > 1 {
-		w.WriteString("[" + strings.Join(b.Parameters[1:], " ") + "]")
+	switch b.Name {
+	case "src":
+		w.WriteString(b.Name + "_" + b.Parameters[0])
+		if len(b.Parameters) > 1 {
+			w.WriteString("[" + strings.Join(b.Parameters[1:], " ") + "]")
+		}
+		w.WriteString("{")
+		WriteNodes(w, b.Children...)
+		w.WriteString("}")
+	case "export":
+		w.WriteString("@@" + b.Parameters[0] + ":")
+		WriteNodes(w, b.Children...)
+		w.WriteString("@@")
 	}
-	w.WriteString("{")
-	WriteNodes(w, b.Children...)
-	w.WriteString("}")
 }
 
 func (w *OrgWriter) WriteDrawer(d Drawer) {

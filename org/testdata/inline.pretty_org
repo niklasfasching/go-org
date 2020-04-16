@@ -9,6 +9,7 @@
 - _underlined_ *bold*  =verbatim= ~code~ +strikethrough+
 - *bold string with an *asterisk inside*
 - inline source blocks like src_html[:eval no]{<h1>hello</h1>}
+- inline export blocks @@html:<h1>hello</h1>@@
 - =multiline emphasis is
   supported - and respects MaxEmphasisNewLines (default: 1)=
   /so this

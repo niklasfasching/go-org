@@ -133,9 +133,16 @@ func (w *HTMLWriter) WriteBlock(b Block) {
 }
 
 func (w *HTMLWriter) WriteInlineBlock(b InlineBlock) {
-	content := w.blockContent(b.Name, b.Children)
-	lang := strings.ToLower(b.Parameters[0])
-	w.WriteString(fmt.Sprintf("<div class=\"src src-inline src-%s\">\n%s\n</div>", lang, content))
+	content := w.blockContent(strings.ToUpper(b.Name), b.Children)
+	switch b.Name {
+	case "src":
+		lang := strings.ToLower(b.Parameters[0])
+		w.WriteString(fmt.Sprintf("<div class=\"src src-inline src-%s\">\n%s\n</div>", lang, content))
+	case "export":
+		if strings.ToLower(b.Parameters[0]) == "html" {
+			w.WriteString(content + "\n")
+		}
+	}
 }
 
 func (w *HTMLWriter) WriteDrawer(d Drawer) {

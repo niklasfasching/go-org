@@ -65,6 +65,7 @@ var footnoteRegexp = regexp.MustCompile(`^\[fn:([\w-]*?)(:(.*?))?\]`)
 var statisticsTokenRegexp = regexp.MustCompile(`^\[(\d+/\d+|\d+%)\]`)
 var latexFragmentRegexp = regexp.MustCompile(`(?s)^\\begin{(\w+)}(.*)\\end{(\w+)}`)
 var inlineBlockRegexp = regexp.MustCompile(`src_(\w+)(\[(.*)\])?{(.*)}`)
+var inlineExportBlockRegexp = regexp.MustCompile(`@@(\w+):(.*?)@@`)
 
 var timestampFormat = "2006-01-02 Mon 15:04"
 var datestampFormat = "2006-01-02 Mon"
@@ -85,6 +86,8 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 			consumed, node = d.parseSubOrSuperScript(input, current)
 		case '_':
 			rewind, consumed, node = d.parseSubScriptOrEmphasisOrInlineBlock(input, current)
+		case '@':
+			consumed, node = d.parseInlineExportBlock(input, current)
 		case '*', '/', '+':
 			consumed, node = d.parseEmphasis(input, current, false)
 		case '=', '~':
@@ -159,6 +162,13 @@ func (d *Document) parseInlineBlock(input string, start int) (int, int, Node) {
 		return 3, len(m[0]), InlineBlock{"src", strings.Fields(m[1] + " " + m[3]), d.parseRawInline(m[4])}
 	}
 	return 0, 0, nil
+}
+
+func (d *Document) parseInlineExportBlock(input string, start int) (int, Node) {
+	if m := inlineExportBlockRegexp.FindStringSubmatch(input[start:]); m != nil {
+		return len(m[0]), InlineBlock{"export", m[1:2], d.parseRawInline(m[2])}
+	}
+	return 0, nil
 }
 
 func (d *Document) parseExplicitLineBreakOrLatexFragment(input string, start int) (int, Node) {
