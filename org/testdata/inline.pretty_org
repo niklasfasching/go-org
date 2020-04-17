@@ -37,3 +37,5 @@
   - <2019-01-06 Sun 18:00 +1w>
   - <2019-01-06 Sun 18:00>
   - <2019-01-06 Sun 18:00 +1w>
+- =#+LINK= based links: [[example:foobar]]
+  #+LINK: example https://www.example.com/

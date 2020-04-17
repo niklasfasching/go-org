@@ -62,6 +62,11 @@ func (d *Document) parseKeyword(i int, stop stopFn) (int, Node) {
 		return d.loadSetupFile(k)
 	case "INCLUDE":
 		return d.parseInclude(k)
+	case "LINK":
+		if parts := strings.Split(k.Value, " "); len(parts) >= 2 {
+			d.Links[parts[0]] = parts[1]
+		}
+		return 1, k
 	case "CAPTION", "ATTR_HTML":
 		consumed, node := d.parseAffiliated(i, stop)
 		if consumed != 0 {

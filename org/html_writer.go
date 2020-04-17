@@ -338,6 +338,9 @@ func (w *HTMLWriter) WriteRegularLink(l RegularLink) {
 	if l.Protocol == "file" {
 		url = url[len("file:"):]
 	}
+	if prefix := w.document.Links[l.Protocol]; prefix != "" {
+		url = html.EscapeString(prefix) + url[len(l.Protocol)+1:]
+	}
 	description := url
 	if l.Description != nil {
 		description = w.WriteNodesAsString(l.Description...)
