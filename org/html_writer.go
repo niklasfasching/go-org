@@ -111,23 +111,23 @@ func (w *HTMLWriter) WritePropertyDrawer(PropertyDrawer) {}
 
 func (w *HTMLWriter) WriteBlock(b Block) {
 	content := w.blockContent(b.Name, b.Children)
-	switch name := b.Name; {
-	case name == "SRC":
+	switch b.Name {
+	case "SRC":
 		lang := "text"
 		if len(b.Parameters) >= 1 {
 			lang = strings.ToLower(b.Parameters[0])
 		}
 		content = w.HighlightCodeBlock(content, lang, false)
 		w.WriteString(fmt.Sprintf("<div class=\"src src-%s\">\n%s\n</div>\n", lang, content))
-	case name == "EXAMPLE":
+	case "EXAMPLE":
 		w.WriteString(`<pre class="example">` + "\n" + html.EscapeString(content) + "\n</pre>\n")
-	case name == "EXPORT":
+	case "EXPORT":
 		if len(b.Parameters) >= 1 && strings.ToLower(b.Parameters[0]) == "html" {
 			w.WriteString(content + "\n")
 		}
-	case name == "QUOTE":
+	case "QUOTE":
 		w.WriteString("<blockquote>\n" + content + "</blockquote>\n")
-	case name == "CENTER":
+	case "CENTER":
 		w.WriteString(`<div class="center-block" style="text-align: center; margin-left: auto; margin-right: auto;">` + "\n")
 		w.WriteString(content + "</div>\n")
 	default:
