@@ -150,7 +150,7 @@ func (d *Document) parseInclude(k Keyword) (int, Node) {
 				d.Log.Printf("Bad include %#v: %s", k, err)
 				return k
 			}
-			return Block{strings.ToUpper(kind), []string{lang}, d.parseRawInline(string(bs))}
+			return Block{strings.ToUpper(kind), []string{lang}, d.parseRawInline(string(bs)), nil}
 		}
 	}
 	return 1, Include{k, resolve}

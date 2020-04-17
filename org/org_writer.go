@@ -102,6 +102,11 @@ func (w *OrgWriter) WriteBlock(b Block) {
 		w.WriteString(w.indent)
 	}
 	w.WriteString("#+END_" + b.Name + "\n")
+
+	if b.Result != nil {
+		w.WriteString("\n")
+		WriteNodes(w, b.Result)
+	}
 }
 
 func (w *OrgWriter) WriteResult(r Result) {

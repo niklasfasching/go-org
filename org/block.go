@@ -10,6 +10,7 @@ type Block struct {
 	Name       string
 	Parameters []string
 	Children   []Node
+	Result     Node
 }
 
 type Result struct {
@@ -58,7 +59,7 @@ func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
 	stop := func(d *Document, i int) bool {
 		return i >= len(d.tokens) || (d.tokens[i].kind == "endBlock" && d.tokens[i].content == name)
 	}
-	block, i := Block{name, parameters, nil}, i+1
+	block, i := Block{name, parameters, nil, nil}, i+1
 	if isRawTextBlock(name) {
 		rawText := ""
 		for ; !stop(d, i); i++ {
@@ -73,10 +74,26 @@ func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
 		block.Children = nodes
 		i += consumed
 	}
-	if i < len(d.tokens) && d.tokens[i].kind == "endBlock" && d.tokens[i].content == name {
-		return i + 1 - start, block
+	if i >= len(d.tokens) || d.tokens[i].kind != "endBlock" || d.tokens[i].content != name {
+		return 0, nil
 	}
-	return 0, nil
+	if name == "SRC" {
+		consumed, result := d.parseSrcBlockResult(i+1, parentStop)
+		block.Result = result
+		i += consumed
+	}
+	return i + 1 - start, block
+}
+
+func (d *Document) parseSrcBlockResult(i int, parentStop stopFn) (int, Node) {
+	start := i
+	for ; !parentStop(d, i) && d.tokens[i].kind == "text" && d.tokens[i].content == ""; i++ {
+	}
+	if parentStop(d, i) || d.tokens[i].kind != "result" {
+		return 0, nil
+	}
+	consumed, result := d.parseResult(i, parentStop)
+	return (i - start) + consumed, result
 }
 
 func (d *Document) parseExample(i int, parentStop stopFn) (int, Node) {

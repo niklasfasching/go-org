@@ -134,6 +134,10 @@ func (w *HTMLWriter) WriteBlock(b Block) {
 		w.WriteString(fmt.Sprintf(`<div class="%s-block">`, strings.ToLower(b.Name)) + "\n")
 		w.WriteString(content + "</div>\n")
 	}
+
+	if b.Result != nil {
+		WriteNodes(w, b.Result)
+	}
 }
 
 func (w *HTMLWriter) WriteResult(r Result) { WriteNodes(w, r.Node) }
