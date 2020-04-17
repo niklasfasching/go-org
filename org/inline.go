@@ -54,6 +54,11 @@ type RegularLink struct {
 	AutoLink    bool
 }
 
+type Macro struct {
+	Name       string
+	Parameters []string
+}
+
 var validURLCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;="
 var autolinkProtocols = regexp.MustCompile(`^(https?|ftp|file)$`)
 var imageExtensionRegexp = regexp.MustCompile(`^[.](png|gif|jpe?g|svg|tiff?)$`)
@@ -66,6 +71,7 @@ var statisticsTokenRegexp = regexp.MustCompile(`^\[(\d+/\d+|\d+%)\]`)
 var latexFragmentRegexp = regexp.MustCompile(`(?s)^\\begin{(\w+)}(.*)\\end{(\w+)}`)
 var inlineBlockRegexp = regexp.MustCompile(`src_(\w+)(\[(.*)\])?{(.*)}`)
 var inlineExportBlockRegexp = regexp.MustCompile(`@@(\w+):(.*?)@@`)
+var macroRegexp = regexp.MustCompile(`{{{(.*)\((.*)\)}}}`)
 
 var timestampFormat = "2006-01-02 Mon 15:04"
 var datestampFormat = "2006-01-02 Mon"
@@ -94,6 +100,8 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 			consumed, node = d.parseEmphasis(input, current, true)
 		case '[':
 			consumed, node = d.parseOpeningBracket(input, current)
+		case '{':
+			consumed, node = d.parseMacro(input, current)
 		case '<':
 			consumed, node = d.parseTimestamp(input, current)
 		case '\\':
@@ -234,6 +242,13 @@ func (d *Document) parseOpeningBracket(input string, start int) (int, Node) {
 		return d.parseFootnoteReference(input, start)
 	} else if statisticsTokenRegexp.MatchString(input[start:]) {
 		return d.parseStatisticToken(input, start)
+	}
+	return 0, nil
+}
+
+func (d *Document) parseMacro(input string, start int) (int, Node) {
+	if m := macroRegexp.FindStringSubmatch(input[start:]); m != nil {
+		return len(m[0]), Macro{m[1], strings.Split(m[2], ",")}
 	}
 	return 0, nil
 }
@@ -389,4 +404,5 @@ func (n InlineBlock) String() string       { return orgWriter.WriteNodesAsString
 func (n LatexFragment) String() string     { return orgWriter.WriteNodesAsString(n) }
 func (n FootnoteLink) String() string      { return orgWriter.WriteNodesAsString(n) }
 func (n RegularLink) String() string       { return orgWriter.WriteNodesAsString(n) }
+func (n Macro) String() string             { return orgWriter.WriteNodesAsString(n) }
 func (n Timestamp) String() string         { return orgWriter.WriteNodesAsString(n) }

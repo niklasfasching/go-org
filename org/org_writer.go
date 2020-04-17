@@ -360,3 +360,7 @@ func (w *OrgWriter) WriteRegularLink(l RegularLink) {
 		w.WriteString(fmt.Sprintf("[[%s][%s]]", l.URL, w.WriteNodesAsString(l.Description...)))
 	}
 }
+
+func (w *OrgWriter) WriteMacro(m Macro) {
+	w.WriteString(fmt.Sprintf("{{{%s(%s)}}}", m.Name, strings.Join(m.Parameters, ",")))
+}

@@ -39,3 +39,5 @@
   - <2019-01-06 Sun 18:00 +1w>
 - =#+LINK= based links: [[example:foobar]]
   #+LINK: example https://www.example.com/
+- =#+MACROs=: {{{headline(yolo)}}}
+  #+MACRO: headline @@html:<h1>$1</h1>@@

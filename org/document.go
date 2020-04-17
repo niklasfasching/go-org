@@ -36,6 +36,7 @@ type Document struct {
 	Path           string // Path of the file containing the parse input - used to resolve relative paths during parsing (e.g. INCLUDE).
 	tokens         []token
 	baseLvl        int
+	Macros         map[string]string
 	Links          map[string]string
 	Nodes          []Node
 	NamedNodes     map[string]Node
@@ -123,6 +124,7 @@ func (c *Configuration) Parse(input io.Reader, path string) (d *Document) {
 		BufferSettings: map[string]string{},
 		NamedNodes:     map[string]Node{},
 		Links:          map[string]string{},
+		Macros:         map[string]string{},
 		Path:           path,
 	}
 	defer func() {

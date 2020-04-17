@@ -355,6 +355,19 @@ func (w *HTMLWriter) WriteRegularLink(l RegularLink) {
 	}
 }
 
+func (w *HTMLWriter) WriteMacro(m Macro) {
+	if macro := w.document.Macros[m.Name]; macro != "" {
+		for i, param := range m.Parameters {
+			macro = strings.Replace(macro, fmt.Sprintf("$%d", i+1), param, -1)
+		}
+		macroDocument := w.document.Parse(strings.NewReader(macro), w.document.Path)
+		if macroDocument.Error != nil {
+			w.log.Printf("bad macro: %s -> %s: %v", m.Name, macro, macroDocument.Error)
+		}
+		WriteNodes(w, macroDocument.Nodes...)
+	}
+}
+
 func (w *HTMLWriter) WriteList(l List) {
 	tags, ok := listTags[l.Kind]
 	if !ok {
