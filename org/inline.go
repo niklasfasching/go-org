@@ -158,7 +158,7 @@ func (d *Document) parseInlineBlock(input string, start int) (int, int, Node) {
 	if !(strings.HasSuffix(input[:start], "src") && (start-4 < 0 || unicode.IsSpace(rune(input[start-4])))) {
 		return 0, 0, nil
 	}
-	if m := inlineBlockRegexp.FindStringSubmatch(input[start-4:]); m != nil {
+	if m := inlineBlockRegexp.FindStringSubmatch(input[start-3:]); m != nil {
 		return 3, len(m[0]), InlineBlock{"src", strings.Fields(m[1] + " " + m[3]), d.parseRawInline(m[4])}
 	}
 	return 0, 0, nil
