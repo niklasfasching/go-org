@@ -24,6 +24,20 @@ echo a source block with results
 #+RESULTS:
 : a source block with results
 
+#+BEGIN_SRC bash :exports none
+echo a source block with results that is not exported
+#+END_SRC
+
+#+RESULTS:
+: a source block with results that is not exported
+
+#+BEGIN_SRC bash :exports results
+echo a source block that only exports results
+#+END_SRC
+
+#+RESULTS:
+: a source block that only exports results
+
 #+BEGIN_EXAMPLE foo bar baz
 an example block with
 multiple lines including

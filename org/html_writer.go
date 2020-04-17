@@ -110,9 +110,13 @@ func (w *HTMLWriter) WriteComment(Comment)               {}
 func (w *HTMLWriter) WritePropertyDrawer(PropertyDrawer) {}
 
 func (w *HTMLWriter) WriteBlock(b Block) {
-	content := w.blockContent(b.Name, b.Children)
+	content, params := w.blockContent(b.Name, b.Children), b.ParameterMap()
+
 	switch b.Name {
 	case "SRC":
+		if params[":exports"] == "results" || params[":exports"] == "none" {
+			break
+		}
 		lang := "text"
 		if len(b.Parameters) >= 1 {
 			lang = strings.ToLower(b.Parameters[0])
@@ -135,7 +139,7 @@ func (w *HTMLWriter) WriteBlock(b Block) {
 		w.WriteString(content + "</div>\n")
 	}
 
-	if b.Result != nil {
+	if b.Result != nil && params[":exports"] != "code" && params[":exports"] != "none" {
 		WriteNodes(w, b.Result)
 	}
 }

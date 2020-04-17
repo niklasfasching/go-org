@@ -118,6 +118,17 @@ func trimIndentUpTo(max int) func(string) string {
 	}
 }
 
+func (b Block) ParameterMap() map[string]string {
+	if len(b.Parameters) == 0 {
+		return nil
+	}
+	m := map[string]string{":lang": b.Parameters[0]}
+	for i := 1; i+1 < len(b.Parameters); i += 2 {
+		m[b.Parameters[i]] = b.Parameters[i+1]
+	}
+	return m
+}
+
 func (n Example) String() string { return orgWriter.WriteNodesAsString(n) }
 func (n Block) String() string   { return orgWriter.WriteNodesAsString(n) }
 func (n Result) String() string  { return orgWriter.WriteNodesAsString(n) }
