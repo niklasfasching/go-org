@@ -24,10 +24,11 @@
 #+CAPTION: table without header
 | 1 | 2 | 3 |
 
-#+CAPTION: table with aligned columns
+#+CAPTION: table with aligned and sized columns
 | left aligned | right aligned | center aligned |
 |--------------+---------------+----------------|
-| <l>          |           <r> |       <c>      |
+| <l>          |           <r> |      <c5>      |
+|              |           <1> |                |
 | 42           |            42 |       42       |
 | foobar       |        foobar |     foobar     |
 

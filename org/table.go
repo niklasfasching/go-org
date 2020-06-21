@@ -23,14 +23,15 @@ type Column struct {
 }
 
 type ColumnInfo struct {
-	Align string
-	Len   int
+	Align      string
+	Len        int
+	DisplayLen int
 }
 
 var tableSeparatorRegexp = regexp.MustCompile(`^(\s*)(\|[+-|]*)\s*$`)
 var tableRowRegexp = regexp.MustCompile(`^(\s*)(\|.*)`)
 
-var columnAlignRegexp = regexp.MustCompile(`^<(l|c|r)>$`)
+var columnAlignAndLengthRegexp = regexp.MustCompile(`^<(l|c|r)?(\d+)?>$`)
 
 func lexTable(line string) (token, bool) {
 	if m := tableSeparatorRegexp.FindStringSubmatch(line); m != nil {
@@ -94,7 +95,7 @@ func getColumnInfos(rows [][]string) []ColumnInfo {
 				columnInfos[i].Len = n
 			}
 
-			if m := columnAlignRegexp.FindStringSubmatch(columns[i]); m != nil && isSpecialRow(columns) {
+			if m := columnAlignAndLengthRegexp.FindStringSubmatch(columns[i]); m != nil && isSpecialRow(columns) {
 				switch m[1] {
 				case "l":
 					columnInfos[i].Align = "left"
@@ -102,6 +103,10 @@ func getColumnInfos(rows [][]string) []ColumnInfo {
 					columnInfos[i].Align = "center"
 				case "r":
 					columnInfos[i].Align = "right"
+				}
+				if m[2] != "" {
+					l, _ := strconv.Atoi(m[2])
+					columnInfos[i].DisplayLen = l
 				}
 			} else if _, err := strconv.ParseFloat(columns[i], 32); err == nil {
 				countNumeric++
@@ -120,7 +125,7 @@ func getColumnInfos(rows [][]string) []ColumnInfo {
 func isSpecialRow(rawColumns []string) bool {
 	isAlignRow := true
 	for _, rawColumn := range rawColumns {
-		if !columnAlignRegexp.MatchString(rawColumn) && rawColumn != "" {
+		if !columnAlignAndLengthRegexp.MatchString(rawColumn) && rawColumn != "" {
 			isAlignRow = false
 		}
 	}
