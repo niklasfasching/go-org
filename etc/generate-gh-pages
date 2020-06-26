@@ -34,7 +34,7 @@ for org_file in $org_files; do
       <h2><a id='${name}' href='#toc-${name}'>${name}</a></h2>
       <div class='source'>
         <pre class='org'>$(sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g;' $org_file)</pre>
-        <div class='html'>$(./go-org $org_file html-chroma)</div>
+        <div class='html'>$(./go-org render $org_file html-chroma)</div>
       </div>"
 done
 
@@ -143,7 +143,7 @@ for org_file in $org_files; do
       <h2><a id='${name}' href='#toc-${name}'>${name}</a></h2>
       <div class='source'>
         <div class='html'>$(./gh-pages/goorgeous $org_file)</div>
-        <div class='html'>$(./go-org $org_file html-chroma)</div>
+        <div class='html'>$(./go-org render $org_file html-chroma)</div>
       </div>"
 done
 go_org_vs_goorgeous_examples+="</body></html>"

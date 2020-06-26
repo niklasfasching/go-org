@@ -1,25 +1,23 @@
 * go-org [[https://travis-ci.org/niklasfasching/go-org.svg?branch=master]]
-An Org mode parser in go.
-Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and an online org -> html demo (wasm based).
+An Org mode parser in go. And soon a blog generator.
+Take a look at [[https://niklasfasching.github.io/go-org/][github pages]] for some examples and to try it out live in your browser.
 [[https://raw.githubusercontent.com/niklasfasching/go-org/master/etc/example.png]]
-Please note that the goal for the html export is to produce sensible html output, not to exactly reproduce output the output of  =org-html-export=.
+Please note
+- the goal for the html export is to produce sensible html output, not to exactly reproduce the output of =org-html-export=.
+- the goal for the parser is to support a reasonable subset of Org mode. Org mode is *huge* and I like to follow the 80/20 rule.
+* usage
+** command line
+#+begin_src
+go-org
+#+end_src
+** as a library
+see [[https://github.com/niklasfasching/go-org/blob/master/main.go][main.go]] and hugo [[https://github.com/gohugoio/hugo/blob/master/markup/org/convert.go][org/convert.go]]
 * development
 1. =make setup install=
 2. change things
 3. =make preview= (regenerates fixtures & shows output in a browser)
 
 in general, have a look at the Makefile - it's short enough.
-* not yet implemented
-** deadlines and scheduling
-see https://orgmode.org/manual/Deadlines-and-scheduling.html
-** more types of links
-see https://orgmode.org/manual/External-links.html & https://orgmode.org/manual/Internal-links.html
-- radio target <<<MyTarget>>>
-- link target: <<go-org>>
-- link: [[go-org]]
-- link to headline
-- links with image as description
-- MyTarget <- this will automatically become a link - not sure i want this...
 * resources
 - test files
   - [[https://raw.githubusercontent.com/kaushalmodi/ox-hugo/master/test/site/content-org/all-posts.org][ox-hugo all-posts.org]]

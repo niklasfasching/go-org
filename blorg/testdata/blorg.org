@@ -1,0 +1,100 @@
+#+AUTHOR: author
+#+TITLE: blog
+#+BASE_URL: https://www.example.com
+#+OPTIONS: toc:nil
+#+CONTENT: ./content
+#+PUBLIC: ./public
+
+* templates
+** head
+#+name: head
+#+begin_src html
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/style.css" type="text/css" />
+  <title>{{ .Title }}</title>
+</head>
+#+end_src
+** header
+#+name: header
+#+begin_src html
+<header class='header'>
+  <a class="logo" href="/">home</a>
+  <nav>
+    <a href="https://www.github.com/niklasfasching">github</a>
+    <a href="/about">about</a>
+  </nav>
+</header>
+#+end_src
+** index
+#+name: index
+#+begin_src html
+<!doctype html>
+<html>
+  {{ template "head" . }}
+  <body>
+    {{ template "header" . }}
+    <h1 class="title">{{ .Title }}</h1>
+    <ul class="posts">
+      {{ range .Pages  }}
+      <li class="post">
+        <a href="{{ .PermaLink }}">
+          <date>{{ .Date.Format "02.01.2006" }}</date>
+          <span>{{ .Title }}</span>
+        </a>
+      </li>
+      {{ end }}
+    </ul>
+  </body>
+</html>
+#+end_src
+** item
+#+name: item
+#+begin_src html
+<!doctype html>
+<html>
+  {{ template "head" . }}
+  <body>
+    {{ template "header" . }}
+    <div class="container">
+      <h1 class="title">{{ .Title }}
+        <br>
+        <span class="subtitle">{{ .Subtitle }}</span>
+      </h1>
+      <ul class="tags">
+        {{ range .Tags }}
+        <li><a href="/tags/{{ . | Slugify }}">{{ . }}</a></li>
+        {{ end }}
+      </ul>
+      {{ .Content }}
+    </div>
+  </body>
+</html>
+#+end_src
+
+** list
+#+name: list
+#+begin_src html
+<!doctype html>
+<html>
+  {{ template "head" . }}
+  <body>
+    {{ template "header" . }}
+    <div class="container">
+      <h1 class="title">{{ .Title }}</h1>
+      <ul class="posts">
+        {{ range .Pages }}
+        <li class="post">
+          <a href="{{ .PermaLink }}">
+            <date>{{ .Date.Format "02.01.2006" }}</date>
+            <span>{{ .Title }}</span>
+          </a>
+        </li>
+        {{ end }}
+      </ul>
+      <ul>
+    </div>
+  </body>
+</html>
+#+end_src

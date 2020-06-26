@@ -1,0 +1,4 @@
+#+TITLE: About
+#+TAG[]: static
+
+and some content

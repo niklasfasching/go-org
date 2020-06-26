@@ -2,6 +2,6 @@
 
 for org_file in org/testdata/*.org; do
     echo $org_file
-    ./go-org $org_file html > org/testdata/$(basename $org_file .org).html
-    ./go-org $org_file org > org/testdata/$(basename $org_file .org).pretty_org
+    ./go-org render $org_file html > org/testdata/$(basename $org_file .org).html
+    ./go-org render $org_file org > org/testdata/$(basename $org_file .org).pretty_org
 done
