@@ -1,6 +1,4 @@
-<h1 class="title"><p>
-Misc title <b>with an inline html export</b>
-</p>
+<h1 class="title"><p>Misc title <b>with an inline html export</b></p>
 </h1>
 <nav>
 <ul>
@@ -93,43 +91,32 @@ issues from goorgeous (free test cases, yay!)
 <a href="https://github.com/chaseadamsio/goorgeous/issues/29">#29:</a> Support verse block
 </h4>
 <div class="verse-block">
-<p>
-This
+<p>This
 <strong>is</strong>
-verse
-</p>
+verse</p>
 </div>
 <div class="custom-block">
-<p>
-or even a <strong>totally</strong> <em>custom</em> kind of block
-crazy ain&#39;t it?
-</p>
+<p>or even a <strong>totally</strong> <em>custom</em> kind of block
+crazy ain&#39;t it?</p>
 </div>
 <h4 id="headline-4">
 <span class="todo">DONE</span>
 <a href="https://github.com/chaseadamsio/goorgeous/issues/30">#30</a>: Support #+SETUPFILE
 </h4>
-<p>
-see <code class="verbatim">./headlines.org</code>
-</p>
+<p>see <code class="verbatim">./headlines.org</code></p>
 <h4 id="headline-5">
 <span class="todo">DONE</span>
 <a href="https://github.com/chaseadamsio/goorgeous/issues/31">#31</a>: Support #+INCLUDE
 </h4>
-<p>
-Note that only src/example/export block inclusion is supported for now.
+<p>Note that only src/example/export block inclusion is supported for now.
 There&#39;s quite a lot more to include (see the <a href="https://orgmode.org/manual/Include-files.html">org manual for include files</a>) but I
 don&#39;t have a use case for this yet and stuff like namespacing footnotes of included files
-adds quite a bit of complexity.
-</p>
+adds quite a bit of complexity.</p>
 <p>
-for now files can be included as:
-</p>
+for now files can be included as:</p>
 <ul>
 <li>
-<p>
-src block
-</p>
+<p>src block</p>
 <div class="src src-org">
 <div class="highlight">
 <pre>
@@ -179,28 +166,20 @@ you get the gist...
 </div>
 </li>
 <li>
-<p>
-export block
-</p>
-<p>
-Paragraphs are the default element.
-</p>
+<p>export block</p>
+<p>Paragraphs are the default element.</p>
 <p>
 Empty lines and other elements end paragraphs - but paragraphs
 can
 obviously
 span
 multiple
-lines.
-</p>
+lines.</p>
 <p>
-Paragraphs can contain inline markup like <em>emphasis</em> <strong>strong</strong>  and links <a href="https://www.example.com">example.com</a> and stuff.
-</p>
+Paragraphs can contain inline markup like <em>emphasis</em> <strong>strong</strong>  and links <a href="https://www.example.com">example.com</a> and stuff.</p>
 </li>
 <li>
-<p>
-example block
-</p>
+<p>example block</p>
 <pre class="example">
 language: go
 go: &#34;1.x&#34;
@@ -247,73 +226,53 @@ deploy:
 </h4>
 <ul>
 <li>
-<p>
-ndash –
-</p>
+<p>ndash –</p>
 </li>
 <li>
-<p>
-mdash —
-</p>
+<p>mdash —</p>
 </li>
 <li>
-<p>
-ellipsis …
-</p>
+<p>ellipsis …</p>
 </li>
 <li>
-<p>
-acute Á and so on
-</p>
+<p>acute Á and so on</p>
 </li>
 <li>
-<p>
-note that —— is replaced with 2 mdashes and …. becomes ellipsis+. and so on - that&#39;s how org also does it
-</p>
+<p>note that —— is replaced with 2 mdashes and …. becomes ellipsis+. and so on - that&#39;s how org also does it</p>
 </li>
 </ul>
 <h4 id="headline-9">
 <span class="todo">DONE</span>
 <a href="https://github.com/chaseadamsio/goorgeous/issues/47">#47:</a> Consecutive <code>code</code> wrapped text gets joined
 </h4>
-<p>
-either <code>this</code> or <code>that</code> foo.
+<p>either <code>this</code> or <code>that</code> foo.
 either <code>this</code>
-or <code>that</code> foo.
-</p>
+or <code>that</code> foo.</p>
 <h4 id="headline-10">
 <span class="todo">DONE</span>
 <a href="https://github.com/chaseadamsio/goorgeous/issues/50">#50</a>: LineBreaks in lists are preserved
 </h4>
 <ul>
 <li>
-<p>
-this list item
+<p>this list item
 has
 multiple
-linbreaks - but it&#39;s still just one paragraph (i.e. no line breaks are rendered)
-</p>
+linbreaks - but it&#39;s still just one paragraph (i.e. no line breaks are rendered)</p>
 </li>
 <li>
-<p>
-foobar
-</p>
+<p>foobar</p>
 </li>
 </ul>
 <ol>
 <li>
-<p>
-same
+<p>same
 goes
 for
 ordered
-lists
-</p>
+lists</p>
 </li>
 <li>
-<p>
-foo
-</p>
+<p>foo</p>
 </li>
 </ol>
 <h4 id="headline-11">
@@ -321,9 +280,7 @@ foo
 <a href="https://github.com/chaseadamsio/goorgeous/issues/68">#68</a>: Quote block with inline markup
 </h4>
 <blockquote>
-<p>
-<a href="https://www.example.com"><em>this</em> <strong>is</strong> <span style="text-decoration: underline;">markup</span>!</a>
-</p>
+<p><a href="https://www.example.com"><em>this</em> <strong>is</strong> <span style="text-decoration: underline;">markup</span>!</a></p>
 </blockquote>
 <h4 id="headline-12">
 <span class="todo">DONE</span>
@@ -336,14 +293,10 @@ foo
 </h4>
 <ul>
 <li>
-<p>
-bullet 1
-</p>
+<p>bullet 1</p>
 <ul>
 <li>
-<p>
-sub bullet
-</p>
+<p>sub bullet</p>
 </li>
 </ul>
 </li>
@@ -356,13 +309,10 @@ sub bullet
 <span class="todo">DONE</span>
 <a href="https://github.com/chaseadamsio/goorgeous/issues/78">#78</a>: Emphasis at beginning of line
 </h4>
-<p>
-<em>italics</em>
-</p>
+<p><em>italics</em></p>
 <p>
 Text
-<em>italics</em>
-</p>
+<em>italics</em></p>
 <h4 id="headline-16">
 <span class="todo">DONE</span>
 <a href="https://github.com/chaseadamsio/goorgeous/issues/82">#82</a>: Crash on empty headline
@@ -370,9 +320,7 @@ Text
 <h5 id="headline-17">
 
 </h5>
-<p>
-just a space as title…
-</p>
+<p>just a space as title…</p>
 <h4 id="headline-18">
 <span class="todo">DONE</span>
 <a href="https://github.com/chaseadamsio/goorgeous/issues/84">#84</a>: Paragraphs that are not followed by an empty line are not parsed correctly
@@ -380,47 +328,31 @@ just a space as title…
 <h5 id="headline-19">
 Foo
 </h5>
-<p>
-Foo paragraph.
-</p>
+<p>Foo paragraph.</p>
 <h5 id="headline-20">
 Bar
 </h5>
-<p>
-Bar paragraph
-</p>
+<p>Bar paragraph</p>
 <h4 id="headline-21">
 <span class="todo">DONE</span>
 <a href="https://github.com/chaseadamsio/goorgeous/issues/86">#86</a>: Multiple hyphens not converted to dashes
 </h4>
-<p>
-just like #46
-</p>
+<p>just like #46</p>
 <ul>
 <li>
-<p>
-<code class="verbatim">--</code> -&gt; – (en dash)
-</p>
+<p><code class="verbatim">--</code> -&gt; – (en dash)</p>
 </li>
 <li>
-<p>
-<code class="verbatim">---</code> -&gt; — (em dash)
-</p>
+<p><code class="verbatim">---</code> -&gt; — (em dash)</p>
 </li>
 </ul>
-<p>
-also, consecutive dashes inside
-</p>
+<p>also, consecutive dashes inside</p>
 <ul>
 <li>
-<p>
-inline code <code class="verbatim">--</code> <code class="verbatim">---</code> and verbatim <code>--</code> <code>---</code>
-</p>
+<p>inline code <code class="verbatim">--</code> <code class="verbatim">---</code> and verbatim <code>--</code> <code>---</code></p>
 </li>
 <li>
-<p>
-src/example/export blocks should not be converted!
-</p>
+<p>src/example/export blocks should not be converted!</p>
 <div class="src src-sh">
 <div class="highlight">
 <pre>
@@ -441,21 +373,15 @@ src/example/export blocks should not be converted!
 <span class="todo">DONE</span>
 <a href="https://github.com/chaseadamsio/goorgeous/issues/87">#87</a>: Markup in footnotes is rendered literally
 </h4>
-<p>
-footnotes can contain <strong>markup</strong> - and other elements and stuff <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup>
-</p>
+<p>footnotes can contain <strong>markup</strong> - and other elements and stuff <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup></p>
 <h4 id="headline-23">
 <span class="todo">DONE</span>
 <a href="https://github.com/chaseadamsio/goorgeous/issues/92">#92</a>: src blocks only render in caps
 </h4>
-<p>
-The behaviour of Org mode <code class="verbatim">&lt;s TAB</code> changed and it now inserts lowercased src blocks (go-org already handled this one)
-</p>
+<p>The behaviour of Org mode <code class="verbatim">&lt;s TAB</code> changed and it now inserts lowercased src blocks (go-org already handled this one)</p>
 <ul>
 <li>
-<p>
-lowercased:
-</p>
+<p>lowercased:</p>
 <div class="src src-bash">
 <div class="highlight">
 <pre>
@@ -465,9 +391,7 @@ uname -a
 </div>
 </li>
 <li>
-<p>
-uppercased
-</p>
+<p>uppercased</p>
 <div class="src src-bash">
 <div class="highlight">
 <pre>
@@ -483,12 +407,9 @@ issues (wrongly) filed with hugo
 <h4 id="headline-25">
 <a href="https://github.com/gohugoio/hugo/issues/3874">#3874</a> exporting images in org mode
 </h4>
+<p>Hello, I&#39;m writing hugo blogs using org-mode.</p>
 <p>
-Hello, I&#39;m writing hugo blogs using org-mode.
-</p>
-<p>
-When inserting an image link like <img src="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" alt="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" title="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" />, hugo doesn&#39;t export the image.
-</p>
+When inserting an image link like <img src="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" alt="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" title="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" />, hugo doesn&#39;t export the image.</p>
 <h4 id="headline-26">
 <a href="https://github.com/gohugoio/hugo/issues/4006">#4006</a> source code blocks in org not rendered correctly
 </h4>
@@ -516,9 +437,7 @@ index out of range in headline priority parsing
 <h4 id="headline-30">
 index out of range in explicit line break parsing
 </h4>
-<p>
-0\\ 
-</p>
+<p>0\\ </p>
 <h2 id="headline-31">
 Footnotes
 </h2>
@@ -528,19 +447,13 @@ Footnotes
 <div class="footnote-definition">
 <sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
 <div class="footnote-body">
-<p>
-a footnote <em>with</em> <strong>markup</strong>
-</p>
+<p>a footnote <em>with</em> <strong>markup</strong></p>
 <ul>
 <li>
-<p>
-and a <strong>list</strong>
-</p>
+<p>and a <strong>list</strong></p>
 </li>
 <li>
-<p>
-because that&#39;s possible
-</p>
+<p>because that&#39;s possible</p>
 </li>
 </ul>
 </div>
@@ -548,9 +461,7 @@ because that&#39;s possible
 <div class="footnote-definition">
 <sup id="footnote-2"><a href="#footnote-reference-2">2</a></sup>
 <div class="footnote-body">
-<p>
-that also goes for <strong>inline</strong> footnote <em>definitions</em>
-</p>
+<p>that also goes for <strong>inline</strong> footnote <em>definitions</em></p>
 </div>
 </div>
 </div>

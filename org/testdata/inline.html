@@ -1,181 +1,116 @@
 <ul>
 <li>
-<p>
-<em>emphasis</em> and a hard line break <br>
+<p><em>emphasis</em> and a hard line break <br>
 see? <br>
-also hard line breaks not followed by a newline get ignored, see \\
-</p>
+also hard line breaks not followed by a newline get ignored, see \\</p>
 </li>
 <li>
-<p>
-<em>.emphasis with dot border chars.</em>
-</p>
+<p><em>.emphasis with dot border chars.</em></p>
 </li>
 <li>
-<p>
-<em>emphasis with a slash/inside</em>
-</p>
+<p><em>emphasis with a slash/inside</em></p>
 </li>
 <li>
-<p>
-<em>emphasis</em> followed by raw text with slash /
-</p>
+<p><em>emphasis</em> followed by raw text with slash /</p>
 </li>
 <li>
-<p>
--&gt;/not an emphasis/&lt;-
-</p>
+<p>-&gt;/not an emphasis/&lt;-</p>
 </li>
 <li>
-<p>
-links with slashes do not become <em>emphasis</em>: <a href="https://somelinkshouldntrenderaccidentalemphasis.com">https://somelinkshouldntrenderaccidentalemphasis.com</a>/ <em>emphasis</em>
-</p>
+<p>links with slashes do not become <em>emphasis</em>: <a href="https://somelinkshouldntrenderaccidentalemphasis.com">https://somelinkshouldntrenderaccidentalemphasis.com</a>/ <em>emphasis</em></p>
 </li>
 <li>
-<p>
-<span style="text-decoration: underline;">underlined</span> <strong>bold</strong>  <code class="verbatim">verbatim</code> <code>code</code> <del>strikethrough</del>
-</p>
+<p><span style="text-decoration: underline;">underlined</span> <strong>bold</strong>  <code class="verbatim">verbatim</code> <code>code</code> <del>strikethrough</del></p>
 </li>
 <li>
-<p>
-<strong>bold string with an *asterisk inside</strong>
-</p>
+<p><strong>bold string with an *asterisk inside</strong></p>
 </li>
 <li>
-<p>
-inline source blocks like <div class="src src-inline src-html">
+<p>inline source blocks like <div class="src src-inline src-html">
 <div class="highlight-inline">
 <pre>
 &lt;h1&gt;hello&lt;/h1&gt;
 </pre>
 </div>
-</div>
-</p>
+</div></p>
 </li>
 <li>
-<p>
-inline export blocks <h1>hello</h1>
-</p>
+<p>inline export blocks <h1>hello</h1></p>
 </li>
 <li>
-<p>
-<code class="verbatim">multiline emphasis is
+<p><code class="verbatim">multiline emphasis is
 supported - and respects MaxEmphasisNewLines (default: 1)</code>
 <em>so this
-is emphasized</em>
-</p>
+is emphasized</em></p>
 <p>
 /but
 this
 is
-not emphasized/
-</p>
+not emphasized/</p>
 </li>
 <li>
-<p>
-empty emphasis markers like ++ // __ and so on are ignored
-</p>
+<p>empty emphasis markers like ++ // __ and so on are ignored</p>
 </li>
 <li>
-<p>
-use _{} for subscript<sub>sub</sub> and ^{} for superscript<sup>super</sup>
-</p>
+<p>use _{} for subscript<sub>sub</sub> and ^{} for superscript<sup>super</sup></p>
 </li>
 <li>
-<p>
-links
-</p>
+<p>links</p>
 <ol>
 <li>
-<p>
-regular link <a href="https://example.com">https://example.com</a> link without description
-</p>
+<p>regular link <a href="https://example.com">https://example.com</a> link without description</p>
 </li>
 <li>
-<p>
-regular link <a href="https://example.com">example.com</a> link with description
-</p>
+<p>regular link <a href="https://example.com">example.com</a> link with description</p>
 </li>
 <li>
-<p>
-regular link to a file (image) <img src="my-img.png" alt="my-img.png" title="my-img.png" />
-</p>
+<p>regular link to a file (image) <img src="my-img.png" alt="my-img.png" title="my-img.png" /></p>
 </li>
 <li>
-<p>
-regular link to a file (video) <video src="my-video.mp4" title="my-video.mp4">my-video.mp4</video>
-</p>
+<p>regular link to a file (video) <video src="my-video.mp4" title="my-video.mp4">my-video.mp4</video></p>
 </li>
 <li>
-<p>
-regular link to http (image) <img src="http://placekitten.com/200/200#.png" alt="http://placekitten.com/200/200#.png" title="http://placekitten.com/200/200#.png" />
-</p>
+<p>regular link to http (image) <img src="http://placekitten.com/200/200#.png" alt="http://placekitten.com/200/200#.png" title="http://placekitten.com/200/200#.png" /></p>
 </li>
 <li>
-<p>
-regular link to https (image) <img src="https://placekitten.com/200/200#.png" alt="https://placekitten.com/200/200#.png" title="https://placekitten.com/200/200#.png" />
-</p>
+<p>regular link to https (image) <img src="https://placekitten.com/200/200#.png" alt="https://placekitten.com/200/200#.png" title="https://placekitten.com/200/200#.png" /></p>
 </li>
 <li>
-<p>
-regular link enclosed in [] [<a href="https://www.example.com">https://www.example.com</a>] [<a href="https://www.example.com">example.com</a>]
-</p>
+<p>regular link enclosed in [] [<a href="https://www.example.com">https://www.example.com</a>] [<a href="https://www.example.com">example.com</a>]</p>
 </li>
 <li>
-<p>
-auto link, i.e. not inside <code class="verbatim">\[[square brackets]\]</code> <a href="https://www.example.com">https://www.example.com</a>
-</p>
+<p>auto link, i.e. not inside <code class="verbatim">\[[square brackets]\]</code> <a href="https://www.example.com">https://www.example.com</a></p>
 </li>
 </ol>
 </li>
 <li>
-<p>
-timestamps
-</p>
+<p>timestamps</p>
 <ul>
 <li>
-<p>
-<span class="timestamp">&lt;2019-01-06 Sun&gt;</span>
-</p>
+<p><span class="timestamp">&lt;2019-01-06 Sun&gt;</span></p>
 </li>
 <li>
-<p>
-<span class="timestamp">&lt;2019-01-06 Sun&gt;</span>
-</p>
+<p><span class="timestamp">&lt;2019-01-06 Sun&gt;</span></p>
 </li>
 <li>
-<p>
-<span class="timestamp">&lt;2019-01-06 Sun 18:00&gt;</span>
-</p>
+<p><span class="timestamp">&lt;2019-01-06 Sun 18:00&gt;</span></p>
 </li>
 <li>
-<p>
-<span class="timestamp">&lt;2019-01-06 Sun 18:00 +1w&gt;</span>
-</p>
+<p><span class="timestamp">&lt;2019-01-06 Sun 18:00 +1w&gt;</span></p>
 </li>
 <li>
-<p>
-<span class="timestamp">&lt;2019-01-06 Sun 18:00&gt;</span>
-</p>
+<p><span class="timestamp">&lt;2019-01-06 Sun 18:00&gt;</span></p>
 </li>
 <li>
-<p>
-<span class="timestamp">&lt;2019-01-06 Sun 18:00 +1w&gt;</span>
-</p>
+<p><span class="timestamp">&lt;2019-01-06 Sun 18:00 +1w&gt;</span></p>
 </li>
 </ul>
 </li>
 <li>
-<p>
-<code class="verbatim">#+LINK</code> based links: <a href="https://www.example.com/foobar">https://www.example.com/foobar</a>
-</p>
+<p><code class="verbatim">#+LINK</code> based links: <a href="https://www.example.com/foobar">https://www.example.com/foobar</a></p>
 </li>
 <li>
-<p>
-<code class="verbatim">#+MACROs</code>: <p>
-<h1>yolo</h1>
-</p>
-
+<p><code class="verbatim">#+MACROs</code>: <p><h1>yolo</h1></p>
 </p>
 </li>
 </ul>

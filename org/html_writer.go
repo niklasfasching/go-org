@@ -411,11 +411,8 @@ func (w *HTMLWriter) WriteParagraph(p Paragraph) {
 		return
 	}
 	w.WriteString("<p>")
-	if _, ok := p.Children[0].(LineBreak); !ok {
-		w.WriteString("\n")
-	}
 	WriteNodes(w, p.Children...)
-	w.WriteString("\n</p>\n")
+	w.WriteString("</p>\n")
 }
 
 func (w *HTMLWriter) WriteExample(e Example) {
