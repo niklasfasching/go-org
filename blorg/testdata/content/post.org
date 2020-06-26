@@ -1,2 +1,0 @@
-#+TITLE: some post
-#+TAG[]: post

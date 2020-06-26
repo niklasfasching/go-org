@@ -24,6 +24,7 @@ type Config struct {
 	ContentDir string
 	PublicDir  string
 	Address    string
+	BaseUrl    string
 	Template   *template.Template
 	OrgConfig  *org.Configuration
 }
@@ -52,7 +53,7 @@ var TemplateFuncs = map[string]interface{}{
 }
 
 func ReadConfig(configFile string) (*Config, error) {
-	address, publicDir, contentDir, workingDir := ":3000", "public", "content", filepath.Dir(configFile)
+	baseUrl, address, publicDir, contentDir, workingDir := "/", ":3000", "public", "content", filepath.Dir(configFile)
 	f, err := os.Open(configFile)
 	if err != nil {
 		return nil, err
@@ -63,6 +64,9 @@ func ReadConfig(configFile string) (*Config, error) {
 		return nil, document.Error
 	}
 	m := document.BufferSettings
+	if !strings.HasSuffix(m["BASE_URL"], "/") {
+		m["BASE_URL"] += "/"
+	}
 	if v, exists := m["AUTO_LINK"]; exists {
 		orgConfig.AutoLink = v == "true"
 		delete(m, "AUTO_LINK")
@@ -70,6 +74,9 @@ func ReadConfig(configFile string) (*Config, error) {
 	if v, exists := m["ADDRESS"]; exists {
 		address = v
 		delete(m, "ADDRESS")
+	}
+	if _, exists := m["BASE_URL"]; exists {
+		baseUrl = m["BASE_URL"]
 	}
 	if v, exists := m["PUBLIC"]; exists {
 		publicDir = v
@@ -87,6 +94,7 @@ func ReadConfig(configFile string) (*Config, error) {
 		orgConfig.MaxEmphasisNewLines = i
 		delete(m, "MAX_EMPHASIS_NEW_LINES")
 	}
+
 	for k, v := range m {
 		if k == "OPTIONS" {
 			orgConfig.DefaultSettings[k] = v + " " + orgConfig.DefaultSettings[k]
@@ -94,11 +102,13 @@ func ReadConfig(configFile string) (*Config, error) {
 			orgConfig.DefaultSettings[k] = v
 		}
 	}
+
 	config := &Config{
 		ConfigFile: configFile,
 		ContentDir: filepath.Join(workingDir, contentDir),
 		PublicDir:  filepath.Join(workingDir, publicDir),
 		Address:    address,
+		BaseUrl:    baseUrl,
 		Template:   template.New("_").Funcs(TemplateFuncs),
 		OrgConfig:  orgConfig,
 	}
@@ -174,7 +184,8 @@ func (c *Config) RenderContent() ([]*Page, error) {
 			return err
 		}
 		pages = append(pages, p)
-		p.PermaLink = "/" + relPath[:len(relPath)-len(".org")] + ".html"
+
+		p.PermaLink = c.BaseUrl + relPath[:len(relPath)-len(".org")] + ".html"
 		return p.Render(publicPath[:len(publicPath)-len(".org")] + ".html")
 	})
 	sort.Slice(pages, func(i, j int) bool { return pages[i].Date.After(pages[j].Date) })

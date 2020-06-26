@@ -156,3 +156,6 @@ cp etc/_wasm.go gh-pages/wasm.go
 GOOS=js GOARCH=wasm go build -o gh-pages/main.wasm gh-pages/wasm.go
 rm gh-pages/wasm.go
 cp $(go env GOROOT)/misc/wasm/wasm_exec.js gh-pages/wasm_exec.js
+
+mkdir -p gh-pages/blorg
+cp -r blorg/testdata/public/* gh-pages/blorg/
