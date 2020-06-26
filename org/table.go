@@ -8,8 +8,9 @@ import (
 )
 
 type Table struct {
-	Rows        []Row
-	ColumnInfos []ColumnInfo
+	Rows             []Row
+	ColumnInfos      []ColumnInfo
+	SeparatorIndices []int
 }
 
 type Row struct {
@@ -43,7 +44,7 @@ func lexTable(line string) (token, bool) {
 }
 
 func (d *Document) parseTable(i int, parentStop stopFn) (int, Node) {
-	rawRows, start := [][]string{}, i
+	rawRows, separatorIndices, start := [][]string{}, []int{}, i
 	for ; !parentStop(d, i); i++ {
 		if t := d.tokens[i]; t.kind == "tableRow" {
 			rawRow := strings.FieldsFunc(d.tokens[i].content, func(r rune) bool { return r == '|' })
@@ -52,13 +53,14 @@ func (d *Document) parseTable(i int, parentStop stopFn) (int, Node) {
 			}
 			rawRows = append(rawRows, rawRow)
 		} else if t.kind == "tableSeparator" {
+			separatorIndices = append(separatorIndices, i-start)
 			rawRows = append(rawRows, nil)
 		} else {
 			break
 		}
 	}
 
-	table := Table{nil, getColumnInfos(rawRows)}
+	table := Table{nil, getColumnInfos(rawRows), separatorIndices}
 	for _, rawColumns := range rawRows {
 		row := Row{nil, isSpecialRow(rawColumns)}
 		if len(rawColumns) != 0 {
