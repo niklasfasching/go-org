@@ -36,3 +36,13 @@
 | long column a | long column b | long column c |
 |---------------+---------------+---------------|
 |             1 |             2 |             3 |
+
+#+CAPTION: table with multiple separators (~ multiple tbodies)
+| a | b | c |
+|---+---+---|
+| 1 | 2 | 3 |
+| . | . | . |
+|---+---+---|
+| 1 | 2 | 3 |
+|---+---+---|
+| 1 | 2 | 3 |

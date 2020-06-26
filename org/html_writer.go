@@ -459,23 +459,31 @@ func (w *HTMLWriter) WriteNodeWithName(n NodeWithName) {
 
 func (w *HTMLWriter) WriteTable(t Table) {
 	w.WriteString("<table>\n")
-	beforeFirstContentRow := true
+	inHead := len(t.SeparatorIndices) > 0 &&
+		t.SeparatorIndices[0] != len(t.Rows)-1 &&
+		(t.SeparatorIndices[0] != 0 || len(t.SeparatorIndices) > 1 && t.SeparatorIndices[len(t.SeparatorIndices)-1] != len(t.Rows)-1)
+	if inHead {
+		w.WriteString("<thead>\n")
+	} else {
+		w.WriteString("<tbody>\n")
+	}
 	for i, row := range t.Rows {
-		if row.IsSpecial || len(row.Columns) == 0 {
-			continue
-		}
-		if beforeFirstContentRow {
-			beforeFirstContentRow = false
-			if i+1 < len(t.Rows) && len(t.Rows[i+1].Columns) == 0 {
-				w.WriteString("<thead>\n")
-				w.writeTableColumns(row.Columns, "th")
+		if len(row.Columns) == 0 && i != 0 && i != len(t.Rows)-1 {
+			if inHead {
 				w.WriteString("</thead>\n<tbody>\n")
-				continue
+				inHead = false
 			} else {
-				w.WriteString("<tbody>\n")
+				w.WriteString("</tbody>\n<tbody>\n")
 			}
 		}
-		w.writeTableColumns(row.Columns, "td")
+		if row.IsSpecial {
+			continue
+		}
+		if inHead {
+			w.writeTableColumns(row.Columns, "th")
+		} else {
+			w.writeTableColumns(row.Columns, "td")
+		}
 	}
 	w.WriteString("</tbody>\n</table>\n")
 }
