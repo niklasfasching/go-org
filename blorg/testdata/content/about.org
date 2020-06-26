@@ -1,11 +1,6 @@
 #+TITLE: About
 #+TAGS[]: static
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum
-dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
-eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no
-sea takimata sanctus est Lorem ipsum dolor sit amet.
+This site is generated from [[https://github.com/niklasfasching/go-org/tree/master/blorg/testdata/content][go-org/blorg/testdata/content]] using the configuration in [[https://github.com/niklasfasching/go-org/blob/master/blorg/testdata/blorg.org][blorg.org]]
+
+#+INCLUDE: "../blorg.org" src org
