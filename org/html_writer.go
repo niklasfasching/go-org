@@ -92,7 +92,7 @@ func (w *HTMLWriter) WriterWithExtensions() Writer {
 func (w *HTMLWriter) Before(d *Document) {
 	w.document = d
 	w.log = d.Log
-	if title := d.Get("TITLE"); title != "" {
+	if title := d.Get("TITLE"); title != "" && w.document.GetOption("title") != "nil" {
 		titleDocument := d.Parse(strings.NewReader(title), d.Path)
 		if titleDocument.Error == nil {
 			title = w.WriteNodesAsString(titleDocument.Nodes...)

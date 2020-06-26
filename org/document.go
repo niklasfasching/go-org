@@ -86,7 +86,7 @@ func New() *Configuration {
 		DefaultSettings: map[string]string{
 			"TODO":         "TODO | DONE",
 			"EXCLUDE_TAGS": "noexport",
-			"OPTIONS":      "toc:t <:t e:t f:t pri:t todo:t tags:t",
+			"OPTIONS":      "toc:t <:t e:t f:t pri:t todo:t tags:t title:t",
 		},
 		Log:      log.New(os.Stderr, "go-org: ", 0),
 		ReadFile: ioutil.ReadFile,
@@ -174,6 +174,7 @@ func (d *Document) Get(key string) string {
 // - < (export timestamps)
 // - e (export org entities)
 // - f (export footnotes)
+// - title (export title)
 // - toc (export table of content. an int limits the included org headline lvl)
 // - todo (export headline todo status)
 // - pri (export headline priority)
