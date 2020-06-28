@@ -383,6 +383,14 @@ func isValidPostChar(r rune) bool {
 func isValidBorderChar(r rune) bool { return !unicode.IsSpace(r) }
 
 func (l RegularLink) Kind() string {
+	description := String(l.Description)
+	descProtocol, descExt := strings.SplitN(description, ":", 2)[0], path.Ext(description)
+	if ok := descProtocol == "file" || descProtocol == "http" || descProtocol == "https"; ok && imageExtensionRegexp.MatchString(descExt) {
+		return "image"
+	} else if ok && videoExtensionRegexp.MatchString(descExt) {
+		return "video"
+	}
+
 	if p := l.Protocol; l.Description != nil || (p != "" && p != "file" && p != "http" && p != "https") {
 		return "regular"
 	}

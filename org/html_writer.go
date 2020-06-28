@@ -341,16 +341,26 @@ func (w *HTMLWriter) WriteRegularLink(l RegularLink) {
 	if prefix := w.document.Links[l.Protocol]; prefix != "" {
 		url = html.EscapeString(prefix) + strings.TrimPrefix(url, l.Protocol+":")
 	}
-	description := url
-	if l.Description != nil {
-		description = w.WriteNodesAsString(l.Description...)
-	}
 	switch l.Kind() {
 	case "image":
-		w.WriteString(fmt.Sprintf(`<img src="%s" alt="%s" title="%s" />`, url, description, description))
+		if l.Description == nil {
+			w.WriteString(fmt.Sprintf(`<img src="%s" alt="%s" title="%s" />`, url, url, url))
+		} else {
+			description := strings.TrimPrefix(String(l.Description), "file:")
+			w.WriteString(fmt.Sprintf(`<a href="%s"><img src="%s" alt="%s" /></a>`, url, description, description))
+		}
 	case "video":
-		w.WriteString(fmt.Sprintf(`<video src="%s" title="%s">%s</video>`, url, description, description))
+		if l.Description == nil {
+			w.WriteString(fmt.Sprintf(`<video src="%s" title="%s">%s</video>`, url, url, url))
+		} else {
+			description := strings.TrimPrefix(String(l.Description), "file:")
+			w.WriteString(fmt.Sprintf(`<a href="%s"><video src="%s" title="%s"></video></a>`, url, description, description))
+		}
 	default:
+		description := url
+		if l.Description != nil {
+			description = w.WriteNodesAsString(l.Description...)
+		}
 		w.WriteString(fmt.Sprintf(`<a href="%s">%s</a>`, url, description))
 	}
 }
