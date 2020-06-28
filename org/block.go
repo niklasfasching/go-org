@@ -105,6 +105,9 @@ func (d *Document) parseExample(i int, parentStop stopFn) (int, Node) {
 }
 
 func (d *Document) parseResult(i int, parentStop stopFn) (int, Node) {
+	if i+1 >= len(d.tokens) {
+		return 0, nil
+	}
 	consumed, node := d.parseOne(i+1, parentStop)
 	return consumed + 1, Result{node}
 }
