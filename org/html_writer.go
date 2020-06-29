@@ -249,6 +249,7 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 		}
 	}
 
+	w.WriteString(fmt.Sprintf(`<div id="outline-container-%s" class="outline-%d">`, h.ID(), h.Lvl+1) + "\n")
 	w.WriteString(fmt.Sprintf(`<h%d id="%s">`, h.Lvl+1, h.ID()) + "\n")
 	if w.document.GetOption("todo") != "nil" && h.Status != "" {
 		w.WriteString(fmt.Sprintf(`<span class="todo">%s</span>`, h.Status) + "\n")
@@ -267,7 +268,10 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 		w.WriteString(fmt.Sprintf(`<span class="tags">%s</span>`, strings.Join(tags, "&#xa0;")))
 	}
 	w.WriteString(fmt.Sprintf("\n</h%d>\n", h.Lvl+1))
-	WriteNodes(w, h.Children...)
+	if content := w.WriteNodesAsString(h.Children...); content != "" {
+		w.WriteString(fmt.Sprintf(`<div id="outline-text-%s" class="outline-text-%d">`, h.ID(), h.Lvl+1) + "\n" + content + "</div>\n")
+	}
+	w.WriteString("</div>\n")
 }
 
 func (w *HTMLWriter) WriteText(t Text) {
