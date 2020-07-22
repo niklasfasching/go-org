@@ -140,6 +140,10 @@ When inserting an image link like [[/home/amos/Pictures/Screenshots/img-2017-09-
 *** index out of range in explicit line break parsing
 0\\ 
 
+*** list items don't end on child headline
+- a list item
+**** followed by a child headline
+- followed by another list item
 * Footnotes
 
 [fn:1] a footnote /with/ *markup*
