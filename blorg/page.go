@@ -44,6 +44,9 @@ func NewPage(c *Config, path string, info os.FileInfo) (*Page, error) {
 }
 
 func (p *Page) Render(path string) error {
+	if p.BufferSettings["DRAFT"] != "" {
+		return nil
+	}
 	f, err := os.Create(path)
 	if err != nil {
 		return err

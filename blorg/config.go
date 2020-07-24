@@ -197,6 +197,9 @@ func (c *Config) RenderLists(pages []*Page) error {
 	ms["Pages"] = pages
 	lists := map[string]map[string][]interface{}{"": map[string][]interface{}{"": nil}}
 	for _, p := range pages {
+		if p.BufferSettings["DRAFT"] != "" {
+			continue
+		}
 		mp := toMap(p.BufferSettings, p)
 		if p.BufferSettings["DATE"] != "" {
 			lists[""][""] = append(lists[""][""], mp)
