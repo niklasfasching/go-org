@@ -20,3 +20,6 @@ named paragraph
 #+begin_src
 named block
 #+end_src
+
+# comments must have whitespace after the hashtag
+#not a comment because there's no space after the hashtag

@@ -207,7 +207,7 @@ func (w *OrgWriter) WriteNodeWithName(n NodeWithName) {
 }
 
 func (w *OrgWriter) WriteComment(c Comment) {
-	w.WriteString(w.indent + "#" + c.Content + "\n")
+	w.WriteString(w.indent + "# " + c.Content + "\n")
 }
 
 func (w *OrgWriter) WriteList(l List) { WriteNodes(w, l.Items...) }
