@@ -342,6 +342,9 @@ func (w *HTMLWriter) WriteRegularLink(l RegularLink) {
 	if l.Protocol == "file" {
 		url = url[len("file:"):]
 	}
+	if (l.Protocol == "file" || l.Protocol == "") && strings.HasSuffix(url, ".org") {
+		url = strings.TrimSuffix(url, ".org") + ".html"
+	}
 	if prefix := w.document.Links[l.Protocol]; prefix != "" {
 		url = html.EscapeString(prefix) + strings.TrimPrefix(url, l.Protocol+":")
 	}

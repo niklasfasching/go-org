@@ -25,12 +25,13 @@
   1. regular link [[https://example.com]] link without description
   2. regular link [[https://example.com][example.com]] link with description
   3. regular link to a file (image) [[file:my-img.png]]
-  4. regular link to a file (video) [[my-video.mp4]]
-  5. regular link to http (image) [[http://placekitten.com/200/200#.png]]
-  6. regular link to https (image) [[https://placekitten.com/200/200#.png]]
-  7. regular link with image as description [[https://placekitten.com][https://placekitten.com/200/200#.png]]
-  8. regular link enclosed in [] [[[https://www.example.com]]] [[[https://www.example.com][example.com]]]
-  9. auto link, i.e. not inside =\[[square brackets]\]= https://www.example.com
+  4. regular link to an org file (extension replaced with html) [[file:inline.org]] / [[../testdata/inline.org]]
+  5. regular link to a file (video) [[my-video.mp4]]
+  6. regular link to http (image) [[http://placekitten.com/200/200#.png]]
+  7. regular link to https (image) [[https://placekitten.com/200/200#.png]]
+  8. regular link with image as description [[https://placekitten.com][https://placekitten.com/200/200#.png]]
+  9. regular link enclosed in [] [[[https://www.example.com]]] [[[https://www.example.com][example.com]]]
+  10. auto link, i.e. not inside =\[[square brackets]\]= https://www.example.com
 - timestamps
   - <2019-01-06>
   - <2019-01-06 Sun>
