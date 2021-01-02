@@ -124,10 +124,10 @@ convert="<html>
   </body>
 </html>"
 
-mkdir -p gh-pages
+mkdir -p docs
 go get github.com/chaseadamsio/goorgeous
-cp etc/_goorgeous.go gh-pages/goorgeous.go
-go build -o gh-pages/goorgeous gh-pages/goorgeous.go
+cp etc/_goorgeous.go docs/goorgeous.go
+go build -o docs/goorgeous docs/goorgeous.go
 go_org_vs_goorgeous_examples="<html>
   <head>
     <style>
@@ -142,20 +142,20 @@ for org_file in $org_files; do
     go_org_vs_goorgeous_examples+="
       <h2><a id='${name}' href='#toc-${name}'>${name}</a></h2>
       <div class='source'>
-        <div class='html'>$(./gh-pages/goorgeous $org_file)</div>
+        <div class='html'>$(./docs/goorgeous $org_file)</div>
         <div class='html'>$(./go-org render $org_file html-chroma)</div>
       </div>"
 done
 go_org_vs_goorgeous_examples+="</body></html>"
-rm gh-pages/goorgeous gh-pages/goorgeous.go
+rm docs/goorgeous docs/goorgeous.go
 
-echo "$index" > gh-pages/index.html
-echo "$convert" > gh-pages/convert.html
-echo "$go_org_vs_goorgeous_examples" > gh-pages/go-org-vs-goorgeous.html
-cp etc/_wasm.go gh-pages/wasm.go
-GOOS=js GOARCH=wasm go build -o gh-pages/main.wasm gh-pages/wasm.go
-rm gh-pages/wasm.go
-cp $(go env GOROOT)/misc/wasm/wasm_exec.js gh-pages/wasm_exec.js
+echo "$index" > docs/index.html
+echo "$convert" > docs/convert.html
+echo "$go_org_vs_goorgeous_examples" > docs/go-org-vs-goorgeous.html
+cp etc/_wasm.go docs/wasm.go
+GOOS=js GOARCH=wasm go build -o docs/main.wasm docs/wasm.go
+rm docs/wasm.go
+cp $(go env GOROOT)/misc/wasm/wasm_exec.js docs/wasm_exec.js
 
-mkdir -p gh-pages/blorg
-cp -r blorg/testdata/public/* gh-pages/blorg/
+mkdir -p docs/blorg
+cp -r blorg/testdata/public/* docs/blorg/

@@ -203,20 +203,35 @@ Paragraphs can contain inline markup like <em>emphasis</em> <strong>strong</stro
 <li>
 <p>example block</p>
 <pre class="example">
-language: go
-go: &#34;1.x&#34;
-script:
-  - make test
-  - make generate-gh-pages
-deploy:
-  provider: pages
-  github-token: $GITHUB_TOKEN  # From travis-ci.org repository settings
-  local-dir: gh-pages
-  target-branch: gh-pages
-  skip-cleanup: true
-  verbose: true
-  on:
-    branch: master
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: git
+      run: |
+        git clone --depth 1 &#34;https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}&#34; .
+        git config user.name &#34;GitHub Action&#34;
+        git config user.email &#34;action@github.com&#34;
+        git log -1 --format=&#34;%H&#34;
+    - name: test
+      run: make test
+    - name: gh-pages
+      run: |
+        git checkout --orphan gh-pages &amp;&amp; git reset
+        make generate-gh-pages
+        git add -f docs/ &amp;&amp; git commit -m deploy
+        git push -f origin gh-pages
+    - name: notify
+      if: ${{ failure() }}
+      run: |
+        text=&#34;https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} failed&#34;
+        curl --silent --output /dev/null ${{secrets.TELEGRAM_URL}} -d &#34;chat_id=${{secrets.TELEGRAM_CHAT_ID}}&amp;text=${text}&#34;
 </pre>
 </li>
 </ul>

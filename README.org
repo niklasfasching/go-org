@@ -1,4 +1,4 @@
-* go-org [[https://travis-ci.org/niklasfasching/go-org.svg?branch=master]]
+* go-org
 An Org mode parser and static site generator in go.
 Take a look at github pages
 - for [[https://niklasfasching.github.io/go-org/][org to html conversion]] examples

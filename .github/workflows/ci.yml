@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: git
+      run: |
+        git clone --depth 1 "https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}" .
+        git config user.name "GitHub Action"
+        git config user.email "action@github.com"
+        git log -1 --format="%H"
+    - name: test
+      run: make test
+    - name: gh-pages
+      run: |
+        git checkout --orphan gh-pages && git reset
+        make generate-gh-pages
+        git add -f docs/ && git commit -m deploy
+        git push -f origin gh-pages
+    - name: notify
+      if: ${{ failure() }}
+      run: |
+        text="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} failed"
+        curl --silent --output /dev/null ${{secrets.TELEGRAM_URL}} -d "chat_id=${{secrets.TELEGRAM_CHAT_ID}}&text=${text}"
