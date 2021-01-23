@@ -16,86 +16,95 @@ import (
 	"github.com/niklasfasching/go-org/org"
 )
 
-func main() {
-	log := log.New(os.Stderr, "", 0)
-	if len(os.Args) < 2 {
-		log.Println("USAGE: org COMMAND [ARGS]")
-		log.Println("- org render FILE OUTPUT_FORMAT")
-		log.Println("  OUTPUT_FORMAT: org, html, html-chroma")
-		log.Println("- org blorg init")
-		log.Println("- org blorg build")
-		log.Println("- org blorg serve")
-		os.Exit(1)
-	}
+var usage = `Usage: go-org COMMAND [ARGS]...
+Commands:
+- render FILE FORMAT
+  FORMAT: org, html, html-chroma
+- blorg
+  - blorg init
+  - blorg build
+  - blorg serve
+`
 
-	switch cmd := strings.ToLower(os.Args[1]); cmd {
+func main() {
+	log.SetFlags(0)
+	if len(os.Args) < 2 {
+		log.Fatal(usage)
+	}
+	switch cmd, args := os.Args[1], os.Args[2:]; cmd {
 	case "render":
-		if len(os.Args) < 4 {
-			log.Fatal("USAGE: org render FILE OUTPUT_FORMAT")
-		}
-		out, err := render(os.Args[2], os.Args[3])
-		if err != nil {
-			log.Fatalf("Error: %v", err)
-		}
-		fmt.Fprint(os.Stdout, out)
+		render(args)
 	case "blorg":
-		if err := runBlorg(os.Args[2]); err != nil {
-			log.Fatalf("Error: %v", err)
-		}
+		runBlorg(args)
 	default:
-		log.Fatalf("Unsupported command: %s", cmd)
+		log.Fatal(usage)
 	}
 }
 
-func runBlorg(cmd string) error {
-	switch strings.ToLower(cmd) {
+func runBlorg(args []string) {
+	if len(args) == 0 {
+		log.Fatal(usage)
+	}
+	switch strings.ToLower(args[0]) {
 	case "init":
 		if _, err := os.Stat(blorg.DefaultConfigFile); !os.IsNotExist(err) {
-			return err
+			log.Fatalf("%s already exists", blorg.DefaultConfigFile)
 		}
 		if err := ioutil.WriteFile(blorg.DefaultConfigFile, []byte(blorg.DefaultConfig), os.ModePerm); err != nil {
-			return err
+			log.Fatal(err)
 		}
-		log.Printf("blorg init finished: Wrote ./%s", blorg.DefaultConfigFile)
-		return nil
+		if err := os.MkdirAll("content", os.ModePerm); err != nil {
+			log.Fatal(err)
+		}
+
 	case "build":
 		config, err := blorg.ReadConfig(blorg.DefaultConfigFile)
 		if err != nil {
-			return err
+			log.Fatal(err)
 		}
 		if err := config.Render(); err != nil {
-			return err
+			log.Fatal(err)
 		}
 		log.Println("blorg build finished")
-		return nil
 	case "serve":
 		config, err := blorg.ReadConfig(blorg.DefaultConfigFile)
 		if err != nil {
-			return err
+			log.Fatal(err)
 		}
-		return config.Serve()
+		log.Fatal(config.Serve())
 	default:
-		return fmt.Errorf("Supported commands: init build serve")
+		log.Fatal(usage)
 	}
 }
 
-func render(path, format string) (string, error) {
+func render(args []string) {
+	if len(args) < 2 {
+		log.Fatal(usage)
+	}
+	path, format := args[0], args[1]
 	bs, err := ioutil.ReadFile(path)
 	if err != nil {
-		return "", err
+		log.Fatal(err)
 	}
 	d := org.New().Parse(bytes.NewReader(bs), path)
+	write := func(w org.Writer) {
+		out, err := d.Write(w)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Fprint(os.Stdout, out)
+	}
 	switch strings.ToLower(format) {
 	case "org":
-		return d.Write(org.NewOrgWriter())
+		write(org.NewOrgWriter())
 	case "html":
-		return d.Write(org.NewHTMLWriter())
+		write(org.NewHTMLWriter())
 	case "html-chroma":
 		writer := org.NewHTMLWriter()
 		writer.HighlightCodeBlock = highlightCodeBlock
-		return d.Write(writer)
+		write(writer)
 	default:
-		return "", fmt.Errorf("unsupported output format: %s", format)
+		log.Fatal(usage)
 	}
 }
 
