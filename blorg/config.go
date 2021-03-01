@@ -16,6 +16,8 @@ import (
 	"strings"
 	"time"
 
+	_ "embed"
+
 	"github.com/niklasfasching/go-org/org"
 )
 
@@ -31,22 +33,8 @@ type Config struct {
 
 var DefaultConfigFile = "blorg.org"
 
-var DefaultConfig = `
-#+CONTENT: content
-#+PUBLIC: public
-
-* templates
-** item
-#+name: item
-#+begin_src html
-{{ . }}
-#+end_src
-
-** list
-#+name: list
-#+begin_src html
-{{ . }}
-#+end_src`
+//go:embed testdata/blorg.org
+var DefaultConfig string
 
 var TemplateFuncs = map[string]interface{}{
 	"Slugify": slugify,
@@ -195,7 +183,7 @@ func (c *Config) RenderContent() ([]*Page, error) {
 func (c *Config) RenderLists(pages []*Page) error {
 	ms := toMap(c.OrgConfig.DefaultSettings, nil)
 	ms["Pages"] = pages
-	lists := map[string]map[string][]interface{}{"": map[string][]interface{}{"": nil}}
+	lists := map[string]map[string][]interface{}{"": {"": nil}}
 	for _, p := range pages {
 		if p.BufferSettings["DRAFT"] != "" {
 			continue

@@ -56,7 +56,7 @@ func runBlorg(args []string) {
 		if err := os.MkdirAll("content", os.ModePerm); err != nil {
 			log.Fatal(err)
 		}
-
+		log.Println("./blorg.org and ./content/ created. Please adapt ./blorg.org")
 	case "build":
 		config, err := blorg.ReadConfig(blorg.DefaultConfigFile)
 		if err != nil {
