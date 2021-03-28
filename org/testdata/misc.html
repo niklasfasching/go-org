@@ -219,14 +219,14 @@ jobs:
         git config user.name &#34;GitHub Action&#34;
         git config user.email &#34;action@github.com&#34;
         git log -1 --format=&#34;%H&#34;
+    - name: go
+      run: sudo snap install go --classic
     - name: test
-      run: |
-        sudo snap install go --edge --classic
-        GOROOT=/snap/go/current make test
+      run: make test
     - name: gh-pages
       run: |
         git checkout --orphan gh-pages &amp;&amp; git reset
-        GOROOT=/snap/go/current make generate-gh-pages
+        make generate-gh-pages
         git add -f docs/ &amp;&amp; git commit -m deploy
         git push -f origin gh-pages
     - name: notify
