@@ -38,6 +38,14 @@ echo a source block that only exports results
 #+RESULTS:
 : a source block that only exports results
 
+#+BEGIN_SRC bash :cmdline -foo -bar :exports results
+# the code block is not rendered
+echo but the result block is
+#+END_SRC
+
+#+RESULTS:
+: but the result block is
+
 #+BEGIN_EXAMPLE foo bar baz
 an example block with
 multiple lines including
