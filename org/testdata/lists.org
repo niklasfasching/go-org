@@ -68,3 +68,8 @@ some list termination tests
 2. ordered descriptive :: 2
 - unordered 1
 - unordered 2
+
+
+1. [@2] use `[@n]` to change the value of list items
+2. [ ] foobar
+3. [@10] [X] that even works in combination with list statuses (`[ ]`)

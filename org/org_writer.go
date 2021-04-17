@@ -219,6 +219,9 @@ func (w *OrgWriter) WriteListItem(li ListItem) {
 	content := strings.TrimPrefix(w.String(), w.indent)
 	w.Builder, w.indent = originalBuilder, originalIndent
 	w.WriteString(w.indent + li.Bullet)
+	if li.Value != "" {
+		w.WriteString(fmt.Sprintf(" [@%s]", li.Value))
+	}
 	if li.Status != "" {
 		w.WriteString(fmt.Sprintf(" [%s]", li.Status))
 	}

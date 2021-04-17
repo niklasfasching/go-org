@@ -412,11 +412,14 @@ func (w *HTMLWriter) WriteList(l List) {
 }
 
 func (w *HTMLWriter) WriteListItem(li ListItem) {
-	if li.Status != "" {
-		w.WriteString(fmt.Sprintf("<li class=\"%s\">\n", listItemStatuses[li.Status]))
-	} else {
-		w.WriteString("<li>\n")
+	attributes := ""
+	if li.Value != "" {
+		attributes += fmt.Sprintf(` value="%s"`, li.Value)
 	}
+	if li.Status != "" {
+		attributes += fmt.Sprintf(` class="%s"`, listItemStatuses[li.Status])
+	}
+	w.WriteString(fmt.Sprintf("<li%s>\n", attributes))
 	WriteNodes(w, li.Children...)
 	w.WriteString("</li>\n")
 }
