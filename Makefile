@@ -1,16 +1,16 @@
 .PHONY: default
 default: test
 
-.PHONY: install
-install:
-	go get -t ./...
-
-.PHONY: build
-build: install
+go-org: *.go */*.go go.mod go.sum
+	go get -d ./...
 	go build .
 
+.PHONY: build
+build: go-org
+
 .PHONY: test
-test: install
+test:
+	go get -d -t ./...
 	go test ./... -v
 
 .PHONY: setup
