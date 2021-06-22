@@ -1,42 +1,22 @@
 <ul>
-<li>
-<p><em>emphasis</em> and a hard line break <br>
+<li><em>emphasis</em> and a hard line break <br>
 see? <br>
-also hard line breaks not followed by a newline get ignored, see \\</p>
-</li>
-<li>
-<p><em>.emphasis with dot border chars.</em></p>
-</li>
-<li>
-<p><em>emphasis with a slash/inside</em></p>
-</li>
-<li>
-<p><em>emphasis</em> followed by raw text with slash /</p>
-</li>
-<li>
-<p>-&gt;/not an emphasis/&lt;-</p>
-</li>
-<li>
-<p>links with slashes do not become <em>emphasis</em>: <a href="https://somelinkshouldntrenderaccidentalemphasis.com">https://somelinkshouldntrenderaccidentalemphasis.com</a>/ <em>emphasis</em></p>
-</li>
-<li>
-<p><span style="text-decoration: underline;">underlined</span> <strong>bold</strong>  <code class="verbatim">verbatim</code> <code>code</code> <del>strikethrough</del></p>
-</li>
-<li>
-<p><strong>bold string with an *asterisk inside</strong></p>
-</li>
-<li>
-<p>inline source blocks like <div class="src src-inline src-html">
+also hard line breaks not followed by a newline get ignored, see \\</li>
+<li><em>.emphasis with dot border chars.</em></li>
+<li><em>emphasis with a slash/inside</em></li>
+<li><em>emphasis</em> followed by raw text with slash /</li>
+<li>-&gt;/not an emphasis/&lt;-</li>
+<li>links with slashes do not become <em>emphasis</em>: <a href="https://somelinkshouldntrenderaccidentalemphasis.com">https://somelinkshouldntrenderaccidentalemphasis.com</a>/ <em>emphasis</em></li>
+<li><span style="text-decoration: underline;">underlined</span> <strong>bold</strong>  <code class="verbatim">verbatim</code> <code>code</code> <del>strikethrough</del></li>
+<li><strong>bold string with an *asterisk inside</strong></li>
+<li>inline source blocks like <div class="src src-inline src-html">
 <div class="highlight-inline">
 <pre>
 &lt;h1&gt;hello&lt;/h1&gt;
 </pre>
 </div>
-</div></p>
-</li>
-<li>
-<p>inline export blocks <h1>hello</h1></p>
-</li>
+</div></li>
+<li>inline export blocks <h1>hello</h1></li>
 <li>
 <p><code class="verbatim">multiline emphasis is
 supported - and respects MaxEmphasisNewLines (default: 1)</code>
@@ -48,68 +28,32 @@ this
 is
 not emphasized/</p>
 </li>
-<li>
-<p>empty emphasis markers like ++ // __ and so on are ignored</p>
-</li>
-<li>
-<p>use _{} for subscript<sub>sub</sub> and ^{} for superscript<sup>super</sup></p>
-</li>
+<li>empty emphasis markers like ++ // __ and so on are ignored</li>
+<li>use _{} for subscript<sub>sub</sub> and ^{} for superscript<sup>super</sup></li>
 <li>
 <p>links</p>
 <ol>
-<li>
-<p>regular link <a href="https://example.com">https://example.com</a> link without description</p>
-</li>
-<li>
-<p>regular link <a href="https://example.com">example.com</a> link with description</p>
-</li>
-<li>
-<p>regular link to a file (image) <img src="my-img.png" alt="my-img.png" title="my-img.png" /></p>
-</li>
-<li>
-<p>regular link to an org file (extension replaced with html) <a href="inline.html">inline.html</a> / <a href="../testdata/inline.html">../testdata/inline.html</a></p>
-</li>
-<li>
-<p>regular link to a file (video) <video src="my-video.mp4" title="my-video.mp4">my-video.mp4</video></p>
-</li>
-<li>
-<p>regular link to http (image) <img src="http://placekitten.com/200/200#.png" alt="http://placekitten.com/200/200#.png" title="http://placekitten.com/200/200#.png" /></p>
-</li>
-<li>
-<p>regular link to https (image) <img src="https://placekitten.com/200/200#.png" alt="https://placekitten.com/200/200#.png" title="https://placekitten.com/200/200#.png" /></p>
-</li>
-<li>
-<p>regular link with image as description <a href="https://placekitten.com"><img src="https://placekitten.com/200/200#.png" alt="https://placekitten.com/200/200#.png" /></a></p>
-</li>
-<li>
-<p>regular link enclosed in [] [<a href="https://www.example.com">https://www.example.com</a>] [<a href="https://www.example.com">example.com</a>]</p>
-</li>
-<li>
-<p>auto link, i.e. not inside <code class="verbatim">\[[square brackets]\]</code> <a href="https://www.example.com">https://www.example.com</a></p>
-</li>
+<li>regular link <a href="https://example.com">https://example.com</a> link without description</li>
+<li>regular link <a href="https://example.com">example.com</a> link with description</li>
+<li>regular link to a file (image) <img src="my-img.png" alt="my-img.png" title="my-img.png" /></li>
+<li>regular link to an org file (extension replaced with html) <a href="inline.html">inline.html</a> / <a href="../testdata/inline.html">../testdata/inline.html</a></li>
+<li>regular link to a file (video) <video src="my-video.mp4" title="my-video.mp4">my-video.mp4</video></li>
+<li>regular link to http (image) <img src="http://placekitten.com/200/200#.png" alt="http://placekitten.com/200/200#.png" title="http://placekitten.com/200/200#.png" /></li>
+<li>regular link to https (image) <img src="https://placekitten.com/200/200#.png" alt="https://placekitten.com/200/200#.png" title="https://placekitten.com/200/200#.png" /></li>
+<li>regular link with image as description <a href="https://placekitten.com"><img src="https://placekitten.com/200/200#.png" alt="https://placekitten.com/200/200#.png" /></a></li>
+<li>regular link enclosed in [] [<a href="https://www.example.com">https://www.example.com</a>] [<a href="https://www.example.com">example.com</a>]</li>
+<li>auto link, i.e. not inside <code class="verbatim">\[[square brackets]\]</code> <a href="https://www.example.com">https://www.example.com</a></li>
 </ol>
 </li>
 <li>
 <p>timestamps</p>
 <ul>
-<li>
-<p><span class="timestamp">&lt;2019-01-06 Sun&gt;</span></p>
-</li>
-<li>
-<p><span class="timestamp">&lt;2019-01-06 Sun&gt;</span></p>
-</li>
-<li>
-<p><span class="timestamp">&lt;2019-01-06 Sun 18:00&gt;</span></p>
-</li>
-<li>
-<p><span class="timestamp">&lt;2019-01-06 Sun 18:00 +1w&gt;</span></p>
-</li>
-<li>
-<p><span class="timestamp">&lt;2019-01-06 Sun 18:00&gt;</span></p>
-</li>
-<li>
-<p><span class="timestamp">&lt;2019-01-06 Sun 18:00 +1w&gt;</span></p>
-</li>
+<li><span class="timestamp">&lt;2019-01-06 Sun&gt;</span></li>
+<li><span class="timestamp">&lt;2019-01-06 Sun&gt;</span></li>
+<li><span class="timestamp">&lt;2019-01-06 Sun 18:00&gt;</span></li>
+<li><span class="timestamp">&lt;2019-01-06 Sun 18:00 +1w&gt;</span></li>
+<li><span class="timestamp">&lt;2019-01-06 Sun 18:00&gt;</span></li>
+<li><span class="timestamp">&lt;2019-01-06 Sun 18:00 +1w&gt;</span></li>
 </ul>
 </li>
 <li>

@@ -411,6 +411,35 @@ func (w *HTMLWriter) WriteList(l List) {
 	w.WriteString(tags[1] + "\n")
 }
 
+func getSingleParagraph(nodes []Node) (Paragraph, bool) {
+	// Get a single non-empty paragraph from nodes
+
+	// The parser reads text as paragraphs, and
+	// if a list item consists only of text
+	// we want to emit the text alone, not wrapped
+	// in a <p> tag. If there are extra blank
+	// lines in a list item it will result in
+	// empty paragraphs which we can discard
+
+	ret := Paragraph{nil}
+	for _, v := range nodes {
+		par, ok := v.(Paragraph)
+		if ok {
+			if len(par.Children) > 0 {
+				if ret.Children == nil {
+					ret = par
+				} else {
+					// already seen a non-empty par
+					return ret, false
+				}
+			}
+		} else {
+			return ret, false
+		}
+	}
+	return ret, true
+}
+
 func (w *HTMLWriter) WriteListItem(li ListItem) {
 	attributes := ""
 	if li.Value != "" {
@@ -419,8 +448,15 @@ func (w *HTMLWriter) WriteListItem(li ListItem) {
 	if li.Status != "" {
 		attributes += fmt.Sprintf(` class="%s"`, listItemStatuses[li.Status])
 	}
-	w.WriteString(fmt.Sprintf("<li%s>\n", attributes))
-	WriteNodes(w, li.Children...)
+	w.WriteString(fmt.Sprintf("<li%s>", attributes))
+	par, ok := getSingleParagraph(li.Children)
+	if ok {
+		// Write the children only, without <p> tag
+		WriteNodes(w, par.Children...)
+	} else {
+		w.WriteString("\n")
+		WriteNodes(w, li.Children...)
+	}
 	w.WriteString("</li>\n")
 }
 
@@ -437,8 +473,15 @@ func (w *HTMLWriter) WriteDescriptiveListItem(di DescriptiveListItem) {
 		w.WriteString("?")
 	}
 	w.WriteString("\n</dt>\n")
-	w.WriteString("<dd>\n")
-	WriteNodes(w, di.Details...)
+	w.WriteString("<dd>")
+	par, ok := getSingleParagraph(di.Details)
+	if ok {
+		// Write the children only, without <p> tag
+		WriteNodes(w, par.Children...)
+	} else {
+		w.WriteString("\n")
+		WriteNodes(w, di.Details...)
+	}
 	w.WriteString("</dd>\n")
 }
 
