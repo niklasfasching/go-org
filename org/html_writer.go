@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"log"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -415,8 +416,8 @@ func (w *HTMLWriter) WriteListItem(li ListItem) {
 	if li.Status != "" {
 		attributes += fmt.Sprintf(` class="%s"`, listItemStatuses[li.Status])
 	}
-	w.WriteString(fmt.Sprintf("<li%s>\n", attributes))
-	WriteNodes(w, li.Children...)
+	w.WriteString(fmt.Sprintf("<li%s>", attributes))
+	w.writeListItemContent(li.Children)
 	w.WriteString("</li>\n")
 }
 
@@ -433,9 +434,24 @@ func (w *HTMLWriter) WriteDescriptiveListItem(di DescriptiveListItem) {
 		w.WriteString("?")
 	}
 	w.WriteString("\n</dt>\n")
-	w.WriteString("<dd>\n")
-	WriteNodes(w, di.Details...)
+	w.WriteString("<dd>")
+	w.writeListItemContent(di.Details)
 	w.WriteString("</dd>\n")
+}
+
+func (w *HTMLWriter) writeListItemContent(children []Node) {
+	if isParagraphNodeSlice(children) {
+		for i, c := range children {
+			out := w.WriteNodesAsString(c.(Paragraph).Children...)
+			if i != 0 && out != "" {
+				w.WriteString("\n")
+			}
+			w.WriteString(out)
+		}
+	} else {
+		w.WriteString("\n")
+		WriteNodes(w, children...)
+	}
 }
 
 func (w *HTMLWriter) WriteParagraph(p Paragraph) {
@@ -583,6 +599,15 @@ func setHTMLAttribute(attributes []h.Attribute, k, v string) []h.Attribute {
 		}
 	}
 	return append(attributes, h.Attribute{Namespace: "", Key: k, Val: v})
+}
+
+func isParagraphNodeSlice(ns []Node) bool {
+	for _, n := range ns {
+		if reflect.TypeOf(n).Name() != "Paragraph" {
+			return false
+		}
+	}
+	return true
 }
 
 func (fs *footnotes) add(f FootnoteLink) int {
