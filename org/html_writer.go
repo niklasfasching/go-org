@@ -227,7 +227,7 @@ func (w *HTMLWriter) WriteOutline(d *Document, maxLvl int) {
 }
 
 func (w *HTMLWriter) writeSection(section *Section, maxLvl int) {
-	if maxLvl != 0 && section.Headline.Lvl > maxLvl {
+	if (maxLvl != 0 && section.Headline.Lvl > maxLvl) || section.Headline.IsExcluded(w.document) {
 		return
 	}
 	// NOTE: To satisfy hugo ExtractTOC() check we cannot use `<li>\n` here. Doesn't really matter, just a note.
@@ -250,12 +250,8 @@ func (w *HTMLWriter) writeSection(section *Section, maxLvl int) {
 }
 
 func (w *HTMLWriter) WriteHeadline(h Headline) {
-	for _, excludeTag := range strings.Fields(w.document.Get("EXCLUDE_TAGS")) {
-		for _, tag := range h.Tags {
-			if excludeTag == tag {
-				return
-			}
-		}
+	if h.IsExcluded(w.document) {
+		return
 	}
 
 	w.WriteString(fmt.Sprintf(`<div id="outline-container-%s" class="outline-%d">`, h.ID(), h.Lvl+1) + "\n")

@@ -89,6 +89,17 @@ func (h Headline) ID() string {
 	return fmt.Sprintf("headline-%d", h.Index)
 }
 
+func (h Headline) IsExcluded(d *Document) bool {
+	for _, excludedTag := range strings.Fields(d.Get("EXCLUDE_TAGS")) {
+		for _, tag := range h.Tags {
+			if tag == excludedTag {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func (parent *Section) add(current *Section) {
 	if parent.Headline == nil || parent.Headline.Lvl < current.Headline.Lvl {
 		parent.Children = append(parent.Children, current)
