@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"log"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -411,35 +412,6 @@ func (w *HTMLWriter) WriteList(l List) {
 	w.WriteString(tags[1] + "\n")
 }
 
-func getSingleParagraph(nodes []Node) (Paragraph, bool) {
-	// Get a single non-empty paragraph from nodes
-
-	// The parser reads text as paragraphs, and
-	// if a list item consists only of text
-	// we want to emit the text alone, not wrapped
-	// in a <p> tag. If there are extra blank
-	// lines in a list item it will result in
-	// empty paragraphs which we can discard
-
-	ret := Paragraph{nil}
-	for _, v := range nodes {
-		par, ok := v.(Paragraph)
-		if ok {
-			if len(par.Children) > 0 {
-				if ret.Children == nil {
-					ret = par
-				} else {
-					// already seen a non-empty par
-					return ret, false
-				}
-			}
-		} else {
-			return ret, false
-		}
-	}
-	return ret, true
-}
-
 func (w *HTMLWriter) WriteListItem(li ListItem) {
 	attributes := ""
 	if li.Value != "" {
@@ -449,14 +421,7 @@ func (w *HTMLWriter) WriteListItem(li ListItem) {
 		attributes += fmt.Sprintf(` class="%s"`, listItemStatuses[li.Status])
 	}
 	w.WriteString(fmt.Sprintf("<li%s>", attributes))
-	par, ok := getSingleParagraph(li.Children)
-	if ok {
-		// Write the children only, without <p> tag
-		WriteNodes(w, par.Children...)
-	} else {
-		w.WriteString("\n")
-		WriteNodes(w, li.Children...)
-	}
+	w.writeListItemContent(li.Children)
 	w.WriteString("</li>\n")
 }
 
@@ -474,15 +439,23 @@ func (w *HTMLWriter) WriteDescriptiveListItem(di DescriptiveListItem) {
 	}
 	w.WriteString("\n</dt>\n")
 	w.WriteString("<dd>")
-	par, ok := getSingleParagraph(di.Details)
-	if ok {
-		// Write the children only, without <p> tag
-		WriteNodes(w, par.Children...)
+	w.writeListItemContent(di.Details)
+	w.WriteString("</dd>\n")
+}
+
+func (w *HTMLWriter) writeListItemContent(children []Node) {
+	if isParagraphNodeSlice(children) {
+		for i, c := range children {
+			out := w.WriteNodesAsString(c.(Paragraph).Children...)
+			if i != 0 && out != "" {
+				w.WriteString("\n")
+			}
+			w.WriteString(out)
+		}
 	} else {
 		w.WriteString("\n")
-		WriteNodes(w, di.Details...)
+		WriteNodes(w, children...)
 	}
-	w.WriteString("</dd>\n")
 }
 
 func (w *HTMLWriter) WriteParagraph(p Paragraph) {
@@ -630,6 +603,15 @@ func setHTMLAttribute(attributes []h.Attribute, k, v string) []h.Attribute {
 		}
 	}
 	return append(attributes, h.Attribute{Namespace: "", Key: k, Val: v})
+}
+
+func isParagraphNodeSlice(ns []Node) bool {
+	for _, n := range ns {
+		if reflect.TypeOf(n).Name() != "Paragraph" {
+			return false
+		}
+	}
+	return true
 }
 
 func (fs *footnotes) add(f FootnoteLink) int {
