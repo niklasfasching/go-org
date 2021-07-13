@@ -19,7 +19,7 @@ setup:
 
 .PHONY: preview
 preview: generate
-	xdg-open gh-pages/index.html
+	xdg-open docs/index.html
 
 .PHONY: generate
 generate: generate-gh-pages generate-fixtures
