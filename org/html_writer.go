@@ -235,7 +235,7 @@ func (w *HTMLWriter) writeSection(section *Section, maxLvl int) {
 	w.WriteString("<li>")
 	h := section.Headline
 	title := cleanHeadlineTitleForHTMLAnchorRegexp.ReplaceAllString(w.WriteNodesAsString(h.Title...), "")
-	w.WriteString(fmt.Sprintf("<a href=\"#%s\">%s</a>\n", h.ID(), title))
+	w.WriteString(fmt.Sprintf("<a href=\"#%s\">%s</a>\n", h.ID(w.document), title))
 	hasChildren := false
 	for _, section := range section.Children {
 		hasChildren = hasChildren || maxLvl == 0 || section.Headline.Lvl <= maxLvl
@@ -255,8 +255,9 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 		return
 	}
 
-	w.WriteString(fmt.Sprintf(`<div id="outline-container-%s" class="outline-%d">`, h.ID(), h.Lvl+1) + "\n")
-	w.WriteString(fmt.Sprintf(`<h%d id="%s">`, h.Lvl+1, h.ID()) + "\n")
+	id := h.ID(w.document)
+	w.WriteString(fmt.Sprintf(`<div id="outline-container-%s" class="outline-%d">`, id, h.Lvl+1) + "\n")
+	w.WriteString(fmt.Sprintf(`<h%d id="%s">`, h.Lvl+1, id) + "\n")
 	if w.document.GetOption("todo") != "nil" && h.Status != "" {
 		w.WriteString(fmt.Sprintf(`<span class="todo">%s</span>`, h.Status) + "\n")
 	}
@@ -275,7 +276,7 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 	}
 	w.WriteString(fmt.Sprintf("\n</h%d>\n", h.Lvl+1))
 	if content := w.WriteNodesAsString(h.Children...); content != "" {
-		w.WriteString(fmt.Sprintf(`<div id="outline-text-%s" class="outline-text-%d">`, h.ID(), h.Lvl+1) + "\n" + content + "</div>\n")
+		w.WriteString(fmt.Sprintf(`<div id="outline-text-%s" class="outline-text-%d">`, h.ID(w.document), h.Lvl+1) + "\n" + content + "</div>\n")
 	}
 	w.WriteString("</div>\n")
 }

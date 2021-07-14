@@ -25,6 +25,8 @@ type Headline struct {
 	Status     string
 	Priority   string
 	Properties *PropertyDrawer
+	Id         string
+	Text       string
 	Title      []Node
 	Tags       []string
 	Children   []Node
@@ -67,6 +69,7 @@ func (d *Document) parseHeadline(i int, parentStop stopFn) (int, Node) {
 	}
 
 	headline.Title = d.parseInline(text)
+	headline.Text = String(headline.Title)
 
 	stop := func(d *Document, i int) bool {
 		return parentStop(d, i) || d.tokens[i].kind == "headline" && len(d.tokens[i].matches[1]) <= headline.Lvl
@@ -82,11 +85,35 @@ func (d *Document) parseHeadline(i int, parentStop stopFn) (int, Node) {
 	return consumed + 1, headline
 }
 
-func (h Headline) ID() string {
-	if customID, ok := h.Properties.Get("CUSTOM_ID"); ok {
-		return customID
+func (h Headline) ID(d *Document) string {
+	if 0 != len(h.Id) {
+		return  h.Id
 	}
-	return fmt.Sprintf("headline-%d", h.Index)
+	if customID, ok := h.Properties.Get("CUSTOM_ID"); ok {
+		h.Id = customID
+		d.Ids[h.Id] = true
+		return h.Id
+	}
+	id := strings.ToLower(h.Text)
+	// Loosely based on https://github.com/bryanbraun/anchorjs/blob/master/anchor.js
+        // I am not at all sure this regexp is sufficient.
+	id = regexp.MustCompile("[][& +$,:;=?@\"#{}|^~`%!'<>./()*\\\n\t\b\v\u00A0]+").ReplaceAllString(id, "-")
+	id = regexp.MustCompile(`-+`).ReplaceAllString(id, "-")
+	id = strings.TrimPrefix(id, "-")
+	id = strings.TrimSuffix(id, "-")
+	base := id
+	count := 0
+	for {
+		if d.Ids[id] {
+			count++
+			id = fmt.Sprintf("%s-%d", base, count)
+		} else {
+			break
+		}
+	}
+	h.Id = id
+	d.Ids[h.Id] = true
+	return h.Id
 }
 
 func (h Headline) IsExcluded(d *Document) bool {

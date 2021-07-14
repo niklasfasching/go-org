@@ -40,6 +40,7 @@ type Document struct {
 	Links          map[string]string
 	Nodes          []Node
 	NamedNodes     map[string]Node
+	Ids            map[string]bool
 	Outline        Outline           // Outline is a Table Of Contents for the document and contains all sections (headline + content).
 	BufferSettings map[string]string // Settings contains all settings that were parsed from keywords.
 	Error          error
@@ -123,6 +124,7 @@ func (c *Configuration) Parse(input io.Reader, path string) (d *Document) {
 		Outline:        Outline{outlineSection, outlineSection, 0},
 		BufferSettings: map[string]string{},
 		NamedNodes:     map[string]Node{},
+		Ids:            map[string]bool{},
 		Links:          map[string]string{},
 		Macros:         map[string]string{},
 		Path:           path,
