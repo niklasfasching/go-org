@@ -112,7 +112,7 @@ figcaption {
 
 dl { font-family: monospace, monospace; }
 dl > dt { font-weight: bold; }
-dl > dd { margin: -1em 0 1em 1em; }
+dl > dd { margin: 1em; }
 
 .todo, .priority, .tags {
   font-size: 0.8em;
