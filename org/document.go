@@ -86,7 +86,7 @@ func New() *Configuration {
 		DefaultSettings: map[string]string{
 			"TODO":         "TODO | DONE",
 			"EXCLUDE_TAGS": "noexport",
-			"OPTIONS":      "toc:t <:t e:t f:t pri:t todo:t tags:t title:t",
+			"OPTIONS":      "toc:t <:t e:t f:t pri:t todo:t tags:t title:t ealb:nil",
 		},
 		Log:      log.New(os.Stderr, "go-org: ", 0),
 		ReadFile: ioutil.ReadFile,
@@ -179,6 +179,7 @@ func (d *Document) Get(key string) string {
 // - todo (export headline todo status)
 // - pri (export headline priority)
 // - tags (export headline tags)
+// - ealb (non-standard) (export with east asian line breaks / ignore line breaks between multi-byte characters)
 // see https://orgmode.org/manual/Export-settings.html for more information
 func (d *Document) GetOption(key string) string {
 	get := func(settings map[string]string) string {

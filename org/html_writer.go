@@ -311,7 +311,9 @@ func (w *HTMLWriter) WriteStatisticToken(s StatisticToken) {
 }
 
 func (w *HTMLWriter) WriteLineBreak(l LineBreak) {
-	w.WriteString(strings.Repeat("\n", l.Count))
+	if w.document.GetOption("ealb") == "nil" || !l.BetweenMultibyteCharacters {
+		w.WriteString(strings.Repeat("\n", l.Count))
+	}
 }
 
 func (w *HTMLWriter) WriteExplicitLineBreak(l ExplicitLineBreak) {

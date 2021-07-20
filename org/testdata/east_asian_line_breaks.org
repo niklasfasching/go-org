@@ -1,0 +1,11 @@
+#+OPTIONS: ealb:t
+
+Line breaks between multi-byte characters are omitted when the =ealb= option is set:
+
+- 中午
+  吃啥
+
+- something else
+  中午
+  吃啥
+  something else

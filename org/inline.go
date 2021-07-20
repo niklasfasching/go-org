@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 	"unicode"
+	"unicode/utf8"
 )
 
 type Text struct {
@@ -14,7 +15,10 @@ type Text struct {
 	IsRaw   bool
 }
 
-type LineBreak struct{ Count int }
+type LineBreak struct {
+	Count                      int
+	BetweenMultibyteCharacters bool
+}
 type ExplicitLineBreak struct{}
 
 type StatisticToken struct{ Content string }
@@ -159,7 +163,9 @@ func (d *Document) parseLineBreak(input string, start int) (int, Node) {
 	i := start
 	for ; i < len(input) && input[i] == '\n'; i++ {
 	}
-	return i - start, LineBreak{i - start}
+	_, beforeLen := utf8.DecodeLastRuneInString(input[:start])
+	_, afterLen := utf8.DecodeRuneInString(input[i:])
+	return i - start, LineBreak{i - start, beforeLen > 1 && afterLen > 1}
 }
 
 func (d *Document) parseInlineBlock(input string, start int) (int, int, Node) {
