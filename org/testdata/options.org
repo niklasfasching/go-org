@@ -8,15 +8,16 @@ That means, entities like =---= --- (mdash) will be left untouched, footnotes li
 not be exported and there won't be a table of contents at the top.
 As buffer options are merged with the defaults, the above headline will be exported *with* priority, todo status & tags.
 
-
-| key  | description                                               |
-|------+-----------------------------------------------------------|
-| f    | Include footnotes (definitions & links)                   |
-| e    | Include entities                                          |
-| toc  | Include table of contents (outline)                       |
-|------+-----------------------------------------------------------|
-| pri  | Include priority =[#A]=, =[#B]=, =[#C]= in headline title |
-| todo | Include todo status in headline title                     |
-| tags | Include tags in headline title                            |
+| key  | description                                                                        |
+|------+------------------------------------------------------------------------------------|
+| f    | Include footnotes (definitions & links)                                            |
+| e    | Include entities                                                                   |
+| toc  | Include table of contents (outline)                                                |
+|------+------------------------------------------------------------------------------------|
+| pri  | Include priority =[#A]=, =[#B]=, =[#C]= in headline title                          |
+| todo | Include todo status in headline title                                              |
+| tags | Include tags in headline title                                                     |
+|------+------------------------------------------------------------------------------------|
+| ealb | Omit newlines between multi-byte characters (east asian line breaks, non-standard) |
 
 [fn:1] This footnote definition won't be printed
