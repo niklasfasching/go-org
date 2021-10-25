@@ -39,7 +39,15 @@
   - <2019-01-06 Sun 18:00 +1w>
   - <2019-01-06 18:00>
   - <2019-01-06 18:00 +1w>
-- =#+LINK= based links: [[example:foobar]]
+- =#+LINK= based links:
   #+LINK: example https://www.example.com/
+  #+LINK: example_interpolate_s https://www.example.com?raw_tag=%s
+  #+LINK: example_interpolate_h https://www.example.com?encoded_tag=%h
+  - [[example:foobar]]
+  - [[example:]]
+  - [[example]]
+  - [[example][description]]
+  - [[example_interpolate_s:tag value with specical chars % : &]] (w/o tag [[example_interpolate_s]])
+  - [[example_interpolate_h:tag value with specical chars % : &]] (w/o tag [[example_interpolate_h]])
 - =#+MACROs=: {{{headline(yolo)}}}
   #+MACRO: headline @@html:<h1>$1</h1>@@

@@ -63,7 +63,7 @@ func (d *Document) parseKeyword(i int, stop stopFn) (int, Node) {
 	case "INCLUDE":
 		return d.parseInclude(k)
 	case "LINK":
-		if parts := strings.Split(k.Value, " "); len(parts) >= 2 {
+		if parts := strings.SplitN(k.Value, " ", 2); len(parts) == 2 {
 			d.Links[parts[0]] = parts[1]
 		}
 		return 1, k

@@ -55,7 +55,15 @@ not emphasized/</li>
 </ul>
 </li>
 <li>
-<p><code class="verbatim">#+LINK</code> based links: <a href="https://www.example.com/foobar">https://www.example.com/foobar</a></p>
+<p><code class="verbatim">#+LINK</code> based links:</p>
+<ul>
+<li><a href="https://www.example.com/foobar">https://www.example.com/foobar</a></li>
+<li><a href="https://www.example.com/">https://www.example.com/</a></li>
+<li><a href="https://www.example.com/">https://www.example.com/</a></li>
+<li><a href="https://www.example.com/">description</a></li>
+<li><a href="https://www.example.com?raw_tag=tag value with specical chars % : &amp;">https://www.example.com?raw_tag=tag value with specical chars % : &amp;</a> (w/o tag <a href="https://www.example.com?raw_tag=">https://www.example.com?raw_tag=</a>)</li>
+<li><a href="https://www.example.com?encoded_tag=tag+value+with+specical+chars+%25+%3A+%26">https://www.example.com?encoded_tag=tag+value+with+specical+chars+%25+%3A+%26</a> (w/o tag <a href="https://www.example.com?encoded_tag=">https://www.example.com?encoded_tag=</a>)</li>
+</ul>
 </li>
 <li>
 <p><code class="verbatim">#+MACROs</code>: <p><h1>yolo</h1></p>

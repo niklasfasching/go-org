@@ -10,6 +10,8 @@ import (
 	"strings"
 	"unicode"
 
+	u "net/url"
+
 	h "golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 )
@@ -361,7 +363,13 @@ func (w *HTMLWriter) WriteRegularLink(l RegularLink) {
 		url = strings.TrimSuffix(url, ".org") + ".html"
 	}
 	if prefix := w.document.Links[l.Protocol]; prefix != "" {
-		url = html.EscapeString(prefix) + strings.TrimPrefix(url, l.Protocol+":")
+		if tag := strings.TrimPrefix(l.URL, l.Protocol+":"); strings.Contains(prefix, "%s") || strings.Contains(prefix, "%h") {
+			url = html.EscapeString(strings.ReplaceAll(strings.ReplaceAll(prefix, "%s", tag), "%h", u.QueryEscape(tag)))
+		} else {
+			url = html.EscapeString(prefix) + tag
+		}
+	} else if prefix := w.document.Links[l.URL]; prefix != "" {
+		url = html.EscapeString(strings.ReplaceAll(strings.ReplaceAll(prefix, "%s", ""), "%h", ""))
 	}
 	switch l.Kind() {
 	case "image":
