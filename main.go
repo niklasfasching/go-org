@@ -82,8 +82,6 @@ func render(args []string) {
 	r, path, format := io.Reader(nil), "", ""
 	if fi, err := os.Stdin.Stat(); err != nil {
 		log.Fatal(err)
-	} else if fi.Mode()&os.ModeCharDevice == 0 {
-		r, path, format = os.Stdin, "./STDIN", args[0]
 	} else if len(args) == 2 {
 		f, err := os.Open(args[0])
 		if err != nil {
@@ -91,6 +89,8 @@ func render(args []string) {
 		}
 		defer f.Close()
 		r, path, format = f, args[0], args[1]
+	} else if fi.Mode()&os.ModeCharDevice == 0 {
+		r, path, format = os.Stdin, "./STDIN", args[0]
 	} else {
 		log.Fatal(usage)
 	}
