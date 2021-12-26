@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -18,8 +18,9 @@ import (
 
 var usage = `Usage: go-org COMMAND [ARGS]...
 Commands:
-- render FILE FORMAT
+- render [FILE] FORMAT
   FORMAT: org, html, html-chroma
+  Instead of specifying a file, org mode content can also be passed on stdin
 - blorg
   - blorg init
   - blorg build
@@ -78,15 +79,22 @@ func runBlorg(args []string) {
 }
 
 func render(args []string) {
-	if len(args) < 2 {
+	r, path, format := io.Reader(nil), "", ""
+	if fi, err := os.Stdin.Stat(); err != nil {
+		log.Fatal(err)
+	} else if fi.Mode()&os.ModeCharDevice == 0 {
+		r, path, format = os.Stdin, "./STDIN", args[0]
+	} else if len(args) == 2 {
+		f, err := os.Open(args[0])
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+		r, path, format = f, args[0], args[1]
+	} else {
 		log.Fatal(usage)
 	}
-	path, format := args[0], args[1]
-	bs, err := ioutil.ReadFile(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	d := org.New().Parse(bytes.NewReader(bs), path)
+	d := org.New().Parse(r, path)
 	write := func(w org.Writer) {
 		out, err := d.Write(w)
 		if err != nil {

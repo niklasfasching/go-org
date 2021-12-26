@@ -14,12 +14,15 @@ Please note
 ** command line
 #+begin_src bash
 $ go-org
-USAGE: org COMMAND [ARGS]
-- org render FILE OUTPUT_FORMAT
-  OUTPUT_FORMAT: org, html, html-chroma
-- org blorg init
-- org blorg build
-- org blorg serve
+Usage: go-org COMMAND [ARGS]...
+Commands:
+- render [FILE] FORMAT
+  FORMAT: org, html, html-chroma
+  Instead of specifying a file, org mode content can also be passed on stdin
+- blorg
+  - blorg init
+  - blorg build
+  - blorg serve
 #+end_src
 ** as a library
 see [[https://github.com/niklasfasching/go-org/blob/master/main.go][main.go]] and hugo [[https://github.com/gohugoio/hugo/blob/master/markup/org/convert.go][org/convert.go]]
