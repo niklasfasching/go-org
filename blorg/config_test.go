@@ -23,7 +23,7 @@ func TestBlorg(t *testing.T) {
 		t.Errorf("Could not render: %s", err)
 		return
 	}
-	renderedHashBs, err := exec.Command("bash", "-c", fmt.Sprintf("find %s -type f | sort -u | xargs cat | md5sum", config.PublicDir)).Output()
+	renderedHashBs, err := exec.Command("bash", "-c", fmt.Sprintf("find %s -type f | sort -u | xargs md5sum", config.PublicDir)).Output()
 	if err != nil {
 		t.Errorf("Could not hash PublicDir: %s", err)
 		return
