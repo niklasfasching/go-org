@@ -16,6 +16,7 @@ test:
 .PHONY: setup
 setup:
 	git config core.hooksPath etc/githooks
+	command -v go > /dev/null || (echo "go not installed" && false)
 
 .PHONY: preview
 preview: generate

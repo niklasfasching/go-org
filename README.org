@@ -27,7 +27,7 @@ Commands:
 ** as a library
 see [[https://github.com/niklasfasching/go-org/blob/master/main.go][main.go]] and hugo [[https://github.com/gohugoio/hugo/blob/master/markup/org/convert.go][org/convert.go]]
 * development
-1. =make setup install=
+1. =make setup=
 2. change things
 3. =make preview= (regenerates fixtures & shows output in a browser)
 
