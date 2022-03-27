@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"runtime/debug"
 	"strings"
 
 	"github.com/alecthomas/chroma"
@@ -37,6 +38,8 @@ func main() {
 		render(args)
 	case "blorg":
 		runBlorg(args)
+	case "version":
+		printVersion()
 	default:
 		log.Fatal(usage)
 	}
@@ -129,4 +132,20 @@ func highlightCodeBlock(source, lang string, inline bool) string {
 		return `<div class="highlight-inline">` + "\n" + w.String() + "\n" + `</div>`
 	}
 	return `<div class="highlight">` + "\n" + w.String() + "\n" + `</div>`
+}
+
+func printVersion() {
+	bi, ok := debug.ReadBuildInfo()
+	if !ok {
+		log.Fatal("not build info available")
+	}
+	revision, modified := "", false
+	for _, s := range bi.Settings {
+		if s.Key == "vcs.revision" {
+			revision = s.Value
+		} else if s.Key == "vcs.modified" {
+			modified = s.Value == "true"
+		}
+	}
+	log.Printf("%s (modified: %v)", revision, modified)
 }
