@@ -6,4 +6,4 @@ for org_file in org/testdata/*.org; do
     ./go-org render $org_file org > org/testdata/$(basename $org_file .org).pretty_org
 done
 
-find blorg/testdata/public -type f | sort -u | xargs cat | md5sum > blorg/testdata/public.md5
+(cd blorg && find testdata/public -type f | sort -u | xargs md5sum > testdata/public.md5)
