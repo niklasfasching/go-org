@@ -33,6 +33,11 @@ generate-gh-pages: build
 generate-fixtures: build
 	./etc/generate-fixtures
 
+.PHONY: serve-gh-pages
+serve-gh-pages: generate-gh-pages
+	cd docs && mkdir go-org && mv * go-org 2> /dev/null || true
+	cd docs && python3 -m http.server
+
 .PHONY: fuzz
 fuzz: build
 	@echo also see "http://lcamtuf.coredump.cx/afl/README.txt"

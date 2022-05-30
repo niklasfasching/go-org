@@ -124,7 +124,8 @@ convert="<html>
   </body>
 </html>"
 
-mkdir -p docs
+rm -rf docs
+mkdir docs
 go get github.com/chaseadamsio/goorgeous
 cp etc/_goorgeous.go docs/goorgeous.go
 go build -o docs/goorgeous docs/goorgeous.go
@@ -147,14 +148,12 @@ for org_file in $org_files; do
       </div>"
 done
 go_org_vs_goorgeous_examples+="</body></html>"
-rm docs/goorgeous docs/goorgeous.go
 
 echo "$index" > docs/index.html
 echo "$convert" > docs/convert.html
 echo "$go_org_vs_goorgeous_examples" > docs/go-org-vs-goorgeous.html
 cp etc/_wasm.go docs/wasm.go
 GOOS=js GOARCH=wasm go build -o docs/main.wasm docs/wasm.go
-rm docs/wasm.go
 cp $(go env GOROOT)/misc/wasm/wasm_exec.js docs/wasm_exec.js
 
 mkdir -p docs/blorg
