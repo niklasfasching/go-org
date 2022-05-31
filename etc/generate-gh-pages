@@ -128,32 +128,9 @@ convert="<html>
 
 rm -rf docs
 mkdir docs
-go get github.com/chaseadamsio/goorgeous
-cp etc/_goorgeous.go docs/goorgeous.go
-go build -o docs/goorgeous docs/goorgeous.go
-go_org_vs_goorgeous_examples="<html>
-  <head>
-    <style>
-     $(cat etc/style.css)
-     $examples_style
-  </style>
-  </head>
-  <body>"
-for org_file in $org_files; do
-    echo generating content for $org_file
-    name=$(basename $org_file)
-    go_org_vs_goorgeous_examples+="
-      <h2><a id='${name}' href='#toc-${name}'>${name}</a></h2>
-      <div class='source'>
-        <div class='html'>$(./docs/goorgeous $org_file)</div>
-        <div class='html'>$(./go-org render $org_file html-chroma)</div>
-      </div>"
-done
-go_org_vs_goorgeous_examples+="</body></html>"
 
 echo "$index" > docs/index.html
 echo "$convert" > docs/convert.html
-echo "$go_org_vs_goorgeous_examples" > docs/go-org-vs-goorgeous.html
 cp etc/_wasm.go docs/wasm.go
 GOOS=js GOARCH=wasm go build -o docs/main.wasm docs/wasm.go
 cp $(go env GOROOT)/misc/wasm/wasm_exec.js docs/wasm_exec.js
