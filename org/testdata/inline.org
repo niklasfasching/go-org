@@ -4,6 +4,7 @@
 - /.emphasis with dot border chars./
 - /emphasis with a slash/inside/
 - /emphasis/ followed by raw text with slash /
+- *emphasis ending with a "difficult" multibyte character 习*
 - ->/not an emphasis/<-
 - links with slashes do not become /emphasis/: [[https://somelinkshouldntrenderaccidentalemphasis.com]]/ /emphasis/
 - _underlined_ *bold*  =verbatim= ~code~ +strikethrough+
