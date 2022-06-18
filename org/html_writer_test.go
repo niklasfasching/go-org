@@ -16,20 +16,7 @@ func (w *ExtendedHTMLWriter) WriteText(t Text) {
 }
 
 func TestHTMLWriter(t *testing.T) {
-	for _, path := range orgTestFiles() {
-		expected := fileString(path[:len(path)-len(".org")] + ".html")
-		reader, writer := strings.NewReader(fileString(path)), NewHTMLWriter()
-		actual, err := New().Silent().Parse(reader, path).Write(writer)
-		if err != nil {
-			t.Errorf("%s\n got error: %s", path, err)
-			continue
-		}
-		if actual != expected {
-			t.Errorf("%s:\n%s'", path, diff(actual, expected))
-		} else {
-			t.Logf("%s: passed!", path)
-		}
-	}
+	testWriter(t, func() Writer { return NewHTMLWriter() }, ".html")
 }
 
 func TestExtendedHTMLWriter(t *testing.T) {

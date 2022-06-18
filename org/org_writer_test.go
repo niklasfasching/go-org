@@ -21,20 +21,7 @@ func (w *ExtendedOrgWriter) WriteText(t Text) {
 }
 
 func TestOrgWriter(t *testing.T) {
-	for _, path := range orgTestFiles() {
-		expected := fileString(path[:len(path)-len(".org")] + ".pretty_org")
-		reader, writer := strings.NewReader(fileString(path)), NewOrgWriter()
-		actual, err := New().Silent().Parse(reader, path).Write(writer)
-		if err != nil {
-			t.Errorf("%s\n got error: %s", path, err)
-			continue
-		}
-		if actual != expected {
-			t.Errorf("%s:\n%s'", path, diff(actual, expected))
-		} else {
-			t.Logf("%s: passed!", path)
-		}
-	}
+	testWriter(t, func() Writer { return NewOrgWriter() }, ".pretty_org")
 }
 
 func TestExtendedOrgWriter(t *testing.T) {
@@ -45,6 +32,22 @@ func TestExtendedOrgWriter(t *testing.T) {
 	WriteNodes(extendedWriter, p)
 	if extendedWriter.callCount != 2 {
 		t.Errorf("WriteText method of extending writer was not called: CallCount %d", extendedWriter.callCount)
+	}
+}
+
+func testWriter(t *testing.T, newWriter func() Writer, ext string) {
+	for _, path := range orgTestFiles() {
+		tmpPath := path[:len(path)-len(".org")]
+		t.Run(filepath.Base(tmpPath), func(t *testing.T) {
+			expected := fileString(t, tmpPath+ext)
+			reader := strings.NewReader(fileString(t, path))
+			actual, err := New().Silent().Parse(reader, path).Write(newWriter())
+			if err != nil {
+				t.Fatalf("%s\n got error: %s", path, err)
+			} else if actual != expected {
+				t.Fatalf("%s:\n%s'", path, "")
+			}
+		})
 	}
 }
 
@@ -65,10 +68,10 @@ func orgTestFiles() []string {
 	return orgFiles
 }
 
-func fileString(path string) string {
+func fileString(t *testing.T, path string) string {
 	bs, err := ioutil.ReadFile(path)
 	if err != nil {
-		panic(fmt.Sprintf("Could not read file %s: %s", path, err))
+		t.Fatalf("Could not read file %s: %s", path, err)
 	}
 	return string(bs)
 }
