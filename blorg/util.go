@@ -55,7 +55,7 @@ func getWriter() org.Writer {
 	return w
 }
 
-func highlightCodeBlock(source, lang string, inline bool) string {
+func highlightCodeBlock(source, lang string, inline bool, params map[string]string) string {
 	var w strings.Builder
 	l := lexers.Get(lang)
 	if l == nil {

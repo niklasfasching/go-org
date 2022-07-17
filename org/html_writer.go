@@ -19,7 +19,7 @@ import (
 // HTMLWriter exports an org document into a html document.
 type HTMLWriter struct {
 	ExtendingWriter     Writer
-	HighlightCodeBlock  func(source, lang string, inline bool) string
+	HighlightCodeBlock  func(source, lang string, inline bool, params map[string]string) string
 	PrettyRelativeLinks bool
 
 	strings.Builder
@@ -66,7 +66,7 @@ func NewHTMLWriter() *HTMLWriter {
 		document:   &Document{Configuration: defaultConfig},
 		log:        defaultConfig.Log,
 		htmlEscape: true,
-		HighlightCodeBlock: func(source, lang string, inline bool) string {
+		HighlightCodeBlock: func(source, lang string, inline bool, params map[string]string) string {
 			if inline {
 				return fmt.Sprintf("<div class=\"highlight-inline\">\n<pre>\n%s\n</pre>\n</div>", html.EscapeString(source))
 			}
@@ -129,7 +129,7 @@ func (w *HTMLWriter) WriteBlock(b Block) {
 		if len(b.Parameters) >= 1 {
 			lang = strings.ToLower(b.Parameters[0])
 		}
-		content = w.HighlightCodeBlock(content, lang, false)
+		content = w.HighlightCodeBlock(content, lang, false, params)
 		w.WriteString(fmt.Sprintf("<div class=\"src src-%s\">\n%s\n</div>\n", lang, content))
 	case "EXAMPLE":
 		w.WriteString(`<pre class="example">` + "\n" + html.EscapeString(content) + "\n</pre>\n")
@@ -159,7 +159,7 @@ func (w *HTMLWriter) WriteInlineBlock(b InlineBlock) {
 	switch b.Name {
 	case "src":
 		lang := strings.ToLower(b.Parameters[0])
-		content = w.HighlightCodeBlock(content, lang, true)
+		content = w.HighlightCodeBlock(content, lang, true, nil)
 		w.WriteString(fmt.Sprintf("<div class=\"src src-inline src-%s\">\n%s\n</div>", lang, content))
 	case "export":
 		if strings.ToLower(b.Parameters[0]) == "html" {
