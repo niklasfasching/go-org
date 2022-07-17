@@ -1,0 +1,9 @@
+Lines in a source block can be highlighted with =:hl_lines=.
+
+#+begin_src emacs-lisp :hl_lines 3-4
+(+ 1 2)
+(+ 1 2)
+(+ 1 2)
+(+ 1 2)
+(+ 1 2)
+#+end_src

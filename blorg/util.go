@@ -63,7 +63,14 @@ func highlightCodeBlock(source, lang string, inline bool, params map[string]stri
 	}
 	l = chroma.Coalesce(l)
 	it, _ := l.Tokenise(nil, source)
-	_ = html.New().Format(&w, styles.Get("github"), it)
+	options := []html.Option{}
+	if params[":hl_lines"] != "" {
+		ranges := org.ParseRanges(params[":hl_lines"])
+		if ranges != nil {
+			options = append(options, html.HighlightLines(ranges))
+		}
+	}
+	_ = html.New(options...).Format(&w, styles.Get("github"), it)
 	if inline {
 		return `<div class="highlight-inline">` + "\n" + w.String() + "\n" + `</div>`
 	}
