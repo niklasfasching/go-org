@@ -1,11 +1,12 @@
 .PHONY: default
 default: test
 
-go-org: *.go */*.go go.mod go.sum
+go_files=$(shell find . -name '*.go' ! -path './docs/*')
+
+go-org: $(go_files) go.mod go.sum
 	go get -d ./...
 	go build .
 
-.PHONY: build
 build: go-org
 
 .PHONY: test
