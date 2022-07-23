@@ -1,9 +1,14 @@
 #!/bin/bash
 
-for org_file in org/testdata/*.org; do
+org_files="$(ls org/testdata/*.org)"
+if [[ ! -z $1 ]]; then
+    org_files="$1"
+else
+    (cd blorg && find testdata/public -type f | sort -u | xargs md5sum > testdata/public.md5)
+fi
+
+for org_file in $org_files; do
     echo $org_file
     ./go-org render $org_file html > org/testdata/$(basename $org_file .org).html
     ./go-org render $org_file org > org/testdata/$(basename $org_file .org).pretty_org
 done
-
-(cd blorg && find testdata/public -type f | sort -u | xargs md5sum > testdata/public.md5)

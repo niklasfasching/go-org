@@ -32,7 +32,7 @@ generate-gh-pages: build
 
 .PHONY: generate-fixtures
 generate-fixtures: build
-	./etc/generate-fixtures
+	./etc/generate-fixtures $(files)
 
 .PHONY: serve-gh-pages
 serve-gh-pages: generate-gh-pages
