@@ -100,7 +100,17 @@ func (w *HTMLWriter) Before(d *Document) {
 	if title := d.Get("TITLE"); title != "" && w.document.GetOption("title") != "nil" {
 		titleDocument := d.Parse(strings.NewReader(title), d.Path)
 		if titleDocument.Error == nil {
-			title = w.WriteNodesAsString(titleDocument.Nodes...)
+			simpleTitle := false
+			if len(titleDocument.Nodes) == 1 {
+				switch p := titleDocument.Nodes[0].(type) {
+				case Paragraph:
+					simpleTitle = true
+					title = w.WriteNodesAsString(p.Children...)
+				}
+			}
+			if !simpleTitle {
+				title = w.WriteNodesAsString(titleDocument.Nodes...)
+			}
 		}
 		w.WriteString(fmt.Sprintf(`<h1 class="title">%s</h1>`+"\n", title))
 	}
