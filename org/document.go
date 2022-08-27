@@ -180,7 +180,7 @@ func (d *Document) Get(key string) string {
 // - pri (export headline priority)
 // - tags (export headline tags)
 // - ealb (non-standard) (export with east asian line breaks / ignore line breaks between multi-byte characters)
-// see https://orgmode.org/manual/Export-settings.html for more information
+// see https://orgmode.org/manual/Export-Settings.html for more information
 func (d *Document) GetOption(key string) string {
 	get := func(settings map[string]string) string {
 		for _, field := range strings.Fields(settings["OPTIONS"]) {
