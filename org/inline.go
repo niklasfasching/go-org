@@ -394,7 +394,7 @@ func isValidPreChar(r rune) bool {
 }
 
 func isValidPostChar(r rune) bool {
-	return r == utf8.RuneError || unicode.IsSpace(r) || strings.ContainsRune(`-.,:!?;'")}[`, r)
+	return r == utf8.RuneError || unicode.IsSpace(r) || strings.ContainsRune(`-.,:!?;'")}[\`, r)
 }
 
 func isValidBorderChar(r rune) bool { return !unicode.IsSpace(r) }
