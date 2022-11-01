@@ -20,14 +20,14 @@ type OrgWriter struct {
 var exampleBlockUnescapeRegexp = regexp.MustCompile(`(^|\n)([ \t]*)(\*|,\*|#\+|,#\+)`)
 
 var emphasisOrgBorders = map[string][]string{
-	"_":   []string{"_", "_"},
-	"*":   []string{"*", "*"},
-	"/":   []string{"/", "/"},
-	"+":   []string{"+", "+"},
-	"~":   []string{"~", "~"},
-	"=":   []string{"=", "="},
-	"_{}": []string{"_{", "}"},
-	"^{}": []string{"^{", "}"},
+	"_":   {"_", "_"},
+	"*":   {"*", "*"},
+	"/":   {"/", "/"},
+	"+":   {"+", "+"},
+	"~":   {"~", "~"},
+	"=":   {"=", "="},
+	"_{}": {"_{", "}"},
+	"^{}": {"^{", "}"},
 }
 
 func NewOrgWriter() *OrgWriter {
