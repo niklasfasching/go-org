@@ -10,3 +10,9 @@ we support =\(...\)=, =\[...\]=, =$$...$$= and =\begin{$env}...\end{$env}= as la
   \sum_{i=1}^n a_n
   \end{xyz}
 - $2 + 2$, $3 - 3$
+- \begin{xyz}
+  latex block ignores block lvl elements (e.g. list - line starting with -)
+  a = b
+  - c
+  - d
+  \end{xyz}

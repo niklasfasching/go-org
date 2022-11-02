@@ -109,6 +109,12 @@ func (w *OrgWriter) WriteBlock(b Block) {
 	}
 }
 
+func (w *OrgWriter) WriteLatexBlock(b LatexBlock) {
+	w.WriteString(w.indent)
+	WriteNodes(w, b.Content...)
+	w.WriteString("\n")
+}
+
 func (w *OrgWriter) WriteResult(r Result) {
 	w.WriteString("#+RESULTS:\n")
 	WriteNodes(w, r.Node)

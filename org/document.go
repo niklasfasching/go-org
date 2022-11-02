@@ -72,6 +72,7 @@ var lexFns = []lexFn{
 	lexKeywordOrComment,
 	lexFootnoteDefinition,
 	lexExample,
+	lexLatexBlock,
 	lexText,
 }
 
@@ -209,6 +210,8 @@ func (d *Document) parseOne(i int, stop stopFn) (consumed int, node Node) {
 		consumed, node = d.parseTable(i, stop)
 	case "beginBlock":
 		consumed, node = d.parseBlock(i, stop)
+	case "beginLatexBlock":
+		consumed, node = d.parseLatexBlock(i, stop)
 	case "result":
 		consumed, node = d.parseResult(i, stop)
 	case "beginDrawer":

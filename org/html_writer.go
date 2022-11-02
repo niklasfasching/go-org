@@ -162,6 +162,11 @@ func (w *HTMLWriter) WriteBlock(b Block) {
 	}
 }
 
+func (w *HTMLWriter) WriteLatexBlock(b LatexBlock) {
+	WriteNodes(w, b.Content...)
+	w.WriteString("\n")
+}
+
 func (w *HTMLWriter) WriteResult(r Result) { WriteNodes(w, r.Node) }
 
 func (w *HTMLWriter) WriteInlineBlock(b InlineBlock) {

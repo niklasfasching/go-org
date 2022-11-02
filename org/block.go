@@ -1,6 +1,7 @@
 package org
 
 import (
+	"math"
 	"regexp"
 	"strings"
 	"unicode"
@@ -21,9 +22,15 @@ type Example struct {
 	Children []Node
 }
 
+type LatexBlock struct {
+	Content []Node
+}
+
 var exampleLineRegexp = regexp.MustCompile(`^(\s*):(\s(.*)|\s*$)`)
 var beginBlockRegexp = regexp.MustCompile(`(?i)^(\s*)#\+BEGIN_(\w+)(.*)`)
 var endBlockRegexp = regexp.MustCompile(`(?i)^(\s*)#\+END_(\w+)`)
+var beginLatexBlockRegexp = regexp.MustCompile(`(?i)^(\s*)\\begin{([^}]+)}(\s*)$`)
+var endLatexBlockRegexp = regexp.MustCompile(`(?i)^(\s*)\\end{([^}]+)}(\s*)$`)
 var resultRegexp = regexp.MustCompile(`(?i)^(\s*)#\+RESULTS:`)
 var exampleBlockEscapeRegexp = regexp.MustCompile(`(^|\n)([ \t]*),([ \t]*)(\*|,\*|#\+|,#\+)`)
 
@@ -32,6 +39,15 @@ func lexBlock(line string) (token, bool) {
 		return token{"beginBlock", len(m[1]), strings.ToUpper(m[2]), m}, true
 	} else if m := endBlockRegexp.FindStringSubmatch(line); m != nil {
 		return token{"endBlock", len(m[1]), strings.ToUpper(m[2]), m}, true
+	}
+	return nilToken, false
+}
+
+func lexLatexBlock(line string) (token, bool) {
+	if m := beginLatexBlockRegexp.FindStringSubmatch(line); m != nil {
+		return token{"beginLatexBlock", len(m[1]), strings.ToUpper(m[2]), m}, true
+	} else if m := endLatexBlockRegexp.FindStringSubmatch(line); m != nil {
+		return token{"endLatexBlock", len(m[1]), strings.ToUpper(m[2]), m}, true
 	}
 	return nilToken, false
 }
@@ -83,6 +99,22 @@ func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
 		i += consumed
 	}
 	return i + 1 - start, block
+}
+
+func (d *Document) parseLatexBlock(i int, parentStop stopFn) (int, Node) {
+	t, start := d.tokens[i], i
+	name, rawText, trim := t.content, "", trimIndentUpTo(int(math.Max((float64(d.baseLvl)), float64(t.lvl))))
+	stop := func(d *Document, i int) bool {
+		return i >= len(d.tokens) || (d.tokens[i].kind == "endLatexBlock" && d.tokens[i].content == name)
+	}
+	for ; !stop(d, i); i++ {
+		rawText += trim(d.tokens[i].matches[0]) + "\n"
+	}
+	if i >= len(d.tokens) || d.tokens[i].kind != "endLatexBlock" || d.tokens[i].content != name {
+		return 0, nil
+	}
+	rawText += trim(d.tokens[i].matches[0])
+	return i + 1 - start, LatexBlock{d.parseRawInline(rawText)}
 }
 
 func (d *Document) parseSrcBlockResult(i int, parentStop stopFn) (int, Node) {
@@ -145,6 +177,7 @@ func (b Block) ParameterMap() map[string]string {
 	return m
 }
 
-func (n Example) String() string { return orgWriter.WriteNodesAsString(n) }
-func (n Block) String() string   { return orgWriter.WriteNodesAsString(n) }
-func (n Result) String() string  { return orgWriter.WriteNodesAsString(n) }
+func (n Example) String() string    { return orgWriter.WriteNodesAsString(n) }
+func (n Block) String() string      { return orgWriter.WriteNodesAsString(n) }
+func (n LatexBlock) String() string { return orgWriter.WriteNodesAsString(n) }
+func (n Result) String() string     { return orgWriter.WriteNodesAsString(n) }
