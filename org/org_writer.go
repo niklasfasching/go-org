@@ -65,7 +65,7 @@ func (w *OrgWriter) WriteHeadline(h Headline) {
 		w.WriteString(" [#" + h.Priority + "]")
 	}
 	w.WriteString(" ")
-	WriteNodes(w, h.Title...)
+	WriteNodes(w, fromRangedNodesToNodes(h.Title)...)
 	if len(h.Tags) != 0 {
 		tString := ":" + strings.Join(h.Tags, ":") + ":"
 		if n := w.TagsColumn - len(tString) - (w.Len() - start); n > 0 {
@@ -81,7 +81,7 @@ func (w *OrgWriter) WriteHeadline(h Headline) {
 	if h.Properties != nil {
 		WriteNodes(w, *h.Properties)
 	}
-	WriteNodes(w, h.Children...)
+	WriteNodes(w, fromRangedNodesToNodes(h.Children)...)
 }
 
 func (w *OrgWriter) WriteBlock(b Block) {
@@ -93,7 +93,7 @@ func (w *OrgWriter) WriteBlock(b Block) {
 	if isRawTextBlock(b.Name) {
 		w.WriteString(w.indent)
 	}
-	content := w.WriteNodesAsString(b.Children...)
+	content := w.WriteNodesAsString(fromRangedNodesToNodes(b.Children)...)
 	if b.Name == "EXAMPLE" || (b.Name == "SRC" && len(b.Parameters) >= 1 && b.Parameters[0] == "org") {
 		content = exampleBlockUnescapeRegexp.ReplaceAllString(content, "$1$2,$3")
 	}
@@ -103,9 +103,9 @@ func (w *OrgWriter) WriteBlock(b Block) {
 	}
 	w.WriteString("#+END_" + b.Name + "\n")
 
-	if b.Result != nil {
+	if b.Result.Node != nil {
 		w.WriteString("\n")
-		WriteNodes(w, b.Result)
+		WriteNodes(w, b.Result.Node)
 	}
 }
 
@@ -117,7 +117,7 @@ func (w *OrgWriter) WriteLatexBlock(b LatexBlock) {
 
 func (w *OrgWriter) WriteResult(r Result) {
 	w.WriteString("#+RESULTS:\n")
-	WriteNodes(w, r.Node)
+	WriteNodes(w, r.Node.Node)
 }
 
 func (w *OrgWriter) WriteInlineBlock(b InlineBlock) {
@@ -139,7 +139,7 @@ func (w *OrgWriter) WriteInlineBlock(b InlineBlock) {
 
 func (w *OrgWriter) WriteDrawer(d Drawer) {
 	w.WriteString(w.indent + ":" + d.Name + ":\n")
-	WriteNodes(w, d.Children...)
+	WriteNodes(w, fromRangedNodesToNodes(d.Children)...)
 	w.WriteString(w.indent + ":END:\n")
 }
 
@@ -157,7 +157,7 @@ func (w *OrgWriter) WritePropertyDrawer(d PropertyDrawer) {
 
 func (w *OrgWriter) WriteFootnoteDefinition(f FootnoteDefinition) {
 	w.WriteString(fmt.Sprintf("[fn:%s]", f.Name))
-	content := w.WriteNodesAsString(f.Children...)
+	content := w.WriteNodesAsString(fromRangedNodesToNodes(f.Children)...)
 	if content != "" && !unicode.IsSpace(rune(content[0])) {
 		w.WriteString(" ")
 	}
@@ -175,7 +175,7 @@ func (w *OrgWriter) WriteParagraph(p Paragraph) {
 func (w *OrgWriter) WriteExample(e Example) {
 	for _, n := range e.Children {
 		w.WriteString(w.indent + ":")
-		if content := w.WriteNodesAsString(n); content != "" {
+		if content := w.WriteNodesAsString(n.Node); content != "" {
 			w.WriteString(" " + content)
 		}
 		w.WriteString("\n")
@@ -279,7 +279,7 @@ func (w *OrgWriter) WriteTable(t Table) {
 			w.WriteString(`|`)
 			for _, column := range row.Columns {
 				w.WriteString(` `)
-				content := w.WriteNodesAsString(column.Children...)
+				content := w.WriteNodesAsString(fromRangedNodesToNodes(column.Children)...)
 				if content == "" {
 					content = " "
 				}
@@ -355,7 +355,7 @@ func (w *OrgWriter) WriteFootnoteLink(l FootnoteLink) {
 	w.WriteString("[fn:" + l.Name)
 	if l.Definition != nil {
 		w.WriteString(":")
-		WriteNodes(w, l.Definition.Children[0].(Paragraph).Children...)
+		WriteNodes(w, l.Definition.Children[0].Node.(Paragraph).Children...)
 	}
 	w.WriteString("]")
 }

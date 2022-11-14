@@ -7,7 +7,7 @@ import (
 
 type Drawer struct {
 	Name     string
-	Children []Node
+	Children []RangedNode
 }
 
 type PropertyDrawer struct {
@@ -27,7 +27,7 @@ func lexDrawer(line string) (token, bool) {
 	return nilToken, false
 }
 
-func (d *Document) parseDrawer(i int, parentStop stopFn) (int, Node) {
+func (d *Document) parseDrawer(i int, parentStop stopFn) (int, RangedNode) {
 	name := strings.ToUpper(d.tokens[i].content)
 	if name == "PROPERTIES" {
 		return d.parsePropertyDrawer(i, parentStop)
@@ -47,7 +47,7 @@ func (d *Document) parseDrawer(i int, parentStop stopFn) (int, Node) {
 		drawer.Children = append(drawer.Children, nodes...)
 		if i < len(d.tokens) && d.tokens[i].kind == "beginDrawer" {
 			p := Paragraph{[]Node{Text{":" + d.tokens[i].content + ":", false}}}
-			drawer.Children = append(drawer.Children, p)
+			drawer.Children = append(drawer.Children, RangedNode{p, start, i})
 			i++
 		} else {
 			break
@@ -56,10 +56,10 @@ func (d *Document) parseDrawer(i int, parentStop stopFn) (int, Node) {
 	if i < len(d.tokens) && d.tokens[i].kind == "endDrawer" {
 		i++
 	}
-	return i - start, drawer
+	return i - start, RangedNode{drawer, start, i}
 }
 
-func (d *Document) parsePropertyDrawer(i int, parentStop stopFn) (int, Node) {
+func (d *Document) parsePropertyDrawer(i int, parentStop stopFn) (int, RangedNode) {
 	drawer, start := PropertyDrawer{}, i
 	i++
 	stop := func(d *Document, i int) bool {
@@ -68,7 +68,7 @@ func (d *Document) parsePropertyDrawer(i int, parentStop stopFn) (int, Node) {
 	for ; !stop(d, i); i++ {
 		m := propertyRegexp.FindStringSubmatch(d.tokens[i].matches[0])
 		if m == nil {
-			return 0, nil
+			return 0, RangedNode{}
 		}
 		k, v := strings.ToUpper(m[2]), strings.TrimSpace(m[4])
 		drawer.Properties = append(drawer.Properties, []string{k, v})
@@ -76,9 +76,9 @@ func (d *Document) parsePropertyDrawer(i int, parentStop stopFn) (int, Node) {
 	if i < len(d.tokens) && d.tokens[i].kind == "endDrawer" {
 		i++
 	} else {
-		return 0, nil
+		return 0, RangedNode{}
 	}
-	return i - start, drawer
+	return i - start, RangedNode{drawer, start, i}
 }
 
 func (d *PropertyDrawer) Get(key string) (string, bool) {

@@ -26,7 +26,7 @@ func lexHorizontalRule(line string) (token, bool) {
 	return nilToken, false
 }
 
-func (d *Document) parseParagraph(i int, parentStop stopFn) (int, Node) {
+func (d *Document) parseParagraph(i int, parentStop stopFn) (int, RangedNode) {
 	lines, start := []string{d.tokens[i].content}, i
 	stop := func(d *Document, i int) bool {
 		return parentStop(d, i) || d.tokens[i].kind != "text" || d.tokens[i].content == ""
@@ -35,12 +35,12 @@ func (d *Document) parseParagraph(i int, parentStop stopFn) (int, Node) {
 		lvl := math.Max(float64(d.tokens[i].lvl-d.baseLvl), 0)
 		lines = append(lines, strings.Repeat(" ", int(lvl))+d.tokens[i].content)
 	}
-	consumed := i - start
-	return consumed, Paragraph{d.parseInline(strings.Join(lines, "\n"))}
+	iBlocks := d.fromRangedNodesToNodes(d.parseInline(strings.Join(lines, "\n")))
+	return i - start, RangedNode{Paragraph{iBlocks}, start, i}
 }
 
-func (d *Document) parseHorizontalRule(i int, parentStop stopFn) (int, Node) {
-	return 1, HorizontalRule{}
+func (d *Document) parseHorizontalRule(i int, parentStop stopFn) (int, RangedNode) {
+	return 1, RangedNode{HorizontalRule{}, i, i + 1}
 }
 
 func (n Paragraph) String() string      { return orgWriter.WriteNodesAsString(n) }

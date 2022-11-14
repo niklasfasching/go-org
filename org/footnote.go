@@ -6,7 +6,7 @@ import (
 
 type FootnoteDefinition struct {
 	Name     string
-	Children []Node
+	Children []RangedNode
 	Inline   bool
 }
 
@@ -19,7 +19,7 @@ func lexFootnoteDefinition(line string) (token, bool) {
 	return nilToken, false
 }
 
-func (d *Document) parseFootnoteDefinition(i int, parentStop stopFn) (int, Node) {
+func (d *Document) parseFootnoteDefinition(i int, parentStop stopFn) (int, RangedNode) {
 	start, name := i, d.tokens[i].content
 	d.tokens[i] = tokenize(d.tokens[i].matches[2])
 	stop := func(d *Document, i int) bool {
@@ -29,7 +29,7 @@ func (d *Document) parseFootnoteDefinition(i int, parentStop stopFn) (int, Node)
 	}
 	consumed, nodes := d.parseMany(i, stop)
 	definition := FootnoteDefinition{name, nodes, false}
-	return consumed, definition
+	return consumed, RangedNode{definition, i, consumed}
 }
 
 func (n FootnoteDefinition) String() string { return orgWriter.WriteNodesAsString(n) }

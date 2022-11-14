@@ -102,14 +102,18 @@ func (w *HTMLWriter) Before(d *Document) {
 		if titleDocument.Error == nil {
 			simpleTitle := false
 			if len(titleDocument.Nodes) == 1 {
-				switch p := titleDocument.Nodes[0].(type) {
+				switch p := titleDocument.Nodes[0].Node.(type) {
 				case Paragraph:
 					simpleTitle = true
 					title = w.WriteNodesAsString(p.Children...)
 				}
 			}
 			if !simpleTitle {
-				title = w.WriteNodesAsString(titleDocument.Nodes...)
+				var nodes []Node
+				for _, n := range titleDocument.Nodes {
+					nodes = append(nodes, n.Node)
+				}
+				title = w.WriteNodesAsString(nodes...)
 			}
 		}
 		w.WriteString(fmt.Sprintf(`<h1 class="title">%s</h1>`+"\n", title))
@@ -128,7 +132,7 @@ func (w *HTMLWriter) WriteComment(Comment)               {}
 func (w *HTMLWriter) WritePropertyDrawer(PropertyDrawer) {}
 
 func (w *HTMLWriter) WriteBlock(b Block) {
-	content, params := w.blockContent(b.Name, b.Children), b.ParameterMap()
+	content, params := w.blockContent(b.Name, w.document.fromRangedNodesToNodes(b.Children)), b.ParameterMap()
 
 	switch b.Name {
 	case "SRC":
@@ -157,8 +161,8 @@ func (w *HTMLWriter) WriteBlock(b Block) {
 		w.WriteString(content + "</div>\n")
 	}
 
-	if b.Result != nil && params[":exports"] != "code" && params[":exports"] != "none" {
-		WriteNodes(w, b.Result)
+	if b.Result.Node != nil && params[":exports"] != "code" && params[":exports"] != "none" {
+		WriteNodes(w, b.Result.Node)
 	}
 }
 
@@ -167,7 +171,7 @@ func (w *HTMLWriter) WriteLatexBlock(b LatexBlock) {
 	w.WriteString("\n")
 }
 
-func (w *HTMLWriter) WriteResult(r Result) { WriteNodes(w, r.Node) }
+func (w *HTMLWriter) WriteResult(r Result) { WriteNodes(w, r.Node.Node) }
 
 func (w *HTMLWriter) WriteInlineBlock(b InlineBlock) {
 	content := w.blockContent(strings.ToUpper(b.Name), b.Children)
@@ -184,7 +188,7 @@ func (w *HTMLWriter) WriteInlineBlock(b InlineBlock) {
 }
 
 func (w *HTMLWriter) WriteDrawer(d Drawer) {
-	WriteNodes(w, d.Children...)
+	WriteNodes(w, w.document.fromRangedNodesToNodes(d.Children)...)
 }
 
 func (w *HTMLWriter) WriteKeyword(k Keyword) {
@@ -228,7 +232,7 @@ func (w *HTMLWriter) WriteFootnotes(d *Document) {
 		w.WriteString(`<div class="footnote-definition">` + "\n")
 		w.WriteString(fmt.Sprintf(`<sup id="footnote-%d"><a href="#footnote-reference-%d">%d</a></sup>`, id, id, id) + "\n")
 		w.WriteString(`<div class="footnote-body">` + "\n")
-		WriteNodes(w, definition.Children...)
+		WriteNodes(w, w.document.fromRangedNodesToNodes(definition.Children)...)
 		w.WriteString("</div>\n</div>\n")
 	}
 	w.WriteString("</div>\n</div>\n")
@@ -251,7 +255,7 @@ func (w *HTMLWriter) writeSection(section *Section, maxLvl int) {
 	// NOTE: To satisfy hugo ExtractTOC() check we cannot use `<li>\n` here. Doesn't really matter, just a note.
 	w.WriteString("<li>")
 	h := section.Headline
-	title := cleanHeadlineTitleForHTMLAnchorRegexp.ReplaceAllString(w.WriteNodesAsString(h.Title...), "")
+	title := cleanHeadlineTitleForHTMLAnchorRegexp.ReplaceAllString(w.WriteNodesAsString(w.document.fromRangedNodesToNodes(h.Title)...), "")
 	w.WriteString(fmt.Sprintf("<a href=\"#%s\">%s</a>\n", h.ID(), title))
 	hasChildren := false
 	for _, section := range section.Children {
@@ -281,7 +285,7 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 		w.WriteString(fmt.Sprintf(`<span class="priority">[%s]</span>`, h.Priority) + "\n")
 	}
 
-	WriteNodes(w, h.Title...)
+	WriteNodes(w, w.document.fromRangedNodesToNodes(h.Title)...)
 	if w.document.GetOption("tags") != "nil" && len(h.Tags) != 0 {
 		tags := make([]string, len(h.Tags))
 		for i, tag := range h.Tags {
@@ -291,7 +295,7 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 		w.WriteString(fmt.Sprintf(`<span class="tags">%s</span>`, strings.Join(tags, "&#xa0;")))
 	}
 	w.WriteString(fmt.Sprintf("\n</h%d>\n", h.Lvl+1))
-	if content := w.WriteNodesAsString(h.Children...); content != "" {
+	if content := w.WriteNodesAsString(w.document.fromRangedNodesToNodes(h.Children)...); content != "" {
 		w.WriteString(fmt.Sprintf(`<div id="outline-text-%s" class="outline-text-%d">`, h.ID(), h.Lvl+1) + "\n" + content + "</div>\n")
 	}
 	w.WriteString("</div>\n")
@@ -419,7 +423,11 @@ func (w *HTMLWriter) WriteMacro(m Macro) {
 		if macroDocument.Error != nil {
 			w.log.Printf("bad macro: %s -> %s: %v", m.Name, macro, macroDocument.Error)
 		}
-		WriteNodes(w, macroDocument.Nodes...)
+		var nodes []Node
+		for _, n := range macroDocument.Nodes {
+			nodes = append(nodes, n.Node)
+		}
+		WriteNodes(w, nodes...)
 	}
 }
 
@@ -492,7 +500,7 @@ func (w *HTMLWriter) WriteExample(e Example) {
 	w.WriteString(`<pre class="example">` + "\n")
 	if len(e.Children) != 0 {
 		for _, n := range e.Children {
-			WriteNodes(w, n)
+			WriteNodes(w, n.Node)
 			w.WriteString("\n")
 		}
 	}
@@ -569,7 +577,7 @@ func (w *HTMLWriter) writeTableColumns(columns []Column, tag string) {
 		} else {
 			w.WriteString(fmt.Sprintf(`<%s class="align-%s">`, tag, column.Align))
 		}
-		WriteNodes(w, column.Children...)
+		WriteNodes(w, w.document.fromRangedNodesToNodes(column.Children)...)
 		w.WriteString(fmt.Sprintf("</%s>\n", tag))
 	}
 	w.WriteString("</tr>\n")

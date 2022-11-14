@@ -19,7 +19,7 @@ type Row struct {
 }
 
 type Column struct {
-	Children []Node
+	Children []RangedNode
 	*ColumnInfo
 }
 
@@ -43,7 +43,7 @@ func lexTable(line string) (token, bool) {
 	return nilToken, false
 }
 
-func (d *Document) parseTable(i int, parentStop stopFn) (int, Node) {
+func (d *Document) parseTable(i int, parentStop stopFn) (int, RangedNode) {
 	rawRows, separatorIndices, start := [][]string{}, []int{}, i
 	for ; !parentStop(d, i); i++ {
 		if t := d.tokens[i]; t.kind == "tableRow" {
@@ -74,7 +74,7 @@ func (d *Document) parseTable(i int, parentStop stopFn) (int, Node) {
 		}
 		table.Rows = append(table.Rows, row)
 	}
-	return i - start, table
+	return i - start, RangedNode{table, start, i}
 }
 
 func getColumnInfos(rows [][]string) []ColumnInfo {

@@ -25,9 +25,9 @@ type Headline struct {
 	Status     string
 	Priority   string
 	Properties *PropertyDrawer
-	Title      []Node
+	Title      []RangedNode
 	Tags       []string
-	Children   []Node
+	Children   []RangedNode
 }
 
 var headlineRegexp = regexp.MustCompile(`^([*]+)\s+(.*)`)
@@ -40,7 +40,7 @@ func lexHeadline(line string) (token, bool) {
 	return nilToken, false
 }
 
-func (d *Document) parseHeadline(i int, parentStop stopFn) (int, Node) {
+func (d *Document) parseHeadline(i int, parentStop stopFn) (int, RangedNode) {
 	t, headline := d.tokens[i], Headline{}
 	headline.Lvl = len(t.matches[1])
 
@@ -75,13 +75,13 @@ func (d *Document) parseHeadline(i int, parentStop stopFn) (int, Node) {
 	}
 	consumed, nodes := d.parseMany(i+1, stop)
 	if len(nodes) > 0 {
-		if d, ok := nodes[0].(PropertyDrawer); ok {
+		if d, ok := nodes[0].Node.(PropertyDrawer); ok {
 			headline.Properties = &d
 			nodes = nodes[1:]
 		}
 	}
 	headline.Children = nodes
-	return consumed + 1, headline
+	return consumed + 1, RangedNode{headline, i, consumed + 1}
 }
 
 func trimFastTags(tags []string) []string {

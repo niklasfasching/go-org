@@ -49,33 +49,35 @@ func lexKeywordOrComment(line string) (token, bool) {
 	return nilToken, false
 }
 
-func (d *Document) parseComment(i int, stop stopFn) (int, Node) {
-	return 1, Comment{d.tokens[i].content}
+func (d *Document) parseComment(i int, stop stopFn) (int, RangedNode) {
+	return 1, RangedNode{Comment{d.tokens[i].content}, i, i + 1}
 }
 
-func (d *Document) parseKeyword(i int, stop stopFn) (int, Node) {
+func (d *Document) parseKeyword(i int, stop stopFn) (int, RangedNode) {
 	k := parseKeyword(d.tokens[i])
 	switch k.Key {
 	case "NAME":
 		return d.parseNodeWithName(k, i, stop)
 	case "SETUPFILE":
-		return d.loadSetupFile(k)
+		c, node := d.loadSetupFile(k)
+		return c, RangedNode{node, i, i + 1}
 	case "INCLUDE":
-		return d.parseInclude(k)
+		c, node := d.parseInclude(k)
+		return c, RangedNode{node, i, i + 1}
 	case "LINK":
 		if parts := strings.SplitN(k.Value, " ", 2); len(parts) == 2 {
 			d.Links[parts[0]] = parts[1]
 		}
-		return 1, k
+		return 1, RangedNode{k, i, i + 1}
 	case "MACRO":
 		if parts := strings.Split(k.Value, " "); len(parts) >= 2 {
 			d.Macros[parts[0]] = parts[1]
 		}
-		return 1, k
+		return 1, RangedNode{k, i, i + 1}
 	case "CAPTION", "ATTR_HTML":
 		consumed, node := d.parseAffiliated(i, stop)
 		if consumed != 0 {
-			return consumed, node
+			return consumed, RangedNode{node, i, consumed}
 		}
 		fallthrough
 	default:
@@ -84,20 +86,20 @@ func (d *Document) parseKeyword(i int, stop stopFn) (int, Node) {
 		} else {
 			d.BufferSettings[k.Key] = k.Value
 		}
-		return 1, k
+		return 1, RangedNode{k, i, i + 1}
 	}
 }
 
-func (d *Document) parseNodeWithName(k Keyword, i int, stop stopFn) (int, Node) {
+func (d *Document) parseNodeWithName(k Keyword, i int, stop stopFn) (int, RangedNode) {
 	if stop(d, i+1) {
-		return 0, nil
+		return 0, RangedNode{}
 	}
 	consumed, node := d.parseOne(i+1, stop)
-	if consumed == 0 || node == nil {
-		return 0, nil
+	if consumed == 0 || node.Node == nil {
+		return 0, RangedNode{}
 	}
-	d.NamedNodes[k.Value] = node
-	return consumed + 1, NodeWithName{k.Value, node}
+	d.NamedNodes[k.Value] = node.Node
+	return consumed + 1, RangedNode{NodeWithName{k.Value, node.Node}, i, consumed}
 }
 
 func (d *Document) parseAffiliated(i int, stop stopFn) (int, Node) {
@@ -105,7 +107,7 @@ func (d *Document) parseAffiliated(i int, stop stopFn) (int, Node) {
 	for ; !stop(d, i) && d.tokens[i].kind == "keyword"; i++ {
 		switch k := parseKeyword(d.tokens[i]); k.Key {
 		case "CAPTION":
-			meta.Caption = append(meta.Caption, d.parseInline(k.Value))
+			meta.Caption = append(meta.Caption, d.fromRangedNodesToNodes(d.parseInline(k.Value)))
 		case "ATTR_HTML":
 			attributes, rest := []string{}, k.Value
 			for {
@@ -132,11 +134,11 @@ func (d *Document) parseAffiliated(i int, stop stopFn) (int, Node) {
 		return 0, nil
 	}
 	consumed, node := d.parseOne(i, stop)
-	if consumed == 0 || node == nil {
+	if consumed == 0 || node.Node == nil {
 		return 0, nil
 	}
 	i += consumed
-	return i - start, NodeWithMeta{node, meta}
+	return i - start, NodeWithMeta{node.Node, meta}
 }
 
 func parseKeyword(t token) Keyword {
@@ -160,7 +162,7 @@ func (d *Document) parseInclude(k Keyword) (int, Node) {
 				d.Log.Printf("Bad include %#v: %s", k, err)
 				return k
 			}
-			return Block{strings.ToUpper(kind), []string{lang}, d.parseRawInline(string(bs)), nil}
+			return Block{strings.ToUpper(kind), []string{lang}, d.parseRawInline(string(bs)), RangedNode{}}
 		}
 	}
 	return 1, Include{k, resolve}

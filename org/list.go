@@ -61,7 +61,7 @@ func listKind(t token) (string, string) {
 	return kind, kind
 }
 
-func (d *Document) parseList(i int, parentStop stopFn) (int, Node) {
+func (d *Document) parseList(i int, parentStop stopFn) (int, RangedNode) {
 	start, lvl := i, d.tokens[i].lvl
 	listMainKind, kind := listKind(d.tokens[i])
 	list := List{Kind: kind}
@@ -77,7 +77,7 @@ func (d *Document) parseList(i int, parentStop stopFn) (int, Node) {
 		i += consumed
 		list.Items = append(list.Items, node)
 	}
-	return i - start, list
+	return i - start, RangedNode{list, start, i}
 }
 
 func (d *Document) parseListItem(l List, i int, parentStop stopFn) (int, Node) {
@@ -109,11 +109,11 @@ func (d *Document) parseListItem(l List, i int, parentStop stopFn) (int, Node) {
 	for !stop(d, i) && (i <= start+1 || !isSecondBlankLine(d, i)) {
 		consumed, node := d.parseOne(i, stop)
 		i += consumed
-		nodes = append(nodes, node)
+		nodes = append(nodes, node.Node)
 	}
 	d.baseLvl = originalBaseLvl
 	if l.Kind == "descriptive" {
-		return i - start, DescriptiveListItem{bullet, status, d.parseInline(dterm), nodes}
+		return i - start, DescriptiveListItem{bullet, status, d.fromRangedNodesToNodes(d.parseInline(dterm)), nodes}
 	}
 	return i - start, ListItem{bullet, status, value, nodes}
 }

@@ -38,11 +38,17 @@ type Document struct {
 	baseLvl        int
 	Macros         map[string]string
 	Links          map[string]string
-	Nodes          []Node
+	Nodes          []RangedNode
 	NamedNodes     map[string]Node
 	Outline        Outline           // Outline is a Table Of Contents for the document and contains all sections (headline + content).
 	BufferSettings map[string]string // Settings contains all settings that were parsed from keywords.
 	Error          error
+}
+
+type RangedNode struct {
+	Node  Node
+	Start int
+	End   int
 }
 
 // Node represents a parsed node of the document.
@@ -110,7 +116,11 @@ func (d *Document) Write(w Writer) (out string, err error) {
 		return "", fmt.Errorf("could not write output: parse was not called")
 	}
 	w.Before(d)
-	WriteNodes(w, d.Nodes...)
+	var nodes []Node
+	for _, v := range d.Nodes {
+		nodes = append(nodes, v.Node)
+	}
+	WriteNodes(w, nodes...)
 	w.After(d)
 	return w.String(), err
 }
@@ -202,7 +212,19 @@ func (d *Document) GetOption(key string) string {
 	return value
 }
 
-func (d *Document) parseOne(i int, stop stopFn) (consumed int, node Node) {
+func fromRangedNodesToNodes(rn []RangedNode) (nodes []Node) {
+	for _, n := range rn {
+		nodes = append(nodes, n.Node)
+	}
+
+	return nodes
+}
+
+func (d *Document) fromRangedNodesToNodes(rn []RangedNode) (nodes []Node) {
+	return fromRangedNodesToNodes(rn)
+}
+
+func (d *Document) parseOne(i int, stop stopFn) (consumed int, node RangedNode) {
 	switch d.tokens[i].kind {
 	case "unorderedList", "orderedList":
 		consumed, node = d.parseList(i, stop)
@@ -241,12 +263,12 @@ func (d *Document) parseOne(i int, stop stopFn) (consumed int, node Node) {
 	return d.parseOne(i, stop)
 }
 
-func (d *Document) parseMany(i int, stop stopFn) (int, []Node) {
-	start, nodes := i, []Node{}
+func (d *Document) parseMany(i int, stop stopFn) (int, []RangedNode) {
+	start, nodes := i, []RangedNode{}
 	for i < len(d.tokens) && !stop(d, i) {
 		consumed, node := d.parseOne(i, stop)
-		i += consumed
 		nodes = append(nodes, node)
+		i += consumed
 	}
 	return i - start, nodes
 }

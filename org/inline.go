@@ -87,7 +87,7 @@ var latexFragmentPairs = map[string]string{
 	`$`:  `$`,
 }
 
-func (d *Document) parseInline(input string) (nodes []Node) {
+func (d *Document) parseInline(input string) (nodes []RangedNode) {
 	previous, current := 0, 0
 	for current < len(input) {
 		rewind, consumed, node := 0, 0, (Node)(nil)
@@ -120,10 +120,10 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 		current -= rewind
 		if consumed != 0 {
 			if current > previous {
-				nodes = append(nodes, Text{input[previous:current], false})
+				nodes = append(nodes, RangedNode{Text{input[previous:current], false}, current, consumed})
 			}
 			if node != nil {
-				nodes = append(nodes, node)
+				nodes = append(nodes, RangedNode{node, current, consumed})
 			}
 			current += consumed
 			previous = current
@@ -133,20 +133,20 @@ func (d *Document) parseInline(input string) (nodes []Node) {
 	}
 
 	if previous < len(input) {
-		nodes = append(nodes, Text{input[previous:], false})
+		nodes = append(nodes, RangedNode{Text{input[previous:], false}, previous, len(input)})
 	}
 	return nodes
 }
 
-func (d *Document) parseRawInline(input string) (nodes []Node) {
+func (d *Document) parseRawInline(input string) (nodes []RangedNode) {
 	previous, current := 0, 0
 	for current < len(input) {
 		if input[current] == '\n' {
 			consumed, node := d.parseLineBreak(input, current)
 			if current > previous {
-				nodes = append(nodes, Text{input[previous:current], true})
+				nodes = append(nodes, RangedNode{Text{input[previous:current], true}, previous, current})
 			}
-			nodes = append(nodes, node)
+			nodes = append(nodes, RangedNode{node, previous, current})
 			current += consumed
 			previous = current
 		} else {
@@ -154,7 +154,7 @@ func (d *Document) parseRawInline(input string) (nodes []Node) {
 		}
 	}
 	if previous < len(input) {
-		nodes = append(nodes, Text{input[previous:], true})
+		nodes = append(nodes, RangedNode{Text{input[previous:], true}, previous, len(input)})
 	}
 	return nodes
 }
@@ -173,14 +173,14 @@ func (d *Document) parseInlineBlock(input string, start int) (int, int, Node) {
 		return 0, 0, nil
 	}
 	if m := inlineBlockRegexp.FindStringSubmatch(input[start-3:]); m != nil {
-		return 3, len(m[0]), InlineBlock{"src", strings.Fields(m[1] + " " + m[3]), d.parseRawInline(m[4])}
+		return 3, len(m[0]), InlineBlock{"src", strings.Fields(m[1] + " " + m[3]), d.fromRangedNodesToNodes(d.parseRawInline(m[4]))}
 	}
 	return 0, 0, nil
 }
 
 func (d *Document) parseInlineExportBlock(input string, start int) (int, Node) {
 	if m := inlineExportBlockRegexp.FindStringSubmatch(input[start:]); m != nil {
-		return len(m[0]), InlineBlock{"export", m[1:2], d.parseRawInline(m[2])}
+		return len(m[0]), InlineBlock{"export", m[1:2], d.fromRangedNodesToNodes(d.parseRawInline(m[2]))}
 	}
 	return 0, nil
 }
@@ -201,7 +201,7 @@ func (d *Document) parseExplicitLineBreakOrLatexFragment(input string, start int
 			if open, content, close := m[1], m[2], m[3]; open == close {
 				openingPair, closingPair := `\begin{`+open+`}`, `\end{`+close+`}`
 				i := strings.Index(input[start:], closingPair)
-				return i + len(closingPair), LatexFragment{openingPair, closingPair, d.parseRawInline(content)}
+				return i + len(closingPair), LatexFragment{openingPair, closingPair, d.fromRangedNodesToNodes(d.parseRawInline(content))}
 			}
 		}
 	}
@@ -219,7 +219,7 @@ func (d *Document) parseLatexFragment(input string, start int, pairLength int) (
 	closingPair := latexFragmentPairs[openingPair]
 	if i := strings.Index(input[start+pairLength:], closingPair); i != -1 {
 		content := d.parseRawInline(input[start+pairLength : start+pairLength+i])
-		return i + pairLength + pairLength, LatexFragment{openingPair, closingPair, content}
+		return i + pairLength + pairLength, LatexFragment{openingPair, closingPair, d.fromRangedNodesToNodes(content)}
 	}
 	return 0, nil
 }
@@ -245,7 +245,8 @@ func (d *Document) parseOpeningBracket(input string, start int) (int, Node) {
 	if len(input[start:]) >= 2 && input[start] == '[' && input[start+1] == '[' {
 		return d.parseRegularLink(input, start)
 	} else if footnoteRegexp.MatchString(input[start:]) {
-		return d.parseFootnoteReference(input, start)
+		c, node := d.parseFootnoteReference(input, start)
+		return c, node.Node
 	} else if statisticsTokenRegexp.MatchString(input[start:]) {
 		return d.parseStatisticToken(input, start)
 	}
@@ -259,19 +260,19 @@ func (d *Document) parseMacro(input string, start int) (int, Node) {
 	return 0, nil
 }
 
-func (d *Document) parseFootnoteReference(input string, start int) (int, Node) {
+func (d *Document) parseFootnoteReference(input string, start int) (int, RangedNode) {
 	if m := footnoteRegexp.FindStringSubmatch(input[start:]); m != nil {
 		name, definition := m[1], m[3]
 		if name == "" && definition == "" {
-			return 0, nil
+			return 0, RangedNode{}
 		}
 		link := FootnoteLink{name, nil}
 		if definition != "" {
-			link.Definition = &FootnoteDefinition{name, []Node{Paragraph{d.parseInline(definition)}}, true}
+			link.Definition = &FootnoteDefinition{name, []RangedNode{RangedNode{Paragraph{d.fromRangedNodesToNodes(d.parseInline(definition))}, start, len(m[0])}}, true}
 		}
-		return len(m[0]), link
+		return len(m[0]), RangedNode{link, start, len(m[0])}
 	}
-	return 0, nil
+	return 0, RangedNode{}
 }
 
 func (d *Document) parseStatisticToken(input string, start int) (int, Node) {
@@ -319,7 +320,7 @@ func (d *Document) parseRegularLink(input string, start int) (int, Node) {
 	rawLinkParts := strings.Split(input[2:end], "][")
 	description, link := ([]Node)(nil), rawLinkParts[0]
 	if len(rawLinkParts) == 2 {
-		link, description = rawLinkParts[0], d.parseInline(rawLinkParts[1])
+		link, description = rawLinkParts[0], d.fromRangedNodesToNodes(d.parseInline(rawLinkParts[1]))
 	}
 	if strings.ContainsRune(link, '\n') {
 		return 0, nil
@@ -360,9 +361,9 @@ func (d *Document) parseEmphasis(input string, start int, isRaw bool) (int, Node
 
 		if input[i] == marker && i != start+1 && hasValidPostAndBorderChars(input, i) {
 			if isRaw {
-				return i + 1 - start, Emphasis{input[start : start+1], d.parseRawInline(input[start+1 : i])}
+				return i + 1 - start, Emphasis{input[start : start+1], d.fromRangedNodesToNodes(d.parseRawInline(input[start+1 : i]))}
 			}
-			return i + 1 - start, Emphasis{input[start : start+1], d.parseInline(input[start+1 : i])}
+			return i + 1 - start, Emphasis{input[start : start+1], d.fromRangedNodesToNodes(d.parseInline(input[start+1 : i]))}
 		}
 	}
 	return 0, nil

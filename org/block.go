@@ -10,16 +10,16 @@ import (
 type Block struct {
 	Name       string
 	Parameters []string
-	Children   []Node
-	Result     Node
+	Children   []RangedNode
+	Result     RangedNode
 }
 
 type Result struct {
-	Node Node
+	Node RangedNode
 }
 
 type Example struct {
-	Children []Node
+	Children []RangedNode
 }
 
 type LatexBlock struct {
@@ -68,14 +68,14 @@ func lexExample(line string) (token, bool) {
 
 func isRawTextBlock(name string) bool { return name == "SRC" || name == "EXAMPLE" || name == "EXPORT" }
 
-func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
+func (d *Document) parseBlock(i int, parentStop stopFn) (int, RangedNode) {
 	t, start := d.tokens[i], i
 	name, parameters := t.content, splitParameters(t.matches[3])
 	trim := trimIndentUpTo(d.tokens[i].lvl)
 	stop := func(d *Document, i int) bool {
 		return i >= len(d.tokens) || (d.tokens[i].kind == "endBlock" && d.tokens[i].content == name)
 	}
-	block, i := Block{name, parameters, nil, nil}, i+1
+	block, i := Block{name, parameters, nil, RangedNode{}}, i+1
 	if isRawTextBlock(name) {
 		rawText := ""
 		for ; !stop(d, i); i++ {
@@ -91,14 +91,14 @@ func (d *Document) parseBlock(i int, parentStop stopFn) (int, Node) {
 		i += consumed
 	}
 	if i >= len(d.tokens) || d.tokens[i].kind != "endBlock" || d.tokens[i].content != name {
-		return 0, nil
+		return 0, RangedNode{}
 	}
 	if name == "SRC" {
 		consumed, result := d.parseSrcBlockResult(i+1, parentStop)
 		block.Result = result
 		i += consumed
 	}
-	return i + 1 - start, block
+	return i + 1 - start, RangedNode{block, start, i + 1}
 }
 
 func (d *Document) parseLatexBlock(i int, parentStop stopFn) (int, Node) {
@@ -117,31 +117,31 @@ func (d *Document) parseLatexBlock(i int, parentStop stopFn) (int, Node) {
 	return i + 1 - start, LatexBlock{d.parseRawInline(rawText)}
 }
 
-func (d *Document) parseSrcBlockResult(i int, parentStop stopFn) (int, Node) {
+func (d *Document) parseSrcBlockResult(i int, parentStop stopFn) (int, RangedNode) {
 	start := i
 	for ; !parentStop(d, i) && d.tokens[i].kind == "text" && d.tokens[i].content == ""; i++ {
 	}
 	if parentStop(d, i) || d.tokens[i].kind != "result" {
-		return 0, nil
+		return 0, RangedNode{}
 	}
 	consumed, result := d.parseResult(i, parentStop)
 	return (i - start) + consumed, result
 }
 
-func (d *Document) parseExample(i int, parentStop stopFn) (int, Node) {
+func (d *Document) parseExample(i int, parentStop stopFn) (int, RangedNode) {
 	example, start := Example{}, i
 	for ; !parentStop(d, i) && d.tokens[i].kind == "example"; i++ {
-		example.Children = append(example.Children, Text{d.tokens[i].content, true})
+		example.Children = append(example.Children, RangedNode{Text{d.tokens[i].content, true}, start, i})
 	}
-	return i - start, example
+	return i - start, RangedNode{example, start, i}
 }
 
-func (d *Document) parseResult(i int, parentStop stopFn) (int, Node) {
+func (d *Document) parseResult(i int, parentStop stopFn) (int, RangedNode) {
 	if i+1 >= len(d.tokens) {
-		return 0, nil
+		return 0, RangedNode{}
 	}
 	consumed, node := d.parseOne(i+1, parentStop)
-	return consumed + 1, Result{node}
+	return consumed + 1, RangedNode{Result{node}, i, consumed + 1}
 }
 
 func trimIndentUpTo(max int) func(string) string {
