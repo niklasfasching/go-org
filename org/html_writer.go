@@ -21,6 +21,21 @@ type HTMLWriter struct {
 	ExtendingWriter     Writer
 	HighlightCodeBlock  func(source, lang string, inline bool, params map[string]string) string
 	PrettyRelativeLinks bool
+	// TopLevelHLevel determines what HTML heading to use for a
+	// level-1 Org headline, and by extension further headings.
+	//
+	// For example, a value of 1 means a top-level Org headline will be
+	// rendered as an <h1> element, a level-2 Org headline will be
+	// rendered as an <h2> element, and so on.
+	//
+	// A value of 2 (default) means a top-level Org headline will be
+	// rendered as an <h2> element, a level-2 Org headline will be
+	// rendered as an <h3> element, and so on.
+	//
+	// This setting and its default behavior match Org's
+	// :html-toplevel-hlevel export property and the associated
+	// org-html-toplevel-hlevel variable.
+	TopLevelHLevel int
 
 	strings.Builder
 	document   *Document
@@ -72,6 +87,7 @@ func NewHTMLWriter() *HTMLWriter {
 			}
 			return fmt.Sprintf("<div class=\"highlight\">\n<pre>\n%s\n</pre>\n</div>", html.EscapeString(source))
 		},
+		TopLevelHLevel: 2,
 		footnotes: &footnotes{
 			mapping: map[string]int{},
 		},
@@ -272,8 +288,10 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 		return
 	}
 
-	w.WriteString(fmt.Sprintf(`<div id="outline-container-%s" class="outline-%d">`, h.ID(), h.Lvl+1) + "\n")
-	w.WriteString(fmt.Sprintf(`<h%d id="%s">`, h.Lvl+1, h.ID()) + "\n")
+	level := (h.Lvl - 1) + w.TopLevelHLevel
+
+	w.WriteString(fmt.Sprintf(`<div id="outline-container-%s" class="outline-%d">`, h.ID(), level) + "\n")
+	w.WriteString(fmt.Sprintf(`<h%d id="%s">`, level, h.ID()) + "\n")
 	if w.document.GetOption("todo") != "nil" && h.Status != "" {
 		w.WriteString(fmt.Sprintf(`<span class="todo">%s</span>`, h.Status) + "\n")
 	}
@@ -290,9 +308,9 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 		w.WriteString("&#xa0;&#xa0;&#xa0;")
 		w.WriteString(fmt.Sprintf(`<span class="tags">%s</span>`, strings.Join(tags, "&#xa0;")))
 	}
-	w.WriteString(fmt.Sprintf("\n</h%d>\n", h.Lvl+1))
+	w.WriteString(fmt.Sprintf("\n</h%d>\n", level))
 	if content := w.WriteNodesAsString(h.Children...); content != "" {
-		w.WriteString(fmt.Sprintf(`<div id="outline-text-%s" class="outline-text-%d">`, h.ID(), h.Lvl+1) + "\n" + content + "</div>\n")
+		w.WriteString(fmt.Sprintf(`<div id="outline-text-%s" class="outline-text-%d">`, h.ID(), level) + "\n" + content + "</div>\n")
 	}
 	w.WriteString("</div>\n")
 }
