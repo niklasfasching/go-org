@@ -293,17 +293,17 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 	w.WriteString(fmt.Sprintf(`<div id="outline-container-%s" class="outline-%d">`, h.ID(), level) + "\n")
 	w.WriteString(fmt.Sprintf(`<h%d id="%s">`, level, h.ID()) + "\n")
 	if w.document.GetOption("todo") != "nil" && h.Status != "" {
-		w.WriteString(fmt.Sprintf(`<span class="todo">%s</span>`, h.Status) + "\n")
+		w.WriteString(fmt.Sprintf(`<span class="todo %s">%s</span>`, h.Status, h.Status) + "\n")
 	}
 	if w.document.GetOption("pri") != "nil" && h.Priority != "" {
-		w.WriteString(fmt.Sprintf(`<span class="priority">[%s]</span>`, h.Priority) + "\n")
+		w.WriteString(fmt.Sprintf(`<span class="priority %s">[%s]</span>`, h.Priority, h.Priority) + "\n")
 	}
 
 	WriteNodes(w, h.Title...)
 	if w.document.GetOption("tags") != "nil" && len(h.Tags) != 0 {
 		tags := make([]string, len(h.Tags))
 		for i, tag := range h.Tags {
-			tags[i] = fmt.Sprintf(`<span>%s</span>`, tag)
+			tags[i] = fmt.Sprintf(`<span class="%s">%s</span>`, tag, tag)
 		}
 		w.WriteString("&#xa0;&#xa0;&#xa0;")
 		w.WriteString(fmt.Sprintf(`<span class="tags">%s</span>`, strings.Join(tags, "&#xa0;")))
