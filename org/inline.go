@@ -400,7 +400,7 @@ func isValidPostChar(r rune) bool {
 func isValidBorderChar(r rune) bool { return !unicode.IsSpace(r) }
 
 func (l RegularLink) Kind() string {
-	description := String(l.Description)
+	description := String(l.Description...)
 	descProtocol, descExt := strings.SplitN(description, ":", 2)[0], path.Ext(description)
 	if ok := descProtocol == "file" || descProtocol == "http" || descProtocol == "https"; ok && imageExtensionRegexp.MatchString(descExt) {
 		return "image"
@@ -420,14 +420,14 @@ func (l RegularLink) Kind() string {
 	return "regular"
 }
 
-func (n Text) String() string              { return orgWriter.WriteNodesAsString(n) }
-func (n LineBreak) String() string         { return orgWriter.WriteNodesAsString(n) }
-func (n ExplicitLineBreak) String() string { return orgWriter.WriteNodesAsString(n) }
-func (n StatisticToken) String() string    { return orgWriter.WriteNodesAsString(n) }
-func (n Emphasis) String() string          { return orgWriter.WriteNodesAsString(n) }
-func (n InlineBlock) String() string       { return orgWriter.WriteNodesAsString(n) }
-func (n LatexFragment) String() string     { return orgWriter.WriteNodesAsString(n) }
-func (n FootnoteLink) String() string      { return orgWriter.WriteNodesAsString(n) }
-func (n RegularLink) String() string       { return orgWriter.WriteNodesAsString(n) }
-func (n Macro) String() string             { return orgWriter.WriteNodesAsString(n) }
-func (n Timestamp) String() string         { return orgWriter.WriteNodesAsString(n) }
+func (n Text) String() string              { return String(n) }
+func (n LineBreak) String() string         { return String(n) }
+func (n ExplicitLineBreak) String() string { return String(n) }
+func (n StatisticToken) String() string    { return String(n) }
+func (n Emphasis) String() string          { return String(n) }
+func (n InlineBlock) String() string       { return String(n) }
+func (n LatexFragment) String() string     { return String(n) }
+func (n FootnoteLink) String() string      { return String(n) }
+func (n RegularLink) String() string       { return String(n) }
+func (n Macro) String() string             { return String(n) }
+func (n Timestamp) String() string         { return String(n) }

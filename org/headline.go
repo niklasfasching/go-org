@@ -126,4 +126,4 @@ func (parent *Section) add(current *Section) {
 	}
 }
 
-func (n Headline) String() string { return orgWriter.WriteNodesAsString(n) }
+func (n Headline) String() string { return String(n) }

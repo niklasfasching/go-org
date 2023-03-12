@@ -43,5 +43,5 @@ func (d *Document) parseHorizontalRule(i int, parentStop stopFn) (int, Node) {
 	return 1, HorizontalRule{}
 }
 
-func (n Paragraph) String() string      { return orgWriter.WriteNodesAsString(n) }
-func (n HorizontalRule) String() string { return orgWriter.WriteNodesAsString(n) }
+func (n Paragraph) String() string      { return String(n) }
+func (n HorizontalRule) String() string { return String(n) }

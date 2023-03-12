@@ -105,7 +105,7 @@ func ReadConfig(configFile string) (*Config, error) {
 			if block.Parameters[0] != "html" {
 				continue
 			}
-			if _, err := config.Template.New(name).Parse(org.String(block.Children)); err != nil {
+			if _, err := config.Template.New(name).Parse(org.String(block.Children...)); err != nil {
 				return nil, err
 			}
 		}

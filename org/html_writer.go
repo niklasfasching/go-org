@@ -409,14 +409,14 @@ func (w *HTMLWriter) WriteRegularLink(l RegularLink) {
 		if l.Description == nil {
 			w.WriteString(fmt.Sprintf(`<img src="%s" alt="%s" title="%s" />`, url, url, url))
 		} else {
-			description := strings.TrimPrefix(String(l.Description), "file:")
+			description := strings.TrimPrefix(String(l.Description...), "file:")
 			w.WriteString(fmt.Sprintf(`<a href="%s"><img src="%s" alt="%s" /></a>`, url, description, description))
 		}
 	case "video":
 		if l.Description == nil {
 			w.WriteString(fmt.Sprintf(`<video src="%s" title="%s">%s</video>`, url, url, url))
 		} else {
-			description := strings.TrimPrefix(String(l.Description), "file:")
+			description := strings.TrimPrefix(String(l.Description...), "file:")
 			w.WriteString(fmt.Sprintf(`<a href="%s"><video src="%s" title="%s"></video></a>`, url, description, description))
 		}
 	default:

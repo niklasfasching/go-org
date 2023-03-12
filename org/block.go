@@ -177,7 +177,7 @@ func (b Block) ParameterMap() map[string]string {
 	return m
 }
 
-func (n Example) String() string    { return orgWriter.WriteNodesAsString(n) }
-func (n Block) String() string      { return orgWriter.WriteNodesAsString(n) }
-func (n LatexBlock) String() string { return orgWriter.WriteNodesAsString(n) }
-func (n Result) String() string     { return orgWriter.WriteNodesAsString(n) }
+func (n Example) String() string    { return String(n) }
+func (n Block) String() string      { return String(n) }
+func (n LatexBlock) String() string { return String(n) }
+func (n Result) String() string     { return String(n) }
