@@ -20,6 +20,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 )
 
 type Configuration struct {
@@ -77,6 +78,7 @@ var lexFns = []lexFn{
 }
 
 var nilToken = token{"nil", -1, "", nil}
+var orgWriterMutex = sync.Mutex{}
 var orgWriter = NewOrgWriter()
 
 // New returns a new Configuration with (hopefully) sane defaults.
@@ -95,7 +97,11 @@ func New() *Configuration {
 }
 
 // String returns the pretty printed Org mode string for the given nodes (see OrgWriter).
-func String(nodes []Node) string { return orgWriter.WriteNodesAsString(nodes...) }
+func String(nodes ...Node) string {
+	orgWriterMutex.Lock()
+	defer orgWriterMutex.Unlock()
+	return orgWriter.WriteNodesAsString(nodes...)
+}
 
 // Write is called after with an instance of the Writer interface to export a parsed Document into another format.
 func (d *Document) Write(w Writer) (out string, err error) {
