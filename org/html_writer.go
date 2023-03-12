@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html"
 	"log"
-	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -35,20 +34,20 @@ type footnotes struct {
 }
 
 var emphasisTags = map[string][]string{
-	"/":   []string{"<em>", "</em>"},
-	"*":   []string{"<strong>", "</strong>"},
-	"+":   []string{"<del>", "</del>"},
-	"~":   []string{"<code>", "</code>"},
-	"=":   []string{`<code class="verbatim">`, "</code>"},
-	"_":   []string{`<span style="text-decoration: underline;">`, "</span>"},
-	"_{}": []string{"<sub>", "</sub>"},
-	"^{}": []string{"<sup>", "</sup>"},
+	"/":   {"<em>", "</em>"},
+	"*":   {"<strong>", "</strong>"},
+	"+":   {"<del>", "</del>"},
+	"~":   {"<code>", "</code>"},
+	"=":   {`<code class="verbatim">`, "</code>"},
+	"_":   {`<span style="text-decoration: underline;">`, "</span>"},
+	"_{}": {"<sub>", "</sub>"},
+	"^{}": {"<sup>", "</sup>"},
 }
 
 var listTags = map[string][]string{
-	"unordered":   []string{"<ul>", "</ul>"},
-	"ordered":     []string{"<ol>", "</ol>"},
-	"descriptive": []string{"<dl>", "</dl>"},
+	"unordered":   {"<ul>", "</ul>"},
+	"ordered":     {"<ol>", "</ol>"},
+	"descriptive": {"<dl>", "</dl>"},
 }
 
 var listItemStatuses = map[string]string{
@@ -628,7 +627,7 @@ func setHTMLAttribute(attributes []h.Attribute, k, v string) []h.Attribute {
 
 func isParagraphNodeSlice(ns []Node) bool {
 	for _, n := range ns {
-		if reflect.TypeOf(n).Name() != "Paragraph" {
+		if _, ok := n.(Paragraph); !ok {
 			return false
 		}
 	}
