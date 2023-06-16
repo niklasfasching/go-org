@@ -622,7 +622,8 @@ func (w *HTMLWriter) blockContent(name string, children []Node) string {
 		WriteNodes(w, children...)
 		out := w.String()
 		w.Builder, w.htmlEscape = builder, htmlEscape
-		return strings.TrimRightFunc(out, unicode.IsSpace)
+
+		return strings.TrimRightFunc(strings.TrimLeftFunc(out, IsNewLineChar), unicode.IsSpace)
 	} else {
 		return w.WriteNodesAsString(children...)
 	}

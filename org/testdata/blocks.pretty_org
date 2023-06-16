@@ -13,6 +13,15 @@ hello
 #+END_SRC
 
 #+BEGIN_SRC
+
+a source block with leading newline, trailing newline characters
+and a line started
+  with leading space
+	and line leading tab.
+
+#+END_SRC
+
+#+BEGIN_SRC
 a source block without a language
 #+END_SRC
 
