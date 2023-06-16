@@ -68,3 +68,7 @@ func ParseRanges(s string) [][2]int {
 	}
 	return ranges
 }
+
+func IsNewLineChar(r rune) bool {
+	return r == '\n' || r == '\r'
+}
