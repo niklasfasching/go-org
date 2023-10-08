@@ -226,7 +226,7 @@ func (w *HTMLWriter) WriteFootnotes(d *Document) {
 		return
 	}
 	w.WriteString(`<div class="footnotes">` + "\n")
-	w.WriteString(`<hr class="footnotes-separatator">` + "\n")
+	w.WriteString(`<hr class="footnotes-separatator"/>` + "\n")
 	w.WriteString(`<div class="footnote-definitions">` + "\n")
 	for i, definition := range w.footnotes.list {
 		id := i + 1
