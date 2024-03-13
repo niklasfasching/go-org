@@ -41,8 +41,11 @@ This shouldn't happen when the definition line and the line after that are empty
 
 [fn:7]
 There's multiple reasons for that. Among others, doing so requires i18n (to recognize the section) and silently
-hides content before and after the footnotes.
+hides content before and after the footnotes[fn:8].
 
 
 
 this is not part of [fn:7] anymore as there are 2 blank lines in between!
+
+
+[fn:8] Footnotes can be linked from another footnote's definition.
