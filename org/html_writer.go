@@ -46,6 +46,7 @@ type HTMLWriter struct {
 type footnotes struct {
 	mapping map[string]int
 	list    []*FootnoteDefinition
+	unused  map[string]*FootnoteDefinition
 }
 
 var emphasisTags = map[string][]string{
@@ -89,6 +90,7 @@ func NewHTMLWriter() *HTMLWriter {
 		TopLevelHLevel: 2,
 		footnotes: &footnotes{
 			mapping: map[string]int{},
+			unused:  map[string]*FootnoteDefinition{},
 		},
 	}
 }
@@ -228,7 +230,10 @@ func (w *HTMLWriter) WriteFootnotes(d *Document) {
 	w.WriteString(`<div class="footnotes">` + "\n")
 	w.WriteString(`<hr class="footnotes-separatator"/>` + "\n")
 	w.WriteString(`<div class="footnote-definitions">` + "\n")
-	for i, definition := range w.footnotes.list {
+
+	// iterate by index instead of ranging, since new footnotes can be added when writing the definitions
+	for i := 0; i < len(w.footnotes.list); i++ {
+		definition := w.footnotes.list[i]
 		id := i + 1
 		if definition == nil {
 			name := ""
@@ -657,6 +662,14 @@ func (fs *footnotes) add(f FootnoteLink) int {
 	if i, ok := fs.mapping[f.Name]; ok && f.Name != "" {
 		return i
 	}
+
+	if def, ok := fs.unused[f.Name]; ok && f.Name != "" && f.Definition == nil {
+		// if there was an a previously unused definition with the same name, attach it to this link
+		// (this enables footnotes from another footnote's definition)
+		f.Definition = def
+		delete(fs.unused, f.Name)
+	}
+
 	fs.list = append(fs.list, f.Definition)
 	i := len(fs.list) - 1
 	if f.Name != "" {
@@ -668,5 +681,9 @@ func (fs *footnotes) add(f FootnoteLink) int {
 func (fs *footnotes) updateDefinition(f FootnoteDefinition) {
 	if i, ok := fs.mapping[f.Name]; ok {
 		fs.list[i] = &f
+	} else {
+		// this could either be an unused definition or one used in another footnote
+		// save in case it's the latter
+		fs.unused[f.Name] = &f
 	}
 }
