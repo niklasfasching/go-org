@@ -65,8 +65,8 @@ type Macro struct {
 
 var validURLCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;="
 var autolinkProtocols = regexp.MustCompile(`^(https?|ftp|file)$`)
-var imageExtensionRegexp = regexp.MustCompile(`^[.](png|gif|jpe?g|svg|tiff?)$`)
-var videoExtensionRegexp = regexp.MustCompile(`^[.](webm|mp4)$`)
+var imageExtensionRegexp = regexp.MustCompile(`(?i)^[.](png|gif|jpe?g|svg|tiff?)$`)
+var videoExtensionRegexp = regexp.MustCompile(`(?i)^[.](webm|mp4)$`)
 
 var subScriptSuperScriptRegexp = regexp.MustCompile(`^([_^]){([^{}]+?)}`)
 var timestampRegexp = regexp.MustCompile(`^<(\d{4}-\d{2}-\d{2})( [A-Za-z]+)?( \d{2}:\d{2})?( \+\d+[dwmy])?>`)
