@@ -152,6 +152,10 @@ func (w *HTMLWriter) WriteBlock(b Block) {
 		if params[":exports"] == "results" || params[":exports"] == "none" {
 			break
 		}
+		if params[":noweb"] == "strip-export" {
+			stripNoweb := regexp.MustCompile(`<<[^>]+>>`)
+			content = stripNoweb.ReplaceAllString(content, "")
+		}
 		lang := "text"
 		if len(b.Parameters) >= 1 {
 			lang = strings.ToLower(b.Parameters[0])
