@@ -176,3 +176,7 @@ this unindented line is outside of the list item
 
         ---AlexSchroeder
     #+END_VERSE
+
+#+BEGIN_SRC raku :results output :noweb strip-export :exports both
+<<defn>>describe <a b c>;
+#+END_SRC
