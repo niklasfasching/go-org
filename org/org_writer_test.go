@@ -45,7 +45,7 @@ func testWriter(t *testing.T, newWriter func() Writer, ext string) {
 			if err != nil {
 				t.Fatalf("%s\n got error: %s", path, err)
 			} else if actual != expected {
-				t.Fatalf("%s:\n%s'", path, "")
+				t.Fatalf("%s:\n%s'", path, diff(actual, expected))
 			}
 		})
 	}
