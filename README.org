@@ -42,3 +42,16 @@ in general, have a look at the Makefile - it's short enough.
   - https://code.orgmode.org/bzg/org-mode/src/master/lisp/org-element.el
   - mostly those & ox-html.el, but yeah, all of [[https://code.orgmode.org/bzg/org-mode/src/master/lisp/]]
 - existing Org mode implementations: [[https://github.com/emacsmirror/org][org]], [[https://github.com/bdewey/org-ruby/blob/master/spec/html_examples][org-ruby]], [[https://github.com/chaseadamsio/goorgeous/][goorgeous]], [[https://github.com/jgm/pandoc/][pandoc]]
+
+
+** autoformat with pre-commit
+
+To run `go-org` autoformat as part of a [pre-commit][pre-commit] workflow, add something like the below to the `repos` list in the project's `.pre-commit-config.yaml`:
+
+#+begin_src yaml
+  - repo: https://github.com/niklasfasching/go-org
+    rev: v1.7.0
+    hooks:
+      - id: org-mode-autoformat
+        args: [--fix]
+#+end_src
