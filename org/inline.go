@@ -73,7 +73,7 @@ var timestampRegexp = regexp.MustCompile(`^<(\d{4}-\d{2}-\d{2})( [A-Za-z]+)?( \d
 var footnoteRegexp = regexp.MustCompile(`^\[fn:([\w-]*?)(:(.*?))?\]`)
 var statisticsTokenRegexp = regexp.MustCompile(`^\[(\d+/\d+|\d+%)\]`)
 var latexFragmentRegexp = regexp.MustCompile(`(?s)^\\begin{(\w+)}(.*)\\end{(\w+)}`)
-var inlineBlockRegexp = regexp.MustCompile(`src_(\w+)(\[(.*)\])?{(.*)}`)
+var inlineBlockRegexp = regexp.MustCompile(`src_(\w+)(\[([^\]]*)\])?{([^}]*)}`)
 var inlineExportBlockRegexp = regexp.MustCompile(`@@(\w+):(.*?)@@`)
 var macroRegexp = regexp.MustCompile(`{{{(.*)\((.*)\)}}}`)
 
