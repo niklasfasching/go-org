@@ -157,7 +157,15 @@ func splitParameters(s string) []string {
 	parameters, parts := []string{}, strings.Split(s, " :")
 	lang, rest := strings.TrimSpace(parts[0]), parts[1:]
 	if lang != "" {
-		parameters = append(parameters, lang)
+		xs := strings.Fields(lang)
+		parameters = append(parameters, xs[0])
+		for i := 1; i < len(xs); i++ {
+			k, v := xs[i], ""
+			if i+1 < len(xs) && xs[i+1][0] != '-' {
+				v, i = xs[i+1], i+1
+			}
+			parameters = append(parameters, k, v)
+		}
 	}
 	for _, p := range rest {
 		kv := strings.SplitN(p+" ", " ", 2)
