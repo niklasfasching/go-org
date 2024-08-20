@@ -260,7 +260,9 @@ func (d *Document) parseMany(i int, stop stopFn) (int, []Node) {
 func (d *Document) addHeadline(headline *Headline) int {
 	current := &Section{Headline: headline}
 	d.Outline.last.add(current)
-	d.Outline.count++
+	if !headline.IsExcluded(d) {
+		d.Outline.count++
+	}
 	d.Outline.last = current
 	return d.Outline.count
 }
