@@ -28,6 +28,8 @@ it's possible to use =#+SETUPFILE= - in this case the setup file contains the fo
 this headline and it's content are not exported as it is marked with an =EXCLUDE_TAGS= tag.
 By default =EXCLUDE_TAGS= is just =:noexport:=.
 
+* TODO [#A] commented headline
+this headline is commented out. see [[https://orgmode.org/manual/Comment-Lines.html][comment lines]]
 * malformed property drawer
 :PROPERTIES:
 not a property

@@ -23,6 +23,7 @@ type Headline struct {
 	Index      int
 	Lvl        int
 	Status     string
+	IsComment  bool
 	Priority   string
 	Properties *PropertyDrawer
 	Title      []Node
@@ -59,7 +60,10 @@ func (d *Document) parseHeadline(i int, parentStop stopFn) (int, Node) {
 		headline.Priority = text[2:3]
 		text = strings.TrimSpace(text[4:])
 	}
-
+	if strings.HasPrefix(text, "COMMENT ") {
+		headline.IsComment = true
+		text = strings.TrimPrefix(text, "COMMENT ")
+	}
 	if m := tagRegexp.FindStringSubmatch(text); m != nil {
 		text = m[1]
 		headline.Tags = strings.FieldsFunc(m[2], func(r rune) bool { return r == ':' })
@@ -104,6 +108,9 @@ func (h Headline) ID() string {
 }
 
 func (h Headline) IsExcluded(d *Document) bool {
+	if h.IsComment {
+		return true
+	}
 	for _, excludedTag := range strings.Fields(d.Get("EXCLUDE_TAGS")) {
 		for _, tag := range h.Tags {
 			if tag == excludedTag {
