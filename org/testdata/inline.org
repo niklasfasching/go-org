@@ -11,7 +11,7 @@
 - links with slashes do not become /emphasis/: [[https://somelinkshouldntrenderaccidentalemphasis.com]]/ /emphasis/
 - _underlined_ *bold*  =verbatim= ~code~ +strikethrough+
 - *bold string with an *asterisk inside*
-- inline source blocks like src_html[:eval no]{<h1>hello</h1>}
+- inline source blocks like src_html[:eval no]{<h1>hello</h1>} and this src_schema[:eval no]{world}
 - inline export blocks @@html:<h1>hello</h1>@@
 - =multiline emphasis is
   supported - and respects MaxEmphasisNewLines (default: 1)=
