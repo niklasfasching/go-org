@@ -29,6 +29,7 @@ type Configuration struct {
 	DefaultSettings     map[string]string                     // Default values for settings that are overriden by setting the same key in BufferSettings.
 	Log                 *log.Logger                           // Log is used to print warnings during parsing.
 	ReadFile            func(filename string) ([]byte, error) // ReadFile is used to read e.g. #+INCLUDE files.
+	ResolveLink         func(protocol string, description []Node, link string) Node
 }
 
 // Document contains the parsing results and a pointer to the Configuration.
@@ -93,6 +94,9 @@ func New() *Configuration {
 		},
 		Log:      log.New(os.Stderr, "go-org: ", 0),
 		ReadFile: ioutil.ReadFile,
+		ResolveLink: func(protocol string, description []Node, link string) Node {
+			return RegularLink{protocol, description, link, false}
+		},
 	}
 }
 
