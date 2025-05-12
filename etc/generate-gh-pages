@@ -133,7 +133,7 @@ echo "$index" > docs/index.html
 echo "$convert" > docs/convert.html
 cp etc/_wasm.go docs/wasm.go
 GOOS=js GOARCH=wasm go build -o docs/main.wasm docs/wasm.go
-cp $(go env GOROOT)/misc/wasm/wasm_exec.js docs/wasm_exec.js
+cp $(go env GOROOT)/lib/wasm/wasm_exec.js docs/wasm_exec.js
 
 mkdir -p docs/blorg
 cp -r blorg/testdata/public/* docs/blorg/
