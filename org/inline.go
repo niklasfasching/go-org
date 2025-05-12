@@ -329,7 +329,7 @@ func (d *Document) parseRegularLink(input string, start int) (int, Node) {
 	if len(linkParts) == 2 {
 		protocol = linkParts[0]
 	}
-	return consumed, RegularLink{protocol, description, link, false}
+	return consumed, d.ResolveLink(protocol, description, link)
 }
 
 func (d *Document) parseTimestamp(input string, start int) (int, Node) {
