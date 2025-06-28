@@ -32,3 +32,15 @@ A table of contents can be rendered anywhere in the document by using
 #+END_SRC
 Where =$n= is the max headline lvl that will be included. You can use =headlines 0= to include all headlines.
 #+TOC: headlines 0
+
+#+ATTR_HTML: :class first
+* meta keywords
+Keywords like =ATTR_HTML= and =CAPTION= are special and apply to the following node.
+We don't want them to become part of the previous headline body unilke everything
+else - unless there are no further nodes in the document.
+#+ATTR_HTML: :class nested
+** nested
+#+ATTR_HTML: :class second
+* headline with dangling meta keyword
+#+ATTR_HTML: :class dangling1
+#+ATTR_HTML: :class dangling2

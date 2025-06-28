@@ -255,6 +255,9 @@ func (d *Document) parseMany(i int, stop stopFn) (int, []Node) {
 	start, nodes := i, []Node{}
 	for i < len(d.tokens) && !stop(d, i) {
 		consumed, node := d.parseOne(i, stop)
+		if consumed == -1 {
+			break
+		}
 		i += consumed
 		nodes = append(nodes, node)
 	}
