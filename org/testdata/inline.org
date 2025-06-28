@@ -54,6 +54,8 @@
   - [[example_interpolate_h:tag value with specical chars % : &]] (w/o tag [[example_interpolate_h]])
 - =#+MACROs=: {{{headline(yolo)}}}
   #+MACRO: headline @@html:<h1>$1</h1>@@
+- =#+MACROs=: {{{macroWithSpaces(red, blue)}}}
+  #+MACRO: macroWithSpaces roses are $1, violets are $2
 - org entities
   - =\pi= & =\pi{}= => \pi & \pi{}
   - =\angle{}= & =\angle= & =\ang= =>= \angle{} \angle \ang

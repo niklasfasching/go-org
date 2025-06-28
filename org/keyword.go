@@ -68,7 +68,7 @@ func (d *Document) parseKeyword(i int, stop stopFn) (int, Node) {
 		}
 		return 1, k
 	case "MACRO":
-		if parts := strings.Split(k.Value, " "); len(parts) >= 2 {
+		if parts := strings.SplitN(k.Value, " ", 2); len(parts) == 2 {
 			d.Macros[parts[0]] = parts[1]
 		}
 		return 1, k
