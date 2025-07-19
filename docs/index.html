@@ -1,0 +1,2665 @@
+<html>
+  <head>
+    <style>* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0; }
+
+html {
+  font: 100%/1.5 sans-serif;
+  word-wrap: break-word;
+  padding: 1.5em; }
+
+@media (min-width: 768px) {
+  html { font-size: 125%; } }
+
+h1, h2, h3, h4 {
+  margin: 2.5rem 0 1.5rem 0;
+  line-height: 1.25; }
+
+.title {
+  font-size: 2.5em; }
+
+.subtitle {
+  font-weight: normal;
+  font-size: 0.75em;
+  color: #666; }
+
+a {
+  color: #fa6432;
+  text-decoration: none; }
+a:hover, a:focus, a:active {
+  text-decoration: underline; }
+
+p {
+  margin: 1em 0; }
+p code {
+  background-color: #eee;
+  padding: 0.05em 0.2em;
+  border: 1px solid #ccc; }
+
+ol, ul {
+  margin: 1em; }
+ol li ol, ol li ul, ul li ol, ul li ul {
+  margin: 0 2em; }
+ol li p, ul li p {
+  margin: 0; }
+
+img {
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+  padding: 0.5em; }
+
+blockquote {
+  padding-left: 1em;
+  font-style: italic;
+  border-left: solid 1px #fa6432; }
+
+table {
+  font-family: monospace, monospace; /* https://github.com/necolas/normalize.css#extended-details-and-known-issues */
+  font-size: 1rem;
+  text-align: left;
+  caption-side: bottom;
+  margin-bottom: 2em; }
+table * {
+  border: none; }
+table thead, table tr {
+  display: table;
+  table-layout: fixed;
+  width: 100%; }
+table tr:nth-child(even) {
+  background-color: #ccc; }
+table tbody {
+  display: block;
+  max-height: 70vh;
+  overflow-y: auto; }
+table td, table th {
+  padding: 0.25em; }
+
+table, .highlight > pre, pre.example {
+  max-height: 70vh;
+  margin: 1em 0;
+  padding: 1em;
+  overflow: auto;
+  font-family: monospace, monospace; /* https://github.com/necolas/normalize.css#extended-details-and-known-issues */
+  font-size: 0.85rem;
+  border: 1px solid rgba(250, 100, 50, 0.5); }
+
+figure {
+  margin: 1em 0;
+}
+
+figcaption {
+  font-family: monospace, monospace; /* https://github.com/necolas/normalize.css#extended-details-and-known-issues */
+  font-size: 0.75em;
+  text-align: center;
+  color: grey; }
+
+.footnote-definition sup {
+  float: left; }
+
+.footnote-definition .footnote-body {
+  margin: 1em 0;
+  padding: 0 1em;
+  border: 1px solid rgba(250, 100, 50, 0.3);
+  background-color: #ccc; }
+.footnote-definition .footnote-body p:only-child {
+  margin: 0.2em 0; }
+
+.align-left   { text-align: left;   }
+.align-center { text-align: center; }
+.align-right  { text-align: right;  }
+
+
+dl { font-family: monospace, monospace; }
+dl > dt { font-weight: bold; }
+dl > dd { margin: 1em; }
+
+.todo, .priority, .tags {
+  font-size: 0.8em;
+  color: lightgrey;
+}
+
+.timestamp {
+  background-color: #eee;
+  padding: 0.05em 0.2em;
+  border: 1px solid #ccc; }</style>
+  </head>
+  <body>
+  
+  <h1>Blorg</h1>
+  <a href=blorg/>example blorg output</a>
+  <h1>Convert</h1>
+  <button id='run' disabled='true' onclick='run()'>
+    RUN (initializing...)
+  </button>
+  or ctrl + return
+  <textarea id='input'>* Hello World</textarea>
+  <div id='output'></div>
+  <style>
+   #run {
+     background-color: #50CCDD;
+     border: none;
+     border-radius: 0.33em;
+     color: #FFF;
+     cursor: pointer;
+     font-weight: bold;
+     letter-spacing: 0.1em;
+     padding: 0.5em 1.5em;
+   }
+
+   #run:hover {
+     background-color: #40AACC;
+     outline: 0;
+   }
+
+   #run:disabled {
+     background-color: #AAA;
+     cursor: wait;
+   }
+
+   #input, #output {
+     display: block;
+     border: 1px dashed grey;
+     margin: 0.5em 0;
+     overflow: auto;
+     padding: 0.25em;
+     width: 100%;
+   }
+   #input { height: 30%; }
+   #output { max-height: 100%; }
+  </style>
+  <script src='wasm_exec.js'></script>
+  <script>
+   const go = new Go();
+   WebAssembly
+     .instantiateStreaming(fetch('main.wasm'), go.importObject)
+     .then((result) => go.run(result.instance),
+           (error) => {
+             const button = document.getElementById('run');
+             button.textContent = 'ERROR: (' + error + ')';
+           });
+
+   function initialized() {
+     const button = document.getElementById('run');
+     button.textContent = 'RUN';
+     button.removeAttribute('disabled');
+   }
+
+   document.getElementById('input').addEventListener('keydown', function(e) {
+   if (e.keyCode == 13 && e.ctrlKey) { // ctrl+enter
+       run();
+       e.preventDefault();
+     }
+   }, false)
+  </script>
+  
+<h1>Sections</h1>
+<style>
+.source {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
+}
+.org, .html {
+  border: 1px dashed grey;
+  padding: 1em;
+  overflow-x: auto;
+}
+.sections { margin-left: 2rem; }
+.sections a { display: block; padding: 0.25em 0; }
+.sections a:hover, .sections a:focus, .sections a:active { background: rgba(200, 200, 200, 0.2); }</style>
+<ul class='sections'><li><a id='toc-blocks.org' href='#blocks.org'>blocks.org</a><li><a id='toc-captions.org' href='#captions.org'>captions.org</a><li><a id='toc-east_asian_line_breaks.org' href='#east_asian_line_breaks.org'>east_asian_line_breaks.org</a><li><a id='toc-footnotes.org' href='#footnotes.org'>footnotes.org</a><li><a id='toc-footnotes_in_headline.org' href='#footnotes_in_headline.org'>footnotes_in_headline.org</a><li><a id='toc-headlines.org' href='#headlines.org'>headlines.org</a><li><a id='toc-hl-lines.org' href='#hl-lines.org'>hl-lines.org</a><li><a id='toc-inline.org' href='#inline.org'>inline.org</a><li><a id='toc-keywords.org' href='#keywords.org'>keywords.org</a><li><a id='toc-latex.org' href='#latex.org'>latex.org</a><li><a id='toc-lists.org' href='#lists.org'>lists.org</a><li><a id='toc-misc.org' href='#misc.org'>misc.org</a><li><a id='toc-options.org' href='#options.org'>options.org</a><li><a id='toc-paragraphs.org' href='#paragraphs.org'>paragraphs.org</a><li><a id='toc-tables.org' href='#tables.org'>tables.org</a></ul><hr>
+      <h2><a id='blocks.org' href='#toc-blocks.org'>blocks.org</a></h2>
+      <div class='source'>
+        <pre class='org'>#+RESULTS:
+: some results without a block
+
+#+CAPTION: block caption
+#+BEGIN_SRC bash :results raw
+echo "a bash source block"
+
+function hello {
+    echo Hello World!
+}
+
+hello
+#+END_SRC
+
+#+BEGIN_SRC
+
+a source block with leading newline, trailing newline characters
+and a line started
+  with leading space
+	and line leading tab.
+
+#+END_SRC
+
+#+BEGIN_SRC
+a source block without a language
+#+END_SRC
+
+
+#+BEGIN_SRC bash
+echo a source block with results
+#+END_SRC
+
+#+RESULTS:
+: a source block with results
+
+#+BEGIN_SRC bash :exports none
+echo a source block with results that is not exported
+#+END_SRC
+
+#+RESULTS:
+: a source block with results that is not exported
+
+#+BEGIN_SRC bash :exports results
+echo a source block that only exports results
+#+END_SRC
+
+#+RESULTS:
+: a source block that only exports results
+
+#+begin_src bash :cmdline -foo -bar :exports results
+# the code block is not rendered
+echo but the result block is
+#+end_src
+
+#+RESULTS:
+: but the result block is
+
+#+BEGIN_EXAMPLE foo bar baz
+an example block with
+multiple lines including
+
+
+empty lines!
+
+it also has multiple parameters
+
+src, example &amp; export blocks treat their content as raw text
+/inline/ *markup* is ignored
+      and whitespace is honored and not removed
+
+content of example blocks is still html escaped - see &lt;script&gt;alert("escaped")&lt;/script&gt;
+#+END_EXAMPLE
+
+: examples like this
+: are also supported
+:
+: note that /inline/ *markup* ignored
+
+#+BEGIN_QUOTE
+Mongodb is *webscale*. (source: [[http://www.mongodb-is-web-scale.com/][mongodb-is-web-scale]])
+
+blocks like the quote block parse their content and can contain
+- lists
+- inline /markup/
+- tables
+  | foo |
+  | bar |
+  | baz |
+- paragraphs
+- ...
+
+      whitespace is honored and not removed (but is not displayed because that's how html works by default)
+        it can be made visible using css (e.g. =white-space: pre=).
+#+END_QUOTE
+
+#+BEGIN_SRC org
+  ,#+BEGIN_SRC bash
+  echo src (with language org) and example blocks support escaping using commata
+  ,#+END_SRC
+
+,,* I am not a real headline - commata escape characters aren't renderered
+
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+  ,#+BEGIN_SRC bash
+  echo src (with language org) and example blocks support escaping using commata
+  ,#+END_SRC
+
+,,* I am not a real headline - commata escape characters aren't renderered
+#+END_EXAMPLE
+
+#+BEGIN_EXPORT html
+&lt;script&gt;
+console.log("Hello World!")
+&lt;/script&gt;
+#+END_EXPORT
+
+#+BEGIN_EXPORT something-other-than-html
+I won't be rendered as html
+#+END_EXPORT
+
+
+- list item 1
+  blocks can contain unindented lines that would normally end a list item
+  #+BEGIN_EXAMPLE
+this line is not indented - if it was outside of a block the list item would end
+  #+END_EXAMPLE
+  #+BEGIN_QUOTE
+this line is not indented - if it was outside of a block the list item would end
+  #+END_QUOTE
+  now we're outside the block again and the following unindented line will be outside of the list item
+this unindented line is outside of the list item
+- list item 2
+  #+BEGIN_SRC
+  #+BEGIN_EXAMPLE
+  #+END_SRC
+  #+END_EXAMPLE
+
+  #+BEGIN_QUOTE
+  #+BEGIN_EXAMPLE
+  #+END_QUOTE
+  #+END_EXAMPLE
+  #+END_QUOTE
+
+- verse blocks
+  - emacs / ox-hugo rendering
+    #+BEGIN_EXPORT html
+    &lt;p class="verse"&gt;
+    Great clouds overhead&lt;br /&gt;
+    Tiny black birds rise and fall&lt;br /&gt;
+    Snow covers Emacs&lt;br /&gt;
+    &lt;br /&gt;
+    &amp;nbsp;&amp;nbsp;&amp;nbsp;---AlexSchroeder&lt;br /&gt;
+    &lt;/p&gt;
+    #+END_EXPORT
+  - go-org rendering
+    #+BEGIN_SRC html
+    &lt;style&gt;
+    .verse-block p { white-space: pre; }
+    .verse-block p + p { margin: 0; }
+    &lt;/style&gt;
+    #+END_SRC
+
+    #+BEGIN_EXPORT html
+    &lt;style&gt;
+    .verse-block p { white-space: pre; }
+    .verse-block p + p { margin: 0; }
+    &lt;/style&gt;
+    #+END_EXPORT
+
+    #+BEGIN_VERSE
+    Great clouds overhead
+    Tiny black birds rise and fall
+    Snow covers Emacs
+
+        ---AlexSchroeder
+    #+END_VERSE
+
+#+BEGIN_SRC raku :results output :noweb strip-export :exports both
+&lt;&lt;defn&gt;&gt;describe &lt;a b c&gt;;
+#+END_SRC</pre>
+        <div class='html'><pre class="example">
+some results without a block
+</pre>
+<figure>
+<div class="src src-bash">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span><span style="color:#007020">echo</span> <span style="color:#4070a0">&#34;a bash source block&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">function</span> hello <span style="color:#666">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#007020">echo</span> Hello World!
+</span></span><span style="display:flex;"><span><span style="color:#666">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>hello</span></span></code></pre>
+</div>
+</div>
+<figcaption>
+block caption
+</figcaption>
+</figure>
+<div class="src src-text">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>a source block with leading newline, trailing newline characters
+</span></span><span style="display:flex;"><span>and a line started
+</span></span><span style="display:flex;"><span>  with leading space
+</span></span><span style="display:flex;"><span>	and line leading tab.</span></span></code></pre>
+</div>
+</div>
+<div class="src src-text">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>a source block without a language</span></span></code></pre>
+</div>
+</div>
+<div class="src src-bash">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span><span style="color:#007020">echo</span> a <span style="color:#007020">source</span> block with results</span></span></code></pre>
+</div>
+</div>
+<pre class="example">
+a source block with results
+</pre>
+<pre class="example">
+a source block that only exports results
+</pre>
+<pre class="example">
+but the result block is
+</pre>
+<pre class="example">
+an example block with
+multiple lines including
+
+
+empty lines!
+
+it also has multiple parameters
+
+src, example &amp; export blocks treat their content as raw text
+/inline/ *markup* is ignored
+      and whitespace is honored and not removed
+
+content of example blocks is still html escaped - see &lt;script&gt;alert(&#34;escaped&#34;)&lt;/script&gt;
+</pre>
+<pre class="example">
+examples like this
+are also supported
+
+note that /inline/ *markup* ignored
+</pre>
+<blockquote>
+<p>Mongodb is <strong>webscale</strong>. (source: <a href="http://www.mongodb-is-web-scale.com/">mongodb-is-web-scale</a>)</p>
+<p>
+blocks like the quote block parse their content and can contain</p>
+<ul>
+<li>lists</li>
+<li>inline <em>markup</em></li>
+<li>
+<p>tables</p>
+<table>
+<tbody>
+<tr>
+<td>foo</td>
+</tr>
+<tr>
+<td>bar</td>
+</tr>
+<tr>
+<td>baz</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>paragraphs</li>
+<li>…
+
+    whitespace is honored and not removed (but is not displayed because that&#39;s how html works by default)
+      it can be made visible using css (e.g. <code class="verbatim">white-space: pre</code>).</li>
+</ul>
+</blockquote>
+<div class="src src-org">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic">  #+BEGIN_SRC </span><span style="color:#60a0b0;background-color:#fff0f0">bash</span><span style="color:#60a0b0;font-style:italic">
+</span></span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"></span>  <span style="color:#007020">echo</span> src <span style="color:#666">(</span>with language org<span style="color:#666">)</span> and example blocks support escaping using commata
+</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic">  #+END_SRC</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>,* I am not a real headline - commata escape characters aren&#39;t renderered</span></span></code></pre>
+</div>
+</div>
+<pre class="example">
+  #+BEGIN_SRC bash
+  echo src (with language org) and example blocks support escaping using commata
+  #+END_SRC
+
+,* I am not a real headline - commata escape characters aren&#39;t renderered
+</pre>
+<script>
+console.log("Hello World!")
+</script>
+<ul>
+<li>
+<p>list item 1
+blocks can contain unindented lines that would normally end a list item</p>
+<pre class="example">
+this line is not indented - if it was outside of a block the list item would end
+</pre>
+<blockquote>
+<p>this line is not indented - if it was outside of a block the list item would end</p>
+</blockquote>
+<p>now we&#39;re outside the block again and the following unindented line will be outside of the list item</p>
+</li>
+</ul>
+<p>this unindented line is outside of the list item</p>
+<ul>
+<li>
+<p>list item 2</p>
+<div class="src src-text">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>#+BEGIN_EXAMPLE</span></span></code></pre>
+</div>
+</div>
+<p>#+END_EXAMPLE</p>
+<blockquote>
+<pre class="example">
+#+END_QUOTE
+</pre>
+</blockquote>
+</li>
+<li>
+<p>verse blocks</p>
+<ul>
+<li>
+<p>emacs / ox-hugo rendering</p>
+<p class="verse">
+Great clouds overhead<br />
+Tiny black birds rise and fall<br />
+Snow covers Emacs<br />
+<br />
+&nbsp;&nbsp;&nbsp;---AlexSchroeder<br />
+</p>
+</li>
+<li>
+<p>go-org rendering</p>
+<div class="src src-html">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>&lt;<span style="color:#062873;font-weight:bold">style</span>&gt;
+</span></span><span style="display:flex;"><span>.<span style="color:#0e84b5;font-weight:bold">verse-block</span> <span style="color:#062873;font-weight:bold">p</span> { <span style="color:#007020;font-weight:bold">white-space</span>: <span style="color:#007020;font-weight:bold">pre</span>; }
+</span></span><span style="display:flex;"><span>.<span style="color:#0e84b5;font-weight:bold">verse-block</span> <span style="color:#062873;font-weight:bold">p</span> <span style="color:#666">+</span> <span style="color:#062873;font-weight:bold">p</span> { <span style="color:#007020;font-weight:bold">margin</span>: <span style="color:#40a070">0</span>; }
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#062873;font-weight:bold">style</span>&gt;</span></span></code></pre>
+</div>
+</div>
+<style>
+.verse-block p { white-space: pre; }
+.verse-block p + p { margin: 0; }
+</style>
+<div class="verse-block">
+<p>Great clouds overhead
+Tiny black birds rise and fall
+Snow covers Emacs</p>
+<p>
+    —AlexSchroeder</p>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+<div class="src src-raku">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>describe &lt;<span style="color:#4070a0">a b c</span>&gt;;</span></span></code></pre>
+</div>
+</div></div>
+      </div>
+      <h2><a id='captions.org' href='#toc-captions.org'>captions.org</a></h2>
+      <div class='source'>
+        <pre class='org'>Anything can be captioned.
+
+#+CAPTION: captioned soure block
+#+BEGIN_SRC sh
+echo "i have a caption!"
+#+END_SRC
+
+#+CAPTION: captioned link (image in this case)
+[[https://placekitten.com/200/200#.png]]
+
+note that the whole paragraph is captioned, so a linebreak is needed for images to caption correctly
+
+#+CAPTION: captioned link (image in this case)
+[[https://placekitten.com/200/200#.png]]
+see?</pre>
+        <div class='html'><p>Anything can be captioned.</p>
+<figure>
+<div class="src src-sh">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span><span style="color:#007020">echo</span> <span style="color:#4070a0">&#34;i have a caption!&#34;</span></span></span></code></pre>
+</div>
+</div>
+<figcaption>
+captioned soure block
+</figcaption>
+</figure>
+<figure>
+<img src="https://placekitten.com/200/200#.png" alt="https://placekitten.com/200/200#.png" title="https://placekitten.com/200/200#.png" /><figcaption>
+captioned link (image in this case)
+</figcaption>
+</figure>
+<p>
+note that the whole paragraph is captioned, so a linebreak is needed for images to caption correctly</p>
+<figure>
+<p><img src="https://placekitten.com/200/200#.png" alt="https://placekitten.com/200/200#.png" title="https://placekitten.com/200/200#.png" />
+see?</p>
+<figcaption>
+captioned link (image in this case)
+</figcaption>
+</figure></div>
+      </div>
+      <h2><a id='east_asian_line_breaks.org' href='#toc-east_asian_line_breaks.org'>east_asian_line_breaks.org</a></h2>
+      <div class='source'>
+        <pre class='org'>#+OPTIONS: ealb:t
+
+Line breaks between multi-byte characters are omitted when the =ealb= option is set:
+
+- 中午
+  吃啥
+
+- something else
+  中午
+  吃啥
+  something else</pre>
+        <div class='html'><p>
+Line breaks between multi-byte characters are omitted when the <code class="verbatim">ealb</code> option is set:</p>
+<ul>
+<li>中午吃啥</li>
+<li>something else
+中午吃啥
+something else</li>
+</ul></div>
+      </div>
+      <h2><a id='footnotes.org' href='#toc-footnotes.org'>footnotes.org</a></h2>
+      <div class='source'>
+        <pre class='org'>* Using some footnotes
+- normal footnote reference [fn:1] [fn:6] [fn:foo-bar] (footnote names can be anything in the format =[\w-]=)
+- further references to the same footnote should not [fn:1] render duplicates in the footnote list
+- inline footnotes are also supported via [fn:2:the inline footnote definition].
+- anonymous inline footnotes are also supported via [fn::the anonymous inline footnote definition].
+- Footnote definitions are not printed where they appear.
+  Rather, they are gathered and exported at the end of the document in the footnote section. [fn:4]
+- footnotes that reference a non-existant definition are rendered but log a warning [fn:does-not-exist]
+
+[fn:4] so this definition will not be at the end of this section in the exported document.
+Rather, it will be somewhere down below in the footnotes section.
+
+[fn:5] this definition will also not be exported here - not only that, it will be overwritten by a definition
+of the same name later on in the document. That will log a warning but carry on nonetheless.
+* Footnotes
+Please note that the footnotes section is not automatically excluded from the export like in emacs. [fn:7]
+
+[fn:foo-bar] yolo
+
+[fn:1] https://www.example.com
+- footnotes can contain *markup*
+- and other elements
+  - like blocks
+    #+BEGIN_SRC
+    other non-plain
+    #+END_SRC
+  - and tables
+    | 1 | a |
+    | 2 | b |
+    | 3 | c |
+
+[fn:3] [[http://example.com/unused-footnote][example.com/unused-footnote]]
+
+[fn:5] another unused footnote (this definition overwrites the previous definition of =fn:5=)
+
+[fn:6]
+
+Footnotes break after two consecutive empty lines - just like paragraphs - see https://orgmode.org/worg/dev/org-syntax.html.
+This shouldn't happen when the definition line and the line after that are empty.
+
+
+[fn:7]
+There's multiple reasons for that. Among others, doing so requires i18n (to recognize the section) and silently
+hides content before and after the footnotes[fn:8].
+
+
+
+this is not part of [fn:7] anymore as there are 2 blank lines in between!
+
+
+[fn:8] Footnotes can be linked from another footnote's definition.</pre>
+        <div class='html'><nav>
+<ul>
+<li><a href="#headline-1">Using some footnotes</a>
+</li>
+<li><a href="#headline-2">Footnotes</a>
+</li>
+</ul>
+</nav>
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+Using some footnotes
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<ul>
+<li>normal footnote reference <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup> <sup class="footnote-reference"><a id="footnote-reference-3" href="#footnote-3">3</a></sup> (footnote names can be anything in the format <code class="verbatim">[\w-]</code>)</li>
+<li>further references to the same footnote should not <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> render duplicates in the footnote list</li>
+<li>inline footnotes are also supported via <sup class="footnote-reference"><a id="footnote-reference-4" href="#footnote-4">4</a></sup>.</li>
+<li>anonymous inline footnotes are also supported via <sup class="footnote-reference"><a id="footnote-reference-5" href="#footnote-5">5</a></sup>.</li>
+<li>Footnote definitions are not printed where they appear.
+Rather, they are gathered and exported at the end of the document in the footnote section. <sup class="footnote-reference"><a id="footnote-reference-6" href="#footnote-6">6</a></sup></li>
+<li>footnotes that reference a non-existant definition are rendered but log a warning <sup class="footnote-reference"><a id="footnote-reference-7" href="#footnote-7">7</a></sup></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
+<h2 id="headline-2">
+Footnotes
+</h2>
+<div id="outline-text-headline-2" class="outline-text-2">
+<p>Please note that the footnotes section is not automatically excluded from the export like in emacs. <sup class="footnote-reference"><a id="footnote-reference-8" href="#footnote-8">8</a></sup></p>
+<p>
+this is not part of <sup class="footnote-reference"><a id="footnote-reference-8" href="#footnote-8">8</a></sup> anymore as there are 2 blank lines in between!</p>
+</div>
+</div>
+<div class="footnotes">
+<hr class="footnotes-separatator"/>
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p><a href="https://www.example.com">https://www.example.com</a></p>
+<ul>
+<li>footnotes can contain <strong>markup</strong></li>
+<li>
+<p>and other elements</p>
+<ul>
+<li>
+<p>like blocks</p>
+<div class="src src-text">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>other non-plain</span></span></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>and tables</p>
+<table>
+<tbody>
+<tr>
+<td class="align-right">1</td>
+<td>a</td>
+</tr>
+<tr>
+<td class="align-right">2</td>
+<td>b</td>
+</tr>
+<tr>
+<td class="align-right">3</td>
+<td>c</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-2"><a href="#footnote-reference-2">2</a></sup>
+<div class="footnote-body">
+<p>
+Footnotes break after two consecutive empty lines - just like paragraphs - see <a href="https://orgmode.org/worg/dev/org-syntax.html.">https://orgmode.org/worg/dev/org-syntax.html.</a>
+This shouldn&#39;t happen when the definition line and the line after that are empty.</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-3"><a href="#footnote-reference-3">3</a></sup>
+<div class="footnote-body">
+<p>yolo</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-4"><a href="#footnote-reference-4">4</a></sup>
+<div class="footnote-body">
+<p>the inline footnote definition</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-5"><a href="#footnote-reference-5">5</a></sup>
+<div class="footnote-body">
+<p>the anonymous inline footnote definition</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-6"><a href="#footnote-reference-6">6</a></sup>
+<div class="footnote-body">
+<p>so this definition will not be at the end of this section in the exported document.
+Rather, it will be somewhere down below in the footnotes section.</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-8"><a href="#footnote-reference-8">8</a></sup>
+<div class="footnote-body">
+<p>
+There&#39;s multiple reasons for that. Among others, doing so requires i18n (to recognize the section) and silently
+hides content before and after the footnotes<sup class="footnote-reference"><a id="footnote-reference-9" href="#footnote-9">9</a></sup>.</p>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-9"><a href="#footnote-reference-9">9</a></sup>
+<div class="footnote-body">
+<p>Footnotes can be linked from another footnote&#39;s definition.</p>
+</div>
+</div>
+</div>
+</div></div>
+      </div>
+      <h2><a id='footnotes_in_headline.org' href='#toc-footnotes_in_headline.org'>footnotes_in_headline.org</a></h2>
+      <div class='source'>
+        <pre class='org'>* Title [fn:1]
+
+[fn:1] this test file just exists to reproduce a bug with footnotes in headlines - that only happens in very specific circumstances.
+The TLDR is:
+- HTMLWriter.footnotes should be a pointer field. I didn't notice my error as go translated my pointer-method calls on
+  non-pointer values rather than complaining - i.e. =footnotes.add()= transparently gets translated to =(&amp;footnotes).add()= ([[https://golang.org/ref/spec#Calls][docs]]).
+- Headlines have to be htmlified twice - once for the outline and once for the headline itself. To do so we have to copy the writer
+- Copying the writer copies footnotes - which contains a map and a slice. Changes to the map will always be reflected in the original map.
+  Changes to the slice will only be reflected if the slice doesn't grow.
+- We can thus end up with a footnote being in the mapping but not the slice - and get an index out of range error.</pre>
+        <div class='html'><nav>
+<ul>
+<li><a href="#headline-1">Title <sup class="footnote-reference">1</sup></a>
+</li>
+</ul>
+</nav>
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+Title <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup>
+</h2>
+</div>
+<div class="footnotes">
+<hr class="footnotes-separatator"/>
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>this test file just exists to reproduce a bug with footnotes in headlines - that only happens in very specific circumstances.
+The TLDR is:</p>
+<ul>
+<li>HTMLWriter.footnotes should be a pointer field. I didn&#39;t notice my error as go translated my pointer-method calls on
+non-pointer values rather than complaining - i.e. <code class="verbatim">footnotes.add()</code> transparently gets translated to <code class="verbatim">(&amp;footnotes).add()</code> (<a href="https://golang.org/ref/spec#Calls">docs</a>).</li>
+<li>Headlines have to be htmlified twice - once for the outline and once for the headline itself. To do so we have to copy the writer</li>
+<li>Copying the writer copies footnotes - which contains a map and a slice. Changes to the map will always be reflected in the original map.
+Changes to the slice will only be reflected if the slice doesn&#39;t grow.</li>
+<li>We can thus end up with a footnote being in the mapping but not the slice - and get an index out of range error.</li>
+</ul>
+</div>
+</div>
+</div>
+</div></div>
+      </div>
+      <h2><a id='headlines.org' href='#toc-headlines.org'>headlines.org</a></h2>
+      <div class='source'>
+        <pre class='org'>#+SETUPFILE: setup_file_org
+#+OPTIONS: toc:1
+* Simple Headline [1/2]
+- [X] checked
+- [ ] unchecked
+- note that statistic tokens are marked up anywhere
+  not just where they are actually meant to be - even here &gt; [100%] &lt;
+  (Org mode proper does the same)
+* TODO [#B] Headline with todo status &amp; priority
+* DONE Headline with TODO status
+:PROPERTIES:
+:custom_id: this-will-be-the-id-of-the-headline
+:note: property drawers are not exported as html like other drawers
+:END:
+
+we can link to headlines that define a custom_id: [[#this-will-be-the-id-of-the-headline]]
+* [#A] Headline with tags &amp; priority                                :foo:bar:
+Still outside the drawer
+:DRAWERNAME:
+This is inside the drawer
+:end:
+Still outside the drawer
+* CUSTOM headline with custom status
+it's possible to use =#+SETUPFILE= - in this case the setup file contains the following
+
+#+INCLUDE: "setup_file_org" src org
+* excluded headline                                                :custom_noexport:
+this headline and it's content are not exported as it is marked with an =EXCLUDE_TAGS= tag.
+By default =EXCLUDE_TAGS= is just =:noexport:=.
+
+* TODO [#A] COMMENT commented headline
+this headline is commented out. see [[https://orgmode.org/manual/Comment-Lines.html][comment lines]]
+* malformed property drawer
+:PROPERTIES:
+not a property
+:END:
+* level limit for headlines to be included in the table of contents
+The toc option allows setting a [[https://orgmode.org/manual/Export-settings.html][level limit]]. For this file we set it to 1 - which means that the following headlines
+won't be included in the table of contents.
+** headline 2 not in toc
+*** headline 3 not in toc
+** anoter headline 2 not in toc
+you get the gist...</pre>
+        <div class='html'><nav>
+<ul>
+<li><a href="#headline-1">Simple Headline <code class="statistic">[1/2]</code></a>
+</li>
+<li><a href="#headline-2">Headline with todo status &amp; priority</a>
+</li>
+<li><a href="#this-will-be-the-id-of-the-headline">Headline with TODO status</a>
+</li>
+<li><a href="#headline-4">Headline with tags &amp; priority</a>
+</li>
+<li><a href="#headline-5">headline with custom status</a>
+</li>
+<li><a href="#headline-6">malformed property drawer</a>
+</li>
+<li><a href="#headline-7">level limit for headlines to be included in the table of contents</a>
+</li>
+</ul>
+</nav>
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+Simple Headline <code class="statistic">[1/2]</code>
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<ul>
+<li class="checked">checked</li>
+<li class="unchecked">unchecked</li>
+<li>note that statistic tokens are marked up anywhere
+not just where they are actually meant to be - even here &gt; <code class="statistic">[100%]</code> &lt;
+(Org mode proper does the same)</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
+<h2 id="headline-2">
+<span class="todo status-todo">TODO</span>
+<span class="priority priority-b">[B]</span>
+Headline with todo status &amp; priority
+</h2>
+</div>
+<div id="outline-container-this-will-be-the-id-of-the-headline" class="outline-2">
+<h2 id="this-will-be-the-id-of-the-headline">
+<span class="todo status-done">DONE</span>
+Headline with TODO status
+</h2>
+<div id="outline-text-this-will-be-the-id-of-the-headline" class="outline-text-2">
+<p>
+we can link to headlines that define a custom_id: <a href="#this-will-be-the-id-of-the-headline">#this-will-be-the-id-of-the-headline</a></p>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
+<h2 id="headline-4">
+<span class="priority priority-a">[A]</span>
+Headline with tags &amp; priority&#xa0;&#xa0;&#xa0;<span class="tags"><span class="tag-foo">foo</span>&#xa0;<span class="tag-bar">bar</span></span>
+</h2>
+<div id="outline-text-headline-4" class="outline-text-2">
+<p>Still outside the drawer</p>
+<p>This is inside the drawer</p>
+<p>Still outside the drawer</p>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-2">
+<h2 id="headline-5">
+<span class="todo status-custom">CUSTOM</span>
+headline with custom status
+</h2>
+<div id="outline-text-headline-5" class="outline-text-2">
+<p>it&#39;s possible to use <code class="verbatim">#+SETUPFILE</code> - in this case the setup file contains the following</p>
+<div class="src src-org">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span><span style="color:#60a0b0;background-color:#fff0f0">#+TODO</span><span style="color:#60a0b0;font-style:italic">: TODO DONE CUSTOM</span>
+</span></span><span style="display:flex;"><span><span style="color:#60a0b0;background-color:#fff0f0">#+EXCLUDE_TAGS</span><span style="color:#60a0b0;font-style:italic">: noexport custom_noexport</span></span></span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-2">
+<h2 id="headline-6">
+malformed property drawer
+</h2>
+<div id="outline-text-headline-6" class="outline-text-2">
+<p>:PROPERTIES:
+not a property</p>
+<p>:END:</p>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-2">
+<h2 id="headline-7">
+level limit for headlines to be included in the table of contents
+</h2>
+<div id="outline-text-headline-7" class="outline-text-2">
+<p>The toc option allows setting a <a href="https://orgmode.org/manual/Export-settings.html">level limit</a>. For this file we set it to 1 - which means that the following headlines
+won&#39;t be included in the table of contents.</p>
+<div id="outline-container-headline-8" class="outline-3">
+<h3 id="headline-8">
+headline 2 not in toc
+</h3>
+<div id="outline-text-headline-8" class="outline-text-3">
+<div id="outline-container-headline-9" class="outline-4">
+<h4 id="headline-9">
+headline 3 not in toc
+</h4>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-3">
+<h3 id="headline-10">
+anoter headline 2 not in toc
+</h3>
+<div id="outline-text-headline-10" class="outline-text-3">
+<p>you get the gist…</p>
+</div>
+</div>
+</div>
+</div></div>
+      </div>
+      <h2><a id='hl-lines.org' href='#toc-hl-lines.org'>hl-lines.org</a></h2>
+      <div class='source'>
+        <pre class='org'>Lines in a source block can be highlighted with =:hl_lines=.
+
+#+begin_src emacs-lisp :hl_lines 3-4
+(+ 1 2)
+(+ 1 2)
+(+ 1 2)
+(+ 1 2)
+(+ 1 2)
+#+end_src</pre>
+        <div class='html'><p>Lines in a source block can be highlighted with <code class="verbatim">:hl_lines</code>.</p>
+<div class="src src-emacs-lisp">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;display:grid;"><code><span style="display:flex;"><span>(<span style="color:#06287e">+</span> <span style="color:#40a070">1</span> <span style="color:#40a070">2</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#06287e">+</span> <span style="color:#40a070">1</span> <span style="color:#40a070">2</span>)
+</span></span><span style="display:flex; background-color:#d8d8d8"><span>(<span style="color:#06287e">+</span> <span style="color:#40a070">1</span> <span style="color:#40a070">2</span>)
+</span></span><span style="display:flex; background-color:#d8d8d8"><span>(<span style="color:#06287e">+</span> <span style="color:#40a070">1</span> <span style="color:#40a070">2</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#06287e">+</span> <span style="color:#40a070">1</span> <span style="color:#40a070">2</span>)</span></span></code></pre>
+</div>
+</div></div>
+      </div>
+      <h2><a id='inline.org' href='#toc-inline.org'>inline.org</a></h2>
+      <div class='source'>
+        <pre class='org'>- /emphasis/ and a hard line break \\
+  see? \\
+  also hard line breaks not followed by a newline get ignored, see \\
+- /.emphasis with dot border chars./
+- /emphasis with a slash/inside/
+- /emphasis/ followed by raw text with slash /
+- *emphasis ending with a "difficult" multibyte character 习*
+- emphasis just before =explict line break=\\
+  =plus more emphasis=
+- -&gt;/not an emphasis/&lt;-
+- links with slashes do not become /emphasis/: [[https://somelinkshouldntrenderaccidentalemphasis.com]]/ /emphasis/
+- _underlined_ *bold*  =verbatim= ~code~ +strikethrough+
+- *bold string with an *asterisk inside*
+- inline source blocks like src_html[:eval no]{&lt;h1&gt;hello&lt;/h1&gt;} and this src_schema[:eval no]{world}
+- inline export blocks @@html:&lt;h1&gt;hello&lt;/h1&gt;@@
+- =multiline emphasis is
+  supported - and respects MaxEmphasisNewLines (default: 1)=
+  /so this
+  is emphasized/
+
+  /but
+  this
+  is
+  not emphasized/
+- empty emphasis markers like ++ // __ and so on are ignored
+- use _{} for subscript_{sub} and ^{} for superscript^{super}
+- links
+  1. regular link [[https://example.com]] link without description
+  2. regular link [[https://example.com][example.com]] link with description
+  3. regular link to a file (image) [[file:my-img.png]]
+  4. regular link to an org file (extension replaced with html) [[file:inline.org]] / [[../testdata/inline.org]]
+  5. regular link to a file (video) [[my-video.mp4]]
+  6. regular link to http (image) [[http://placekitten.com/200/200#.png]]
+  7. regular link to https (image) [[https://placekitten.com/200/200#.png]]
+  8. regular link with image as description [[https://placekitten.com][https://placekitten.com/200/200#.png]]
+  9. regular link enclosed in [] [[[https://www.example.com]]] [[[https://www.example.com][example.com]]]
+  10. auto link, i.e. not inside =\[[square brackets]\]= https://www.example.com
+- timestamps
+  - &lt;2019-01-06&gt;
+  - &lt;2019-01-06 Sun&gt;
+  - &lt;2019-01-06 Sun 18:00&gt;
+  - &lt;2019-01-06 Sun 18:00 +1w&gt;
+  - &lt;2019-01-06 18:00&gt;
+  - &lt;2019-01-06 18:00 +1w&gt;
+- =#+LINK= based links:
+  #+LINK: example https://www.example.com/
+  #+LINK: example_interpolate_s https://www.example.com?raw_tag=%s
+  #+LINK: example_interpolate_h https://www.example.com?encoded_tag=%h
+  - [[example:foobar]]
+  - [[example:]]
+  - [[example]]
+  - [[example][description]]
+  - [[example_interpolate_s:tag value with specical chars % : &amp;]] (w/o tag [[example_interpolate_s]])
+  - [[example_interpolate_h:tag value with specical chars % : &amp;]] (w/o tag [[example_interpolate_h]])
+- =#+MACROs=: {{{headline(yolo)}}}
+  #+MACRO: headline @@html:&lt;h1&gt;$1&lt;/h1&gt;@@
+- =#+MACROs=: {{{macroWithSpaces(red, blue)}}}
+  #+MACRO: macroWithSpaces roses are $1, violets are $2
+- org entities
+  - =\pi= &amp; =\pi{}= =&gt; \pi &amp; \pi{}
+  - =\angle{}= &amp; =\angle= &amp; =\ang= =&gt;= \angle{} \angle \ang</pre>
+        <div class='html'><ul>
+<li><em>emphasis</em> and a hard line break <br>
+see? <br>
+also hard line breaks not followed by a newline get ignored, see \\</li>
+<li><em>.emphasis with dot border chars.</em></li>
+<li><em>emphasis with a slash/inside</em></li>
+<li><em>emphasis</em> followed by raw text with slash /</li>
+<li><strong>emphasis ending with a &#34;difficult&#34; multibyte character 习</strong></li>
+<li>emphasis just before <code class="verbatim">explict line break</code><br>
+<code class="verbatim">plus more emphasis</code></li>
+<li>-&gt;/not an emphasis/&lt;-</li>
+<li>links with slashes do not become <em>emphasis</em>: <a href="https://somelinkshouldntrenderaccidentalemphasis.com">https://somelinkshouldntrenderaccidentalemphasis.com</a>/ <em>emphasis</em></li>
+<li><span style="text-decoration: underline;">underlined</span> <strong>bold</strong>  <code class="verbatim">verbatim</code> <code>code</code> <del>strikethrough</del></li>
+<li><strong>bold string with an *asterisk inside</strong></li>
+<li>inline source blocks like <div class="src src-inline src-html">
+<div class="highlight-inline">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>&lt;<span style="color:#062873;font-weight:bold">h1</span>&gt;hello&lt;/<span style="color:#062873;font-weight:bold">h1</span>&gt;</span></span></code></pre>
+</div>
+</div> and this <div class="src src-inline src-schema">
+<div class="highlight-inline">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>world</span></span></code></pre>
+</div>
+</div></li>
+<li>inline export blocks <h1>hello</h1></li>
+<li><code class="verbatim">multiline emphasis is
+supported - and respects MaxEmphasisNewLines (default: 1)</code>
+<em>so this
+is emphasized</em>
+
+/but
+this
+is
+not emphasized/</li>
+<li>empty emphasis markers like ++ // __ and so on are ignored</li>
+<li>use _{} for subscript<sub>sub</sub> and ^{} for superscript<sup>super</sup></li>
+<li>
+<p>links</p>
+<ol>
+<li>regular link <a href="https://example.com">https://example.com</a> link without description</li>
+<li>regular link <a href="https://example.com">example.com</a> link with description</li>
+<li>regular link to a file (image) <img src="my-img.png" alt="my-img.png" title="my-img.png" /></li>
+<li>regular link to an org file (extension replaced with html) <a href="inline.html">inline.html</a> / <a href="../testdata/inline.html">../testdata/inline.html</a></li>
+<li>regular link to a file (video) <video src="my-video.mp4" title="my-video.mp4">my-video.mp4</video></li>
+<li>regular link to http (image) <img src="http://placekitten.com/200/200#.png" alt="http://placekitten.com/200/200#.png" title="http://placekitten.com/200/200#.png" /></li>
+<li>regular link to https (image) <img src="https://placekitten.com/200/200#.png" alt="https://placekitten.com/200/200#.png" title="https://placekitten.com/200/200#.png" /></li>
+<li>regular link with image as description <a href="https://placekitten.com"><img src="https://placekitten.com/200/200#.png" alt="https://placekitten.com/200/200#.png" /></a></li>
+<li>regular link enclosed in [] [<a href="https://www.example.com">https://www.example.com</a>] [<a href="https://www.example.com">example.com</a>]</li>
+<li>auto link, i.e. not inside <code class="verbatim">\[[square brackets]\]</code> <a href="https://www.example.com">https://www.example.com</a></li>
+</ol>
+</li>
+<li>
+<p>timestamps</p>
+<ul>
+<li><span class="timestamp">&lt;2019-01-06 Sun&gt;</span></li>
+<li><span class="timestamp">&lt;2019-01-06 Sun&gt;</span></li>
+<li><span class="timestamp">&lt;2019-01-06 Sun 18:00&gt;</span></li>
+<li><span class="timestamp">&lt;2019-01-06 Sun 18:00 +1w&gt;</span></li>
+<li><span class="timestamp">&lt;2019-01-06 Sun 18:00&gt;</span></li>
+<li><span class="timestamp">&lt;2019-01-06 Sun 18:00 +1w&gt;</span></li>
+</ul>
+</li>
+<li>
+<p><code class="verbatim">#+LINK</code> based links:</p>
+<ul>
+<li><a href="https://www.example.com/foobar">https://www.example.com/foobar</a></li>
+<li><a href="https://www.example.com/">https://www.example.com/</a></li>
+<li><a href="https://www.example.com/">https://www.example.com/</a></li>
+<li><a href="https://www.example.com/">description</a></li>
+<li><a href="https://www.example.com?raw_tag=tag value with specical chars % : &amp;">https://www.example.com?raw_tag=tag value with specical chars % : &amp;</a> (w/o tag <a href="https://www.example.com?raw_tag=">https://www.example.com?raw_tag=</a>)</li>
+<li><a href="https://www.example.com?encoded_tag=tag+value+with+specical+chars+%25+%3A+%26">https://www.example.com?encoded_tag=tag+value+with+specical+chars+%25+%3A+%26</a> (w/o tag <a href="https://www.example.com?encoded_tag=">https://www.example.com?encoded_tag=</a>)</li>
+</ul>
+</li>
+<li>
+<p><code class="verbatim">#+MACROs</code>: <p><h1>yolo</h1></p>
+</p>
+</li>
+<li>
+<p><code class="verbatim">#+MACROs</code>: <p>roses are red, violets are  blue</p>
+</p>
+</li>
+<li>
+<p>org entities</p>
+<ul>
+<li><code class="verbatim">\pi</code> &amp; <code class="verbatim">\pi{}</code> =&gt; π &amp; π</li>
+<li><code class="verbatim">\angle{}</code> &amp; <code class="verbatim">\angle</code> &amp; <code class="verbatim">\ang</code> <code class="verbatim">&gt;</code> ∠ ∠ ∠</li>
+</ul>
+</li>
+</ul></div>
+      </div>
+      <h2><a id='keywords.org' href='#toc-keywords.org'>keywords.org</a></h2>
+      <div class='source'>
+        <pre class='org'>#+OPTIONS: toc:nil
+* captions, custom attributes and more
+#+CAPTION: and _multiple_
+#+CAPTION: lines of *captions*!
+#+ATTR_HTML: :class a b
+#+ATTR_HTML: :id it :class c d
+#+BEGIN_SRC sh
+echo "a bash source block with custom html attributes"
+#+END_SRC
+
+and an image with custom html attributes and a caption
+#+CAPTION: kittens!
+#+ATTR_HTML: :style height: 100%; :id overwritten
+#+ATTR_HTML: :style border: 10px solid black; :id kittens
+[[https://placekitten.com/200/200#.png]]
+
+#+NAME: foo
+named paragraph
+
+#+NAME: bar
+#+begin_src
+named block
+#+end_src
+
+# comments must have whitespace after the hashtag
+#not a comment because there's no space after the hashtag
+
+* table of contents
+A table of contents can be rendered anywhere in the document by using
+#+begin_src org
+,#+TOC: headlines $n
+#+end_src
+Where =$n= is the max headline lvl that will be included. You can use =headlines 0= to include all headlines.
+#+TOC: headlines 0</pre>
+        <div class='html'><div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+captions, custom attributes and more
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<figure>
+<div class="src src-sh a b c d" id="it">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span><span style="color:#007020">echo</span> <span style="color:#4070a0">&#34;a bash source block with custom html attributes&#34;</span></span></span></code></pre>
+</div>
+</div>
+<figcaption>
+and <span style="text-decoration: underline;">multiple</span> lines of <strong>captions</strong>!
+</figcaption>
+</figure>
+<p>
+and an image with custom html attributes and a caption</p>
+<figure>
+<img src="https://placekitten.com/200/200#.png" alt="https://placekitten.com/200/200#.png" title="https://placekitten.com/200/200#.png" style="height: 100%; border: 10px solid black;" id="kittens"/>
+<figcaption>
+kittens!
+</figcaption>
+</figure>
+<p>named paragraph</p>
+<div class="src src-text">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>named block</span></span></code></pre>
+</div>
+</div>
+<p>#not a comment because there&#39;s no space after the hashtag</p>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
+<h2 id="headline-2">
+table of contents
+</h2>
+<div id="outline-text-headline-2" class="outline-text-2">
+<p>A table of contents can be rendered anywhere in the document by using</p>
+<div class="src src-org">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span><span style="color:#60a0b0;background-color:#fff0f0">#+TOC</span><span style="color:#60a0b0;font-style:italic">: headlines $n</span></span></span></code></pre>
+</div>
+</div>
+<p>Where <code class="verbatim">$n</code> is the max headline lvl that will be included. You can use <code class="verbatim">headlines 0</code> to include all headlines.</p>
+<nav>
+<ul>
+<li><a href="#headline-1">captions, custom attributes and more</a>
+</li>
+<li><a href="#headline-2">table of contents</a>
+</li>
+</ul>
+</nav>
+</div>
+</div></div>
+      </div>
+      <h2><a id='latex.org' href='#toc-latex.org'>latex.org</a></h2>
+      <div class='source'>
+        <pre class='org'>without latex delimiters the =_{i=1}= in =\sum_{i=1}^n a_n= is interpreted as subscript.
+we support =\(...\)=, =\[...\]=, =$$...$$= and =\begin{$env}...\end{$env}= as latex fragment delimiters.
+
+- \sum_{i=1}^n a_n (without latex delimiter)
+- \(\sum_{i=1}^n a_n\)
+- \[\sum_{i=1}^n a_n\]
+- $$\sum_{i=1}^n a_n$$
+- \begin{xyz}\sum_{i=1}^n a_n\end{xyz}
+- \begin{xyz}
+  \sum_{i=1}^n a_n
+  \end{xyz}
+- $2 + 2$, $3 - 3$
+- \begin{xyz}
+  latex block ignores block lvl elements (e.g. list - line starting with -)
+  a = b
+  - c
+  - d
+  \end{xyz}</pre>
+        <div class='html'><p>without latex delimiters the <code class="verbatim">_{i=1}</code> in <code class="verbatim">\sum_{i=1}^n a_n</code> is interpreted as subscript.
+we support <code class="verbatim">\(...\)</code>, <code class="verbatim">\[...\]</code>, <code class="verbatim">$$...$$</code> and <code class="verbatim">\begin{$env}...\end{$env}</code> as latex fragment delimiters.</p>
+<ul>
+<li>∑<sub>i=1</sub>^n a_n (without latex delimiter)</li>
+<li>\(\sum_{i=1}^n a_n\)</li>
+<li>\[\sum_{i=1}^n a_n\]</li>
+<li>$$\sum_{i=1}^n a_n$$</li>
+<li>\begin{xyz}\sum_{i=1}^n a_n\end{xyz}</li>
+<li>
+\begin{xyz}
+\sum_{i=1}^n a_n
+\end{xyz}
+</li>
+<li>$2 + 2$, $3 - 3$</li>
+<li>
+\begin{xyz}
+latex block ignores block lvl elements (e.g. list - line starting with -)
+a = b
+- c
+- d
+\end{xyz}
+</li>
+</ul></div>
+      </div>
+      <h2><a id='lists.org' href='#toc-lists.org'>lists.org</a></h2>
+      <div class='source'>
+        <pre class='org'>- [ ] unordered list item 1
+-
+
+  list item with empty first and second line \\
+  normally an empty line breaks the list item - but we make an exception for the first line and don't count it towards that limit
+- unordered list item 2 - with ~inline~ /markup/
+  1. [-] ordered sublist item 1
+     a) [X] ordered sublist item 1
+     b) [ ] ordered sublist item 2
+     c) [X] ordered sublist item 3
+  2. ordered sublist item 2
+  3.
+
+     list item with empty first and second line - see above
+- [X] unordered list item 3 - and a [[https://example.com][link]]
+  and some lines of text
+  1. and another subitem
+     #+BEGIN_SRC sh
+     echo with a block
+     #+END_SRC
+  2. and another one with a table
+     | a | b | c |
+     |---+---+---|
+     | 1 | 2 | 3 |
+
+     and text with an empty line in between as well!
+- unordered list item 4
+  : with an example
+  : 
+  : that spans multiple lines
+
+
+descriptive lists
+- [ ] term :: details
+          continued details
+- [ ] details without a term
+- [X] term ::
+          details on a new line
+- term ::
+
+          details on a new line (with an empty line in between)
+          *continued*
+          #+BEGIN_SRC bash
+          echo "Hello World!"
+          #+END_SRC
+
+some list termination tests
+
+- unordered 1
+- unordered 2
+1. ordered 1
+2. ordered 2
+
+
+1. ordered 1
+2. ordered 2
+- unordered 1
+- unordered 2
+
+
+1. ordered 1
+2. ordered 2
+- unordered descriptive :: 1
+- unordered descriptive :: 2
+
+
+1. ordered descriptive :: 1
+2. ordered descriptive :: 2
+- unordered 1
+- unordered 2
+
+
+1. [@2] use `[@n]` to change the value of list items
+2. [ ] foobar
+3. [@10] [X] that even works in combination with list statuses (`[ ]`)</pre>
+        <div class='html'><ul>
+<li class="unchecked">unordered list item 1</li>
+<li>
+
+list item with empty first and second line <br>
+normally an empty line breaks the list item - but we make an exception for the first line and don&#39;t count it towards that limit</li>
+<li>
+<p>unordered list item 2 - with <code>inline</code> <em>markup</em></p>
+<ol>
+<li class="indeterminate">
+<p>ordered sublist item 1</p>
+<ol>
+<li class="checked">ordered sublist item 1</li>
+<li class="unchecked">ordered sublist item 2</li>
+<li class="checked">ordered sublist item 3</li>
+</ol>
+</li>
+<li>ordered sublist item 2</li>
+<li>
+
+list item with empty first and second line - see above</li>
+</ol>
+</li>
+<li class="checked">
+<p>unordered list item 3 - and a <a href="https://example.com">link</a>
+and some lines of text</p>
+<ol>
+<li>
+<p>and another subitem</p>
+<div class="src src-sh">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span><span style="color:#007020">echo</span> with a block</span></span></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>and another one with a table</p>
+<table>
+<thead>
+<tr>
+<th class="align-right">a</th>
+<th class="align-right">b</th>
+<th class="align-right">c</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
+</tr>
+</tbody>
+</table>
+<p>
+and text with an empty line in between as well!</p>
+</li>
+</ol>
+</li>
+<li>
+<p>unordered list item 4</p>
+<pre class="example">
+with an example
+
+that spans multiple lines
+</pre>
+</li>
+</ul>
+<p>
+descriptive lists</p>
+<dl>
+<dt class="unchecked">
+term
+</dt>
+<dd>details
+continued details</dd>
+<dt class="unchecked">
+?
+</dt>
+<dd>details without a term</dd>
+<dt class="checked">
+term
+</dt>
+<dd>
+details on a new line</dd>
+<dt>
+term
+</dt>
+<dd>
+<p>
+details on a new line (with an empty line in between)
+<strong>continued</strong></p>
+<div class="src src-bash">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span><span style="color:#007020">echo</span> <span style="color:#4070a0">&#34;Hello World!&#34;</span></span></span></code></pre>
+</div>
+</div>
+</dd>
+</dl>
+<p>some list termination tests</p>
+<ul>
+<li>unordered 1</li>
+<li>unordered 2</li>
+</ul>
+<ol>
+<li>ordered 1</li>
+<li>ordered 2</li>
+</ol>
+<ol>
+<li>ordered 1</li>
+<li>ordered 2</li>
+</ol>
+<ul>
+<li>unordered 1</li>
+<li>unordered 2</li>
+</ul>
+<ol>
+<li>ordered 1</li>
+<li>ordered 2</li>
+</ol>
+<dl>
+<dt>
+unordered descriptive
+</dt>
+<dd>1</dd>
+<dt>
+unordered descriptive
+</dt>
+<dd>2</dd>
+</dl>
+<dl>
+<dt>
+ordered descriptive
+</dt>
+<dd>1</dd>
+<dt>
+ordered descriptive
+</dt>
+<dd>2</dd>
+</dl>
+<ul>
+<li>unordered 1</li>
+<li>unordered 2</li>
+</ul>
+<ol>
+<li value="2">use `[@n]` to change the value of list items</li>
+<li class="unchecked">foobar</li>
+<li value="10" class="checked">that even works in combination with list statuses (`[ ]`)</li>
+</ol></div>
+      </div>
+      <h2><a id='misc.org' href='#toc-misc.org'>misc.org</a></h2>
+      <div class='source'>
+        <pre class='org'>#+TITLE: Misc title @@html:&lt;b&gt;with an inline html export&lt;/b&gt;@@
+** issues from goorgeous (free test cases, yay!)
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/19][#19]]: Support #+HTML
+#+HTML: &lt;p style="border: 1px dotted grey"&gt;neato!&lt;/p&gt;
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/29][#29:]] Support verse block
+#+BEGIN_VERSE
+This
+*is*
+verse
+#+END_VERSE
+
+#+BEGIN_CUSTOM
+or even a *totally* /custom/ kind of block
+crazy ain't it?
+#+END_CUSTOM
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/30][#30]]: Support #+SETUPFILE
+see =./headlines.org=
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/31][#31]]: Support #+INCLUDE
+Note that only src/example/export block inclusion is supported for now.
+There's quite a lot more to include (see the [[https://orgmode.org/manual/Include-files.html][org manual for include files]]) but I
+don't have a use case for this yet and stuff like namespacing footnotes of included files
+adds quite a bit of complexity.
+
+for now files can be included as:
+- src block
+  #+INCLUDE: "./headlines.org" src org
+- export block
+  #+INCLUDE: "./paragraphs.html" export html
+- example block
+  #+INCLUDE: "../../.github/workflows/ci.yml" example yaml
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/33][#33]]: Wrong output when mixing html with Org mode
+#+HTML: &lt;div class="outline-2" id="meta" style="color: green;"&gt;
+| *foo* | foo |
+| *bar* | bar |
+#+HTML: &lt;/div&gt;
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/41][#41]]: Support Table Of Contents
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/46][#46]]: Support for symbols like ndash and mdash
+- ndash --
+- mdash ---
+- ellipsis ...
+- acute \Aacute and so on
+- note that ------ is replaced with 2 mdashes and .... becomes ellipsis+. and so on - that's how org also does it
+
+
+
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/47][#47:]] Consecutive ~code~ wrapped text gets joined
+either ~this~ or ~that~ foo.
+either ~this~
+or ~that~ foo.
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/50][#50]]: LineBreaks in lists are preserved
+- this list item
+  has
+  multiple
+  linbreaks - but it's still just one paragraph (i.e. no line breaks are rendered)
+- foobar
+1. same
+   goes
+   for
+   ordered
+   lists
+2. foo
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/68][#68]]: Quote block with inline markup
+#+BEGIN_QUOTE
+[[https://www.example.com][/this/ *is* _markup_!]]
+#+END_QUOTE
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/72][#72]]: Support for #+ATTR_HTML
+#+ATTR_HTML: :alt Go is fine though. :id gopher-image
+#+ATTR_HTML: :width 300 :style border:2px solid black;
+[[https://golang.org/doc/gopher/pkg.png]]
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/75][#75]]: Not parsing nested lists correctly
+- bullet 1
+  - sub bullet
+
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/77][#77]]: Recognize =code=--- as code plus dash
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/78][#78]]: Emphasis at beginning of line
+/italics/
+
+
+Text
+/italics/
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/82][#82]]: Crash on empty headline
+**** 
+just a space as title...
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/84][#84]]: Paragraphs that are not followed by an empty line are not parsed correctly
+**** Foo
+Foo paragraph.
+**** Bar
+Bar paragraph
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/86][#86]]: Multiple hyphens not converted to dashes
+just like #46
+- =--= -&gt; -- (en dash)
+- =---= -&gt; --- (em dash)
+
+also, consecutive dashes inside
+- inline code =--= =---= and verbatim ~--~ ~---~
+- src/example/export blocks should not be converted!
+  #+BEGIN_SRC sh
+  --, ---
+  #+END_SRC
+
+  #+BEGIN_EXAMPLE
+  --, ---
+  #+END_EXAMPLE
+
+  #+BEGIN_EXPORT html
+  --, ---
+  #+END_EXPORT
+
+  : --, ---
+
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/87][#87]]: Markup in footnotes is rendered literally
+footnotes can contain *markup* - and other elements and stuff [fn:1] [fn:2:that also goes for *inline* footnote /definitions/]
+*** DONE [[https://github.com/chaseadamsio/goorgeous/issues/92][#92]]: src blocks only render in caps
+The behaviour of Org mode =&lt;s TAB= changed and it now inserts lowercased src blocks (go-org already handled this one)
+- lowercased:
+  #+begin_src bash
+  uname -a
+  #+end_src
+- uppercased
+  #+BEGIN_SRC bash
+  uname -a
+  #+END_SRC
+** issues (wrongly) filed with hugo
+*** [[https://github.com/gohugoio/hugo/issues/3874][#3874]] exporting images in org mode
+Hello, I'm writing hugo blogs using org-mode.
+
+When inserting an image link like [[/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png]], hugo doesn't export the image.
+*** [[https://github.com/gohugoio/hugo/issues/4006][#4006]] source code blocks in org not rendered correctly
+    #+BEGIN_SRC emacs-lisp
+    (defun small-shell ()
+      (interactive)
+      (split-window-vertically)
+      (other-window 1)
+      (shrink-window (- (window-height) 12))
+      (ansi-term))
+    #+END_SRC
+** misc fuzz / regression / edge case
+*** index out of range in headline priority parsing
+**** [#B
+*** index out of range in explicit line break parsing
+0\\ 
+
+*** list items don't end on child headline
+- a list item
+**** followed by a child headline
+- followed by another list item
+* Footnotes
+
+[fn:1] a footnote /with/ *markup*
+- and a *list*
+- because that's possible</pre>
+        <div class='html'><h1 class="title">Misc title <b>with an inline html export</b></h1>
+<nav>
+<ul>
+<li><a href="#headline-1">issues from goorgeous (free test cases, yay!)</a>
+<ul>
+<li><a href="#headline-2">#19: Support #+HTML</a>
+</li>
+<li><a href="#headline-3">#29: Support verse block</a>
+</li>
+<li><a href="#headline-4">#30: Support #+SETUPFILE</a>
+</li>
+<li><a href="#headline-5">#31: Support #+INCLUDE</a>
+</li>
+<li><a href="#headline-6">#33: Wrong output when mixing html with Org mode</a>
+</li>
+<li><a href="#headline-7">#41: Support Table Of Contents</a>
+</li>
+<li><a href="#headline-8">#46: Support for symbols like ndash and mdash</a>
+</li>
+<li><a href="#headline-9">#47: Consecutive <code>code</code> wrapped text gets joined</a>
+</li>
+<li><a href="#headline-10">#50: LineBreaks in lists are preserved</a>
+</li>
+<li><a href="#headline-11">#68: Quote block with inline markup</a>
+</li>
+<li><a href="#headline-12">#72: Support for #+ATTR_HTML</a>
+</li>
+<li><a href="#headline-13">#75: Not parsing nested lists correctly</a>
+</li>
+<li><a href="#headline-14">#77: Recognize <code class="verbatim">code</code>— as code plus dash</a>
+</li>
+<li><a href="#headline-15">#78: Emphasis at beginning of line</a>
+</li>
+<li><a href="#headline-16">#82: Crash on empty headline</a>
+<ul>
+<li><a href="#headline-17"></a>
+</li>
+</ul>
+</li>
+<li><a href="#headline-18">#84: Paragraphs that are not followed by an empty line are not parsed correctly</a>
+<ul>
+<li><a href="#headline-19">Foo</a>
+</li>
+<li><a href="#headline-20">Bar</a>
+</li>
+</ul>
+</li>
+<li><a href="#headline-21">#86: Multiple hyphens not converted to dashes</a>
+</li>
+<li><a href="#headline-22">#87: Markup in footnotes is rendered literally</a>
+</li>
+<li><a href="#headline-23">#92: src blocks only render in caps</a>
+</li>
+</ul>
+</li>
+<li><a href="#headline-24">issues (wrongly) filed with hugo</a>
+<ul>
+<li><a href="#headline-25">#3874 exporting images in org mode</a>
+</li>
+<li><a href="#headline-26">#4006 source code blocks in org not rendered correctly</a>
+</li>
+</ul>
+</li>
+<li><a href="#headline-27">misc fuzz / regression / edge case</a>
+<ul>
+<li><a href="#headline-28">index out of range in headline priority parsing</a>
+<ul>
+<li><a href="#headline-29">[#B</a>
+</li>
+</ul>
+</li>
+<li><a href="#headline-30">index out of range in explicit line break parsing</a>
+</li>
+<li><a href="#headline-31">list items don&#39;t end on child headline</a>
+<ul>
+<li><a href="#headline-32">followed by a child headline</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#headline-33">Footnotes</a>
+</li>
+</ul>
+</nav>
+<div id="outline-container-headline-1" class="outline-3">
+<h3 id="headline-1">
+issues from goorgeous (free test cases, yay!)
+</h3>
+<div id="outline-text-headline-1" class="outline-text-3">
+<div id="outline-container-headline-2" class="outline-4">
+<h4 id="headline-2">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/19">#19</a>: Support #+HTML
+</h4>
+<div id="outline-text-headline-2" class="outline-text-4">
+<p style="border: 1px dotted grey">neato!</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-4">
+<h4 id="headline-3">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/29">#29:</a> Support verse block
+</h4>
+<div id="outline-text-headline-3" class="outline-text-4">
+<div class="verse-block">
+<p>This
+<strong>is</strong>
+verse</p>
+</div>
+<div class="custom-block">
+<p>or even a <strong>totally</strong> <em>custom</em> kind of block
+crazy ain&#39;t it?</p>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-4">
+<h4 id="headline-4">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/30">#30</a>: Support #+SETUPFILE
+</h4>
+<div id="outline-text-headline-4" class="outline-text-4">
+<p>see <code class="verbatim">./headlines.org</code></p>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-4">
+<h4 id="headline-5">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/31">#31</a>: Support #+INCLUDE
+</h4>
+<div id="outline-text-headline-5" class="outline-text-4">
+<p>Note that only src/example/export block inclusion is supported for now.
+There&#39;s quite a lot more to include (see the <a href="https://orgmode.org/manual/Include-files.html">org manual for include files</a>) but I
+don&#39;t have a use case for this yet and stuff like namespacing footnotes of included files
+adds quite a bit of complexity.</p>
+<p>
+for now files can be included as:</p>
+<ul>
+<li>
+<p>src block</p>
+<div class="src src-org">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span><span style="color:#60a0b0;background-color:#fff0f0">#+SETUPFILE</span><span style="color:#60a0b0;font-style:italic">: setup_file_org</span>
+</span></span><span style="display:flex;"><span><span style="color:#60a0b0;background-color:#fff0f0">#+OPTIONS</span><span style="color:#60a0b0;font-style:italic">: toc:1</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080;font-weight:bold">*</span><span style="font-weight:bold"> Simple Headline [1/2]</span>
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">- [X]</span> checked
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">- [ ]</span> unchecked
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">- </span>note that statistic tokens are marked up anywhere
+</span></span><span style="display:flex;"><span>  not just where they are actually meant to be - even here &gt; [100%] &lt;
+</span></span><span style="display:flex;"><span>  (Org mode proper does the same)
+</span></span><span style="display:flex;"><span><span style="color:#000080;font-weight:bold">*</span><span style=""> TODO</span><span style="font-weight:bold"> [#B] Headline with todo status &amp; priority</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080;font-weight:bold">*</span><span style="color:#235388"> DONE</span><span style="font-weight:bold"> Headline with TODO status</span>
+</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic">:PROPERTIES:
+</span></span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;background-color:#fff0f0">:custom_id: this-will-be-the-id-of-the-headline
+</span></span></span><span style="display:flex;"><span><span style="color:#60a0b0;background-color:#fff0f0">:note: property drawers are not exported as html like other drawers
+</span></span></span><span style="display:flex;"><span><span style="color:#60a0b0;background-color:#fff0f0"></span><span style="color:#60a0b0;font-style:italic">:END:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>we can link to headlines that define a custom_id: [[<span style="color:#4070a0">#this-will-be-the-id-of-the-headline</span>]]
+</span></span><span style="display:flex;"><span><span style="color:#000080;font-weight:bold">*</span><span style="font-weight:bold"> [#A] Headline with tags &amp; priority                               </span><span style="font-style:italic"> :foo:bar:</span>
+</span></span><span style="display:flex;"><span>Still outside the drawer
+</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic">:DRAWERNAME:
+</span></span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;background-color:#fff0f0">This is inside the drawer
+</span></span></span><span style="display:flex;"><span><span style="color:#60a0b0;background-color:#fff0f0"></span><span style="color:#60a0b0;font-style:italic">:end:</span>
+</span></span><span style="display:flex;"><span>Still outside the drawer
+</span></span><span style="display:flex;"><span><span style="color:#000080;font-weight:bold">*</span><span style="font-weight:bold"> CUSTOM headline with custom status</span>
+</span></span><span style="display:flex;"><span>it&#39;s possible to use <span style="color:#0e84b5;font-weight:bold">=#+SETUPFILE=</span> - in this case the setup file contains the following
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#60a0b0;background-color:#fff0f0">#+INCLUDE</span><span style="color:#60a0b0;font-style:italic">: &#34;setup_file_org&#34; src org</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080;font-weight:bold">*</span><span style="font-weight:bold"> excluded headline                                               </span><span style="font-style:italic"> :custom_noexport:</span>
+</span></span><span style="display:flex;"><span>this headline and it&#39;s content are not exported as it is marked with an <span style="color:#0e84b5;font-weight:bold">=EXCLUDE_TAGS=</span> tag.
+</span></span><span style="display:flex;"><span>By default <span style="color:#0e84b5;font-weight:bold">=EXCLUDE_TAGS=</span> is just <span style="color:#0e84b5;font-weight:bold">=:noexport:=</span>.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000080;font-weight:bold">*</span><span style=""> TODO</span><span style="font-weight:bold"> [#A] COMMENT commented headline</span>
+</span></span><span style="display:flex;"><span>this headline is commented out. see [[<span style="color:#4070a0">https://orgmode.org/manual/Comment-Lines.html</span>][<span style="color:#062873;font-weight:bold">comment lines</span>]]
+</span></span><span style="display:flex;"><span><span style="color:#000080;font-weight:bold">*</span><span style="font-weight:bold"> malformed property drawer</span>
+</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic">:PROPERTIES:
+</span></span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"></span><span style="color:#60a0b0;background-color:#fff0f0">not a property
+</span></span></span><span style="display:flex;"><span><span style="color:#60a0b0;background-color:#fff0f0"></span><span style="color:#60a0b0;font-style:italic">:END:</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080;font-weight:bold">*</span><span style="font-weight:bold"> level limit for headlines to be included in the table of contents</span>
+</span></span><span style="display:flex;"><span>The toc option allows setting a [[<span style="color:#4070a0">https://orgmode.org/manual/Export-settings.html</span>][<span style="color:#062873;font-weight:bold">level limit</span>]]. For this file we set it to 1 - which means that the following headlines
+</span></span><span style="display:flex;"><span>won&#39;t be included in the table of contents.
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">**</span> headline 2 not in toc
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">***</span> headline 3 not in toc
+</span></span><span style="display:flex;"><span><span style="color:#800080;font-weight:bold">**</span> anoter headline 2 not in toc
+</span></span><span style="display:flex;"><span>you get the gist...</span></span></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>export block</p>
+<p>Paragraphs are the default element.</p>
+<p>
+Empty lines and other elements end paragraphs - but paragraphs
+can
+obviously
+span
+multiple
+lines.</p>
+<p>
+Paragraphs can contain inline markup like <em>emphasis</em> <strong>strong</strong>  and links <a href="https://www.example.com">example.com</a> and stuff.</p>
+</li>
+<li>
+<p>example block</p>
+<pre class="example">
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: git
+      run: |
+        git clone --depth 1 &#34;https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}&#34; .
+        git config user.name &#34;GitHub Action&#34;
+        git config user.email &#34;action@github.com&#34;
+        git log -1 --format=&#34;%H&#34;
+    - name: go
+      run: sudo snap install go --classic
+    - name: test
+      run: make test
+    - name: gh-pages
+      run: |
+        git checkout --orphan gh-pages &amp;&amp; git reset
+        make generate-gh-pages
+        git add -f docs/ &amp;&amp; git commit -m deploy
+        git push -f origin gh-pages
+    - name: notify
+      if: ${{ failure() }}
+      run: |
+        text=&#34;https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} failed&#34;
+        curl --silent --output /dev/null ${{secrets.TELEGRAM_URL}} -d &#34;chat_id=${{secrets.TELEGRAM_CHAT_ID}}&amp;text=${text}&#34;
+</pre>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-4">
+<h4 id="headline-6">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/33">#33</a>: Wrong output when mixing html with Org mode
+</h4>
+<div id="outline-text-headline-6" class="outline-text-4">
+<div class="outline-2" id="meta" style="color: green;">
+<table>
+<tbody>
+<tr>
+<td><strong>foo</strong></td>
+<td>foo</td>
+</tr>
+<tr>
+<td><strong>bar</strong></td>
+<td>bar</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-4">
+<h4 id="headline-7">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/41">#41</a>: Support Table Of Contents
+</h4>
+</div>
+<div id="outline-container-headline-8" class="outline-4">
+<h4 id="headline-8">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/46">#46</a>: Support for symbols like ndash and mdash
+</h4>
+<div id="outline-text-headline-8" class="outline-text-4">
+<ul>
+<li>ndash –</li>
+<li>mdash —</li>
+<li>ellipsis …</li>
+<li>acute Á and so on</li>
+<li>note that —— is replaced with 2 mdashes and …. becomes ellipsis+. and so on - that&#39;s how org also does it</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-4">
+<h4 id="headline-9">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/47">#47:</a> Consecutive <code>code</code> wrapped text gets joined
+</h4>
+<div id="outline-text-headline-9" class="outline-text-4">
+<p>either <code>this</code> or <code>that</code> foo.
+either <code>this</code>
+or <code>that</code> foo.</p>
+</div>
+</div>
+<div id="outline-container-headline-10" class="outline-4">
+<h4 id="headline-10">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/50">#50</a>: LineBreaks in lists are preserved
+</h4>
+<div id="outline-text-headline-10" class="outline-text-4">
+<ul>
+<li>this list item
+has
+multiple
+linbreaks - but it&#39;s still just one paragraph (i.e. no line breaks are rendered)</li>
+<li>foobar</li>
+</ul>
+<ol>
+<li>same
+goes
+for
+ordered
+lists</li>
+<li>foo</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-headline-11" class="outline-4">
+<h4 id="headline-11">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/68">#68</a>: Quote block with inline markup
+</h4>
+<div id="outline-text-headline-11" class="outline-text-4">
+<blockquote>
+<p><a href="https://www.example.com"><em>this</em> <strong>is</strong> <span style="text-decoration: underline;">markup</span>!</a></p>
+</blockquote>
+</div>
+</div>
+<div id="outline-container-headline-12" class="outline-4">
+<h4 id="headline-12">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/72">#72</a>: Support for #+ATTR_HTML
+</h4>
+<div id="outline-text-headline-12" class="outline-text-4">
+<img src="https://golang.org/doc/gopher/pkg.png" alt="Go is fine though." title="https://golang.org/doc/gopher/pkg.png" id="gopher-image" width="300" style="border:2px solid black;"/>
+</div>
+</div>
+<div id="outline-container-headline-13" class="outline-4">
+<h4 id="headline-13">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/75">#75</a>: Not parsing nested lists correctly
+</h4>
+<div id="outline-text-headline-13" class="outline-text-4">
+<ul>
+<li>
+<p>bullet 1</p>
+<ul>
+<li>sub bullet</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-14" class="outline-4">
+<h4 id="headline-14">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/77">#77</a>: Recognize <code class="verbatim">code</code>— as code plus dash
+</h4>
+</div>
+<div id="outline-container-headline-15" class="outline-4">
+<h4 id="headline-15">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/78">#78</a>: Emphasis at beginning of line
+</h4>
+<div id="outline-text-headline-15" class="outline-text-4">
+<p><em>italics</em></p>
+<p>
+Text
+<em>italics</em></p>
+</div>
+</div>
+<div id="outline-container-headline-16" class="outline-4">
+<h4 id="headline-16">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/82">#82</a>: Crash on empty headline
+</h4>
+<div id="outline-text-headline-16" class="outline-text-4">
+<div id="outline-container-headline-17" class="outline-5">
+<h5 id="headline-17">
+
+</h5>
+<div id="outline-text-headline-17" class="outline-text-5">
+<p>just a space as title…</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-18" class="outline-4">
+<h4 id="headline-18">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/84">#84</a>: Paragraphs that are not followed by an empty line are not parsed correctly
+</h4>
+<div id="outline-text-headline-18" class="outline-text-4">
+<div id="outline-container-headline-19" class="outline-5">
+<h5 id="headline-19">
+Foo
+</h5>
+<div id="outline-text-headline-19" class="outline-text-5">
+<p>Foo paragraph.</p>
+</div>
+</div>
+<div id="outline-container-headline-20" class="outline-5">
+<h5 id="headline-20">
+Bar
+</h5>
+<div id="outline-text-headline-20" class="outline-text-5">
+<p>Bar paragraph</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-21" class="outline-4">
+<h4 id="headline-21">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/86">#86</a>: Multiple hyphens not converted to dashes
+</h4>
+<div id="outline-text-headline-21" class="outline-text-4">
+<p>just like #46</p>
+<ul>
+<li><code class="verbatim">--</code> -&gt; – (en dash)</li>
+<li><code class="verbatim">---</code> -&gt; — (em dash)</li>
+</ul>
+<p>also, consecutive dashes inside</p>
+<ul>
+<li>inline code <code class="verbatim">--</code> <code class="verbatim">---</code> and verbatim <code>--</code> <code>---</code></li>
+<li>
+<p>src/example/export blocks should not be converted!</p>
+<div class="src src-sh">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>--, ---</span></span></code></pre>
+</div>
+</div>
+<pre class="example">
+--, ---
+</pre>
+--, ---
+<pre class="example">
+--, ---
+</pre>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-headline-22" class="outline-4">
+<h4 id="headline-22">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/87">#87</a>: Markup in footnotes is rendered literally
+</h4>
+<div id="outline-text-headline-22" class="outline-text-4">
+<p>footnotes can contain <strong>markup</strong> - and other elements and stuff <sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> <sup class="footnote-reference"><a id="footnote-reference-2" href="#footnote-2">2</a></sup></p>
+</div>
+</div>
+<div id="outline-container-headline-23" class="outline-4">
+<h4 id="headline-23">
+<span class="todo status-done">DONE</span>
+<a href="https://github.com/chaseadamsio/goorgeous/issues/92">#92</a>: src blocks only render in caps
+</h4>
+<div id="outline-text-headline-23" class="outline-text-4">
+<p>The behaviour of Org mode <code class="verbatim">&lt;s TAB</code> changed and it now inserts lowercased src blocks (go-org already handled this one)</p>
+<ul>
+<li>
+<p>lowercased:</p>
+<div class="src src-bash">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>uname -a</span></span></code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>uppercased</p>
+<div class="src src-bash">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>uname -a</span></span></code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-24" class="outline-3">
+<h3 id="headline-24">
+issues (wrongly) filed with hugo
+</h3>
+<div id="outline-text-headline-24" class="outline-text-3">
+<div id="outline-container-headline-25" class="outline-4">
+<h4 id="headline-25">
+<a href="https://github.com/gohugoio/hugo/issues/3874">#3874</a> exporting images in org mode
+</h4>
+<div id="outline-text-headline-25" class="outline-text-4">
+<p>Hello, I&#39;m writing hugo blogs using org-mode.</p>
+<p>
+When inserting an image link like <img src="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" alt="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" title="/home/amos/Pictures/Screenshots/img-2017-09-11-165647.png" />, hugo doesn&#39;t export the image.</p>
+</div>
+</div>
+<div id="outline-container-headline-26" class="outline-4">
+<h4 id="headline-26">
+<a href="https://github.com/gohugoio/hugo/issues/4006">#4006</a> source code blocks in org not rendered correctly
+</h4>
+<div id="outline-text-headline-26" class="outline-text-4">
+<div class="src src-emacs-lisp">
+<div class="highlight">
+<pre style="background-color:#f0f0f0;"><code><span style="display:flex;"><span>(<span style="color:#007020">defun</span> <span style="color:#bb60d5">small-shell</span> ()
+</span></span><span style="display:flex;"><span>  (<span style="color:#007020">interactive</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#bb60d5">split-window-vertically</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#bb60d5">other-window</span> <span style="color:#40a070">1</span>)
+</span></span><span style="display:flex;"><span>  (<span style="color:#bb60d5">shrink-window</span> (<span style="color:#06287e">-</span> (<span style="color:#bb60d5">window-height</span>) <span style="color:#40a070">12</span>))
+</span></span><span style="display:flex;"><span>  (<span style="color:#bb60d5">ansi-term</span>))</span></span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-27" class="outline-3">
+<h3 id="headline-27">
+misc fuzz / regression / edge case
+</h3>
+<div id="outline-text-headline-27" class="outline-text-3">
+<div id="outline-container-headline-28" class="outline-4">
+<h4 id="headline-28">
+index out of range in headline priority parsing
+</h4>
+<div id="outline-text-headline-28" class="outline-text-4">
+<div id="outline-container-headline-29" class="outline-5">
+<h5 id="headline-29">
+[#B
+</h5>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-30" class="outline-4">
+<h4 id="headline-30">
+index out of range in explicit line break parsing
+</h4>
+<div id="outline-text-headline-30" class="outline-text-4">
+<p>0\\ </p>
+</div>
+</div>
+<div id="outline-container-headline-31" class="outline-4">
+<h4 id="headline-31">
+list items don&#39;t end on child headline
+</h4>
+<div id="outline-text-headline-31" class="outline-text-4">
+<ul>
+<li>a list item</li>
+</ul>
+<div id="outline-container-headline-32" class="outline-5">
+<h5 id="headline-32">
+followed by a child headline
+</h5>
+<div id="outline-text-headline-32" class="outline-text-5">
+<ul>
+<li>followed by another list item</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-33" class="outline-2">
+<h2 id="headline-33">
+Footnotes
+</h2>
+</div>
+<div class="footnotes">
+<hr class="footnotes-separatator"/>
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<p>a footnote <em>with</em> <strong>markup</strong></p>
+<ul>
+<li>and a <strong>list</strong></li>
+<li>because that&#39;s possible</li>
+</ul>
+</div>
+</div>
+<div class="footnote-definition">
+<sup id="footnote-2"><a href="#footnote-reference-2">2</a></sup>
+<div class="footnote-body">
+<p>that also goes for <strong>inline</strong> footnote <em>definitions</em></p>
+</div>
+</div>
+</div>
+</div></div>
+      </div>
+      <h2><a id='options.org' href='#toc-options.org'>options.org</a></h2>
+      <div class='source'>
+        <pre class='org'>#+OPTIONS: toc:nil f:nil e:nil
+
+* DONE [#A] =#+OPTIONS:= toggles supported by =go-org=                 :tag1:tag2:
+=go-org= supports multiple export toggles as described in the [[https://orgmode.org/manual/Export-settings.html][export settings]] section of the Org mode manual.
+By default (most of?) those toggles are enabled. This file starts with =#+OPTIONS: toc:nil f:nil e:nil= and thus
+disables the table of contents, footnotes &amp; entities.
+That means, entities like =---= --- (mdash) will be left untouched, footnotes like =[fn:1]= [fn:1] will
+not be exported and there won't be a table of contents at the top.
+As buffer options are merged with the defaults, the above headline will be exported *with* priority, todo status &amp; tags.
+
+| key  | description                                                                        |
+|------+------------------------------------------------------------------------------------|
+| f    | Include footnotes (definitions &amp; links)                                            |
+| e    | Include entities                                                                   |
+| toc  | Include table of contents (outline)                                                |
+|------+------------------------------------------------------------------------------------|
+| pri  | Include priority =[#A]=, =[#B]=, =[#C]= in headline title                          |
+| todo | Include todo status in headline title                                              |
+| tags | Include tags in headline title                                                     |
+|------+------------------------------------------------------------------------------------|
+| ealb | Omit newlines between multi-byte characters (east asian line breaks, non-standard) |
+
+[fn:1] This footnote definition won't be printed</pre>
+        <div class='html'><div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+<span class="todo status-done">DONE</span>
+<span class="priority priority-a">[A]</span>
+<code class="verbatim">#+OPTIONS:</code> toggles supported by <code class="verbatim">go-org</code>&#xa0;&#xa0;&#xa0;<span class="tags"><span class="tag-tag1">tag1</span>&#xa0;<span class="tag-tag2">tag2</span></span>
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p><code class="verbatim">go-org</code> supports multiple export toggles as described in the <a href="https://orgmode.org/manual/Export-settings.html">export settings</a> section of the Org mode manual.
+By default (most of?) those toggles are enabled. This file starts with <code class="verbatim">#+OPTIONS: toc:nil f:nil e:nil</code> and thus
+disables the table of contents, footnotes &amp; entities.
+That means, entities like <code class="verbatim">---</code> --- (mdash) will be left untouched, footnotes like <code class="verbatim">[fn:1]</code>  will
+not be exported and there won&#39;t be a table of contents at the top.
+As buffer options are merged with the defaults, the above headline will be exported <strong>with</strong> priority, todo status &amp; tags.</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>f</td>
+<td>Include footnotes (definitions &amp; links)</td>
+</tr>
+<tr>
+<td>e</td>
+<td>Include entities</td>
+</tr>
+<tr>
+<td>toc</td>
+<td>Include table of contents (outline)</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td>pri</td>
+<td>Include priority <code class="verbatim">[#A]</code>, <code class="verbatim">[#B]</code>, <code class="verbatim">[#C]</code> in headline title</td>
+</tr>
+<tr>
+<td>todo</td>
+<td>Include todo status in headline title</td>
+</tr>
+<tr>
+<td>tags</td>
+<td>Include tags in headline title</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td>ealb</td>
+<td>Omit newlines between multi-byte characters (east asian line breaks, non-standard)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+      </div>
+      <h2><a id='paragraphs.org' href='#toc-paragraphs.org'>paragraphs.org</a></h2>
+      <div class='source'>
+        <pre class='org'>Paragraphs are the default element.
+
+Empty lines and other elements end paragraphs - but paragraphs
+can
+obviously
+span
+multiple
+lines.
+
+Paragraphs can contain inline markup like /emphasis/ *strong*  and links [[https://www.example.com][example.com]] and stuff.</pre>
+        <div class='html'><p>Paragraphs are the default element.</p>
+<p>
+Empty lines and other elements end paragraphs - but paragraphs
+can
+obviously
+span
+multiple
+lines.</p>
+<p>
+Paragraphs can contain inline markup like <em>emphasis</em> <strong>strong</strong>  and links <a href="https://www.example.com">example.com</a> and stuff.</p></div>
+      </div>
+      <h2><a id='tables.org' href='#toc-tables.org'>tables.org</a></h2>
+      <div class='source'>
+        <pre class='org'>#+CAPTION: table with separator before and after header
+|---+---+---|
+| a | b | c |
+|---+---+---|
+| 1 | 2 | 3 |
+
+#+CAPTION: table with separator after header
+| a | b | c |
+|---+---+---|
+| 1 | 2 | 3 |
+
+#+CAPTION: table with unicode characters
+| Character | Org       | Rendered HTML |
+|-----------+-----------+---------------|
+| Hyphen    | =a - b=   | a - b         |
+| Ndash     | =a -- b=  | a – b         |
+| Mdash     | =a --- b= | a — b         |
+| Ellipsis  | =a ... b= | a … b         |
+
+#+CAPTION: table without header (but separator before)
+|---+---+---|
+| 1 | 2 | 3 |
+
+#+CAPTION: table without header
+| 1 | 2 | 3 |
+
+#+CAPTION: table with aligned and sized columns
+| left aligned | right aligned | center aligned |
+|--------------+---------------+----------------|
+| &lt;l&gt;          |           &lt;r&gt; |      &lt;c5&gt;      |
+|              |           &lt;1&gt; |                |
+| 42           |            42 |       42       |
+| foobar       |        foobar |     foobar     |
+
+#+CAPTION: table with right aligned columns (because numbers)
+| long column a | long column b | long column c |
+|---------------+---------------+---------------|
+|             1 |             2 |             3 |
+
+#+CAPTION: table with multiple separators (~ multiple tbodies)
+| a | b | c |
+|---+---+---|
+| 1 | 2 | 3 |
+| . | . | . |
+|---+---+---|
+| 1 | 2 | 3 |
+|---+---+---|
+| 1 | 2 | 3 |</pre>
+        <div class='html'><figure>
+<table>
+<thead>
+<tr>
+<th class="align-right">a</th>
+<th class="align-right">b</th>
+<th class="align-right">c</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+table with separator before and after header
+</figcaption>
+</figure>
+<figure>
+<table>
+<thead>
+<tr>
+<th class="align-right">a</th>
+<th class="align-right">b</th>
+<th class="align-right">c</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+table with separator after header
+</figcaption>
+</figure>
+<figure>
+<table>
+<thead>
+<tr>
+<th>Character</th>
+<th>Org</th>
+<th>Rendered HTML</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hyphen</td>
+<td><code class="verbatim">a - b</code></td>
+<td>a - b</td>
+</tr>
+<tr>
+<td>Ndash</td>
+<td><code class="verbatim">a -- b</code></td>
+<td>a – b</td>
+</tr>
+<tr>
+<td>Mdash</td>
+<td><code class="verbatim">a --- b</code></td>
+<td>a — b</td>
+</tr>
+<tr>
+<td>Ellipsis</td>
+<td><code class="verbatim">a ... b</code></td>
+<td>a … b</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+table with unicode characters
+</figcaption>
+</figure>
+<figure>
+<table>
+<tbody>
+<tr>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+table without header (but separator before)
+</figcaption>
+</figure>
+<figure>
+<table>
+<tbody>
+<tr>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+table without header
+</figcaption>
+</figure>
+<figure>
+<table>
+<thead>
+<tr>
+<th class="align-left">left aligned</th>
+<th class="align-right">right aligned</th>
+<th class="align-center">center aligned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="align-left">42</td>
+<td class="align-right">42</td>
+<td class="align-center">42</td>
+</tr>
+<tr>
+<td class="align-left">foobar</td>
+<td class="align-right">foobar</td>
+<td class="align-center">foobar</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+table with aligned and sized columns
+</figcaption>
+</figure>
+<figure>
+<table>
+<thead>
+<tr>
+<th class="align-right">long column a</th>
+<th class="align-right">long column b</th>
+<th class="align-right">long column c</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+table with right aligned columns (because numbers)
+</figcaption>
+</figure>
+<figure>
+<table>
+<thead>
+<tr>
+<th class="align-right">a</th>
+<th class="align-right">b</th>
+<th class="align-right">c</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
+</tr>
+<tr>
+<td class="align-right">.</td>
+<td class="align-right">.</td>
+<td class="align-right">.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="align-right">1</td>
+<td class="align-right">2</td>
+<td class="align-right">3</td>
+</tr>
+</tbody>
+</table>
+<figcaption>
+table with multiple separators (~ multiple tbodies)
+</figcaption>
+</figure></div>
+      </div>
+  </body>
+</html>

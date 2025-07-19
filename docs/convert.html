@@ -1,0 +1,198 @@
+<html>
+  <head>
+    <style>* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0; }
+
+html {
+  font: 100%/1.5 sans-serif;
+  word-wrap: break-word;
+  padding: 1.5em; }
+
+@media (min-width: 768px) {
+  html { font-size: 125%; } }
+
+h1, h2, h3, h4 {
+  margin: 2.5rem 0 1.5rem 0;
+  line-height: 1.25; }
+
+.title {
+  font-size: 2.5em; }
+
+.subtitle {
+  font-weight: normal;
+  font-size: 0.75em;
+  color: #666; }
+
+a {
+  color: #fa6432;
+  text-decoration: none; }
+a:hover, a:focus, a:active {
+  text-decoration: underline; }
+
+p {
+  margin: 1em 0; }
+p code {
+  background-color: #eee;
+  padding: 0.05em 0.2em;
+  border: 1px solid #ccc; }
+
+ol, ul {
+  margin: 1em; }
+ol li ol, ol li ul, ul li ol, ul li ul {
+  margin: 0 2em; }
+ol li p, ul li p {
+  margin: 0; }
+
+img {
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+  padding: 0.5em; }
+
+blockquote {
+  padding-left: 1em;
+  font-style: italic;
+  border-left: solid 1px #fa6432; }
+
+table {
+  font-family: monospace, monospace; /* https://github.com/necolas/normalize.css#extended-details-and-known-issues */
+  font-size: 1rem;
+  text-align: left;
+  caption-side: bottom;
+  margin-bottom: 2em; }
+table * {
+  border: none; }
+table thead, table tr {
+  display: table;
+  table-layout: fixed;
+  width: 100%; }
+table tr:nth-child(even) {
+  background-color: #ccc; }
+table tbody {
+  display: block;
+  max-height: 70vh;
+  overflow-y: auto; }
+table td, table th {
+  padding: 0.25em; }
+
+table, .highlight > pre, pre.example {
+  max-height: 70vh;
+  margin: 1em 0;
+  padding: 1em;
+  overflow: auto;
+  font-family: monospace, monospace; /* https://github.com/necolas/normalize.css#extended-details-and-known-issues */
+  font-size: 0.85rem;
+  border: 1px solid rgba(250, 100, 50, 0.5); }
+
+figure {
+  margin: 1em 0;
+}
+
+figcaption {
+  font-family: monospace, monospace; /* https://github.com/necolas/normalize.css#extended-details-and-known-issues */
+  font-size: 0.75em;
+  text-align: center;
+  color: grey; }
+
+.footnote-definition sup {
+  float: left; }
+
+.footnote-definition .footnote-body {
+  margin: 1em 0;
+  padding: 0 1em;
+  border: 1px solid rgba(250, 100, 50, 0.3);
+  background-color: #ccc; }
+.footnote-definition .footnote-body p:only-child {
+  margin: 0.2em 0; }
+
+.align-left   { text-align: left;   }
+.align-center { text-align: center; }
+.align-right  { text-align: right;  }
+
+
+dl { font-family: monospace, monospace; }
+dl > dt { font-weight: bold; }
+dl > dd { margin: 1em; }
+
+.todo, .priority, .tags {
+  font-size: 0.8em;
+  color: lightgrey;
+}
+
+.timestamp {
+  background-color: #eee;
+  padding: 0.05em 0.2em;
+  border: 1px solid #ccc; }</style>
+  </head>
+  <body>
+  
+  <h1>Blorg</h1>
+  <a href=blorg/>example blorg output</a>
+  <h1>Convert</h1>
+  <button id='run' disabled='true' onclick='run()'>
+    RUN (initializing...)
+  </button>
+  or ctrl + return
+  <textarea id='input'>* Hello World</textarea>
+  <div id='output'></div>
+  <style>
+   #run {
+     background-color: #50CCDD;
+     border: none;
+     border-radius: 0.33em;
+     color: #FFF;
+     cursor: pointer;
+     font-weight: bold;
+     letter-spacing: 0.1em;
+     padding: 0.5em 1.5em;
+   }
+
+   #run:hover {
+     background-color: #40AACC;
+     outline: 0;
+   }
+
+   #run:disabled {
+     background-color: #AAA;
+     cursor: wait;
+   }
+
+   #input, #output {
+     display: block;
+     border: 1px dashed grey;
+     margin: 0.5em 0;
+     overflow: auto;
+     padding: 0.25em;
+     width: 100%;
+   }
+   #input { height: 30%; }
+   #output { max-height: 100%; }
+  </style>
+  <script src='wasm_exec.js'></script>
+  <script>
+   const go = new Go();
+   WebAssembly
+     .instantiateStreaming(fetch('main.wasm'), go.importObject)
+     .then((result) => go.run(result.instance),
+           (error) => {
+             const button = document.getElementById('run');
+             button.textContent = 'ERROR: (' + error + ')';
+           });
+
+   function initialized() {
+     const button = document.getElementById('run');
+     button.textContent = 'RUN';
+     button.removeAttribute('disabled');
+   }
+
+   document.getElementById('input').addEventListener('keydown', function(e) {
+   if (e.keyCode == 13 && e.ctrlKey) { // ctrl+enter
+       run();
+       e.preventDefault();
+     }
+   }, false)
+  </script>
+  </body>
+</html>
