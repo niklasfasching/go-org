@@ -73,13 +73,11 @@ func (d *Document) parseKeyword(i int, stop stopFn) (int, Node) {
 		}
 		return 1, k
 	case "CAPTION", "ATTR_HTML":
-		consumed, node, ok := d.parseAffiliated(i, stop)
-		if ok {
+		consumed, node := d.parseAffiliated(i, stop)
+		if consumed != 0 {
 			return consumed, node
-		} else if i+consumed <= len(d.tokens)-1 {
-			return -1, nil
 		}
-		return 1, k
+		fallthrough
 	default:
 		if _, ok := d.BufferSettings[k.Key]; ok {
 			d.BufferSettings[k.Key] = strings.Join([]string{d.BufferSettings[k.Key], k.Value}, "\n")
@@ -102,7 +100,7 @@ func (d *Document) parseNodeWithName(k Keyword, i int, stop stopFn) (int, Node) 
 	return consumed + 1, NodeWithName{k.Value, node}
 }
 
-func (d *Document) parseAffiliated(i int, stop stopFn) (int, Node, bool) {
+func (d *Document) parseAffiliated(i int, stop stopFn) (int, Node) {
 	start, meta := i, Metadata{}
 	for ; !stop(d, i) && d.tokens[i].kind == "keyword"; i++ {
 		switch k := parseKeyword(d.tokens[i]); k.Key {
@@ -127,18 +125,18 @@ func (d *Document) parseAffiliated(i int, stop stopFn) (int, Node, bool) {
 			}
 			meta.HTMLAttributes = append(meta.HTMLAttributes, attributes)
 		default:
-			return i - start, nil, false
+			return 0, nil
 		}
 	}
 	if stop(d, i) {
-		return i - start, nil, false
+		return 0, nil
 	}
 	consumed, node := d.parseOne(i, stop)
 	if consumed == 0 || node == nil {
-		return i - start, nil, false
+		return 0, nil
 	}
 	i += consumed
-	return i - start, NodeWithMeta{node, meta}, true
+	return i - start, NodeWithMeta{node, meta}
 }
 
 func parseKeyword(t token) Keyword {
