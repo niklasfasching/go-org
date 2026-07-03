@@ -90,6 +90,7 @@ func New() *Configuration {
 		DefaultSettings: map[string]string{
 			"TODO":         "TODO | DONE",
 			"EXCLUDE_TAGS": "noexport",
+			"IGNORE_TAGS":  "ignore",
 			"OPTIONS":      "toc:t <:t e:t f:t pri:t todo:t tags:t title:t ealb:nil",
 		},
 		Log:      log.New(os.Stderr, "go-org: ", 0),
