@@ -303,7 +303,7 @@ func (w *HTMLWriter) WriteHeadline(h Headline) {
 	}
 
 	if h.IsIgnored(w.document) {
-		WriteNodes(w, h.Children...)
+		WriteNodes(w, promoteChildren(h.Children)...)
 		return
 	}
 
@@ -701,4 +701,18 @@ func (fs *footnotes) updateDefinition(f FootnoteDefinition) {
 		// save in case it's the latter
 		fs.unused[f.Name] = &f
 	}
+}
+
+func promoteChildren(children []Node) []Node {
+	promoted := make([]Node, len(children))
+	for i, child := range children {
+		if ch, ok := child.(Headline); ok {
+			ch.Lvl--
+			ch.Children = promoteChildren(ch.Children)
+			promoted[i] = ch
+		} else {
+			promoted[i] = child
+		}
+	}
+	return promoted
 }

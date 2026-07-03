@@ -45,3 +45,11 @@ you get the gist...
 this content should be rendered without a heading wrapper.
 ** child of ignored headline
 this child headline should be rendered normally.
+*** grandchild of ignored headline
+this grandchild should also be promoted.
+* nested ignore                                                      :ignore:
+** visible section
+some content.
+*** also ignored                                                     :ignore:
+**** promoted twice
+this should render one level below visible section.
