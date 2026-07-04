@@ -121,6 +121,17 @@ func (h Headline) IsExcluded(d *Document) bool {
 	return false
 }
 
+func (h Headline) IsIgnored(d *Document) bool {
+	for _, ignoredTag := range strings.Fields(d.Get("IGNORE_TAGS")) {
+		for _, tag := range h.Tags {
+			if tag == ignoredTag {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func (parent *Section) add(current *Section) {
 	if parent.Headline == nil || parent.Headline.Lvl < current.Headline.Lvl {
 		parent.Children = append(parent.Children, current)
