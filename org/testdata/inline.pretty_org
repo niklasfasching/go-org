@@ -35,6 +35,7 @@
   8. regular link with image as description [[https://placekitten.com][https://placekitten.com/200/200#.png]]
   9. regular link enclosed in [] [[[https://www.example.com]]] [[[https://www.example.com][example.com]]]
   10. auto link, i.e. not inside =\[[square brackets]\]= https://www.example.com
+  11. auto link with trailing punctuation https://www.example.com. and https://www.example.com/path_(a) kept
 - timestamps
   - <2019-01-06 Sun>
   - <2019-01-06 Sun>

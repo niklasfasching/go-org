@@ -301,10 +301,39 @@ func (d *Document) parseAutoLink(input string, start int) (int, int, Node) {
 	for ; end < len(input) && strings.ContainsRune(validURLCharacters, rune(input[end])); end++ {
 	}
 	path := input[start:end]
+	path = trimTrailingURLPunctuation(path)
+	end = start + len(path)
 	if path == "://" {
 		return 0, 0, nil
 	}
 	return len(protocol), len(path + protocol), RegularLink{protocol, nil, protocol + path, true}
+}
+
+// trimTrailingURLPunctuation removes punctuation that follows a plain link but
+// is meant as sentence punctuation rather than part of the URL, e.g. the period
+// in "see https://example.com/foo." or the comma in "a, https://example.com, b".
+// A closing bracket is only kept when the path contains a matching opening one,
+// so "https://en.wikipedia.org/wiki/Foo_(bar)" survives while a link wrapped in
+// "(https://example.com)" does not swallow the closing paren.
+func trimTrailingURLPunctuation(path string) string {
+	for len(path) > 0 {
+		c := path[len(path)-1]
+		switch c {
+		case '.', ',', ';', ':', '!', '?', '\'':
+		case ')', ']':
+			open := byte('(')
+			if c == ']' {
+				open = '['
+			}
+			if strings.Count(path, string(open)) >= strings.Count(path, string(c)) {
+				return path
+			}
+		default:
+			return path
+		}
+		path = path[:len(path)-1]
+	}
+	return path
 }
 
 func (d *Document) parseRegularLink(input string, start int) (int, Node) {
