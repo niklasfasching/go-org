@@ -445,6 +445,13 @@ func (w *HTMLWriter) WriteMacro(m Macro) {
 		if macroDocument.Error != nil {
 			w.log.Printf("bad macro: %s -> %s: %v", m.Name, macro, macroDocument.Error)
 		}
+		if len(macroDocument.Nodes) == 1 {
+			if paragraph, ok := macroDocument.Nodes[0].(Paragraph); ok {
+				// A macro is already inside its surrounding paragraph.
+				WriteNodes(w, paragraph.Children...)
+				return
+			}
+		}
 		WriteNodes(w, macroDocument.Nodes...)
 	}
 }
