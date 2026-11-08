@@ -3,6 +3,8 @@ package org
 import (
 	"strings"
 	"testing"
+
+	"golang.org/x/net/html"
 )
 
 type ExtendedHTMLWriter struct {
@@ -27,6 +29,64 @@ func TestExtendedHTMLWriter(t *testing.T) {
 	WriteNodes(extendedWriter, p)
 	if extendedWriter.callCount != 2 {
 		t.Errorf("WriteText method of extending writer was not called: CallCount %d", extendedWriter.callCount)
+	}
+}
+
+func TestHTMLMacroParagraph(t *testing.T) {
+	tests := []struct {
+		name       string
+		definition string
+		input      string
+		want       string
+	}{
+		{"inline", "Hello", "xxx {{{test()}}} yyy", "<p>xxx Hello yyy</p>"},
+		{"first", "Hello", "{{{test()}}} yyy", "<p>Hello yyy</p>"},
+		{"last", "Hello", "xxx {{{test()}}}", "<p>xxx Hello</p>"},
+		{"standalone", "Hello", "{{{test()}}}", "<p>Hello</p>"},
+		{"parameters", "newline added after $1 and $2 inserted", "How to avoid {{{test(foo, bar)}}} ?", "<p>How to avoid newline added after foo and  bar inserted ?</p>"},
+		{"expansion markup", "*Hello* [[https://example.test/][link]]", "xxx {{{test()}}} yyy", `<p>xxx <strong>Hello</strong> <a href="https://example.test/">link</a> yyy</p>`},
+		{"surrounding markup", "Hello", "*xxx* {{{test()}}} /yyy/", "<p><strong>xxx</strong> Hello <em>yyy</em></p>"},
+		{"undefined", "Hello", "xxx {{{missing()}}} yyy", "<p>xxx  yyy</p>"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			input := "#+MACRO: test " + test.definition + "\n" + test.input
+			document := New().Silent().Parse(strings.NewReader(input), "macro.org")
+			actual, err := document.Write(NewHTMLWriter())
+			if err != nil {
+				t.Fatal(err)
+			}
+			if strings.TrimSpace(actual) != test.want {
+				t.Fatalf("unexpected HTML:\n%s", diff(actual, test.want+"\n"))
+			}
+			// A browser repairs nested <p> elements, so assert the raw output
+			// above as well as the resulting paragraph structure.
+			root, err := html.Parse(strings.NewReader(actual))
+			if err != nil {
+				t.Fatal(err)
+			}
+			paragraphs := 0
+			var visit func(*html.Node)
+			visit = func(node *html.Node) {
+				if node.Type == html.ElementNode && node.Data == "p" {
+					paragraphs++
+				}
+				for child := node.FirstChild; child != nil; child = child.NextSibling {
+					visit(child)
+				}
+			}
+			visit(root)
+			if paragraphs != 1 {
+				t.Fatalf("expected one paragraph, got %d", paragraphs)
+			}
+			org, err := document.Write(NewOrgWriter())
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !strings.Contains(org, test.input) {
+				t.Fatalf("Org writer changed the macro call or surrounding text: %s", org)
+			}
+		})
 	}
 }
 
